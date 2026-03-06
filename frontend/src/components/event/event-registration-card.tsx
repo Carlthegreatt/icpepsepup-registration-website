@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle, Users, Ticket, Check } from "lucide-react";
+import { CheckCircle, Users, Ticket, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface EventRegistrationCardProps {
@@ -9,6 +9,7 @@ interface EventRegistrationCardProps {
   registeredCount?: number;
   isUserRegistered?: boolean;
   registrationApprovalStatus?: "approved" | "pending" | null;
+  qrUrl?: string | null;
   onRsvpClick: () => void;
 }
 
@@ -19,6 +20,7 @@ export function EventRegistrationCard({
   registeredCount = 0,
   isUserRegistered = false,
   registrationApprovalStatus = null,
+  qrUrl = null,
   onRsvpClick,
 }: EventRegistrationCardProps) {
   const capacityNum = parseInt(capacity) || 0;
@@ -56,6 +58,31 @@ export function EventRegistrationCard({
             className="text-green-400 mt-0.5 flex-shrink-0"
           />
           <p className="text-white/80 text-xs">You're registered for this event</p>
+        </div>
+      )}
+
+      {isUserRegistered && isApproved && qrUrl && (
+        <div className="mb-4 flex flex-col items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
+          <p className="text-xs text-white/50 font-urbanist">Your QR Ticket</p>
+          <div className="rounded-xl overflow-hidden border border-white/20 bg-white p-2">
+            <img
+              src={qrUrl}
+              alt="QR Ticket"
+              width={180}
+              height={180}
+              className="block"
+            />
+          </div>
+          <a
+            href={qrUrl}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+          >
+            <Download size={13} />
+            Download QR Code
+          </a>
         </div>
       )}
 

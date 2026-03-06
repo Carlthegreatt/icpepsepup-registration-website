@@ -52,3 +52,18 @@ export async function checkUserSession(): Promise<boolean> {
     return false;
   }
 }
+
+export async function updateRegistrantQrUrl(
+  registrantId: string,
+  qrUrl: string
+): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('registrants')
+    .update({ qr_url: qrUrl })
+    .eq('registrant_id', registrantId);
+
+  if (error) {
+    console.error('Failed to save qr_url:', error.message);
+  }
+}

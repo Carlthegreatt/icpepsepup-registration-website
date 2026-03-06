@@ -112,13 +112,14 @@ export const checkUserRegistrationAction = withActionErrorHandler(
 
     const { data: registrantDetails } = await supabase
       .from("registrants")
-      .select("is_registered")
+      .select("is_registered, qr_url")
       .eq("registrant_id", registrant.registrant_id)
       .single();
 
     return { 
       isRegistered: true, 
-      registrationStatus: (registrantDetails?.is_registered ? "approved" : "pending") as "approved" | "pending"
+      registrationStatus: (registrantDetails?.is_registered ? "approved" : "pending") as "approved" | "pending",
+      qrUrl: (registrantDetails?.qr_url as string | null) ?? null,
     };
   },
 );

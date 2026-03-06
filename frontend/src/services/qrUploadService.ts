@@ -1,6 +1,6 @@
 import { Guest } from "@/types/guest";
 import { generateQRCodeBlob, createQRDataFromGuest } from "@/services/qrService";
-import { uploadQRToStorage, checkUserSession } from "@/repositories/qrRepository";
+import { uploadQRToStorage, checkUserSession, updateRegistrantQrUrl } from "@/repositories/qrRepository";
 
 export interface QRUploadResult {
   success: boolean;
@@ -35,9 +35,11 @@ export async function uploadSingleQR(
 
     const uploadResult = await uploadQRToStorage(blobResult.fileName, blobResult.blob);
     
-    return uploadResult.success 
-      ? { success: true, url: uploadResult.url }
-      : { success: false, error: uploadResult.error };
+    if (uploadResult.success && uploadResult.url) {
+      await updateRegistrantQrUrl(guest.registrant_id, uploadResult.url);
+      return { success: true, url: uploadResult.url };
+    }
+    return { success: false, error: uploadResult.error };
   } catch (error) {
     console.error('Error uploading QR code:', error);
     return {
@@ -47,10 +49,6 @@ export async function uploadSingleQR(
   }
 }
 
-/**
- * Upload multiple QR codes to storage
- * Business logic for bulk QR code generation and upload
- */
 export async function uploadBulkQR(
   guests: Guest[],
   eventSlug: string
@@ -72,7 +70,8 @@ export async function uploadBulkQR(
 
       const uploadResult = await uploadQRToStorage(blobResult.fileName, blobResult.blob);
 
-      if (uploadResult.success) {
+      if (uploadResult.success && uploadResult.url) {
+        await updateRegistrantQrUrl(guest.registrant_id, uploadResult.url);
         uploadedCount++;
       } else {
         console.error(`Failed to upload ${blobResult.fileName}:`, uploadResult.error);

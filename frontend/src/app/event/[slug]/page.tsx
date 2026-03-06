@@ -38,6 +38,7 @@ export default function EventPage() {
   const [registrationStatus, setRegistrationStatus] = useState<{
     isRegistered: boolean;
     registrationStatus: "approved" | "pending" | null;
+    qrUrl?: string | null;
   } | null>(null);
 
   const isLoggedIn = !roleLoading && userId != null;
@@ -266,6 +267,7 @@ export default function EventPage() {
               registeredCount={event.registeredCount}
               isUserRegistered={registrationStatus?.isRegistered || false}
               registrationApprovalStatus={registrationStatus?.registrationStatus || null}
+              qrUrl={registrationStatus?.qrUrl ?? null}
               onRsvpClick={() => router.push(`/event/${slug}/register`)}
             />
 
