@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  ExternalLink,
-} from "lucide-react";
+import { Calendar, Clock, MapPin, ExternalLink } from "lucide-react";
 import { EventData } from "@/types/event";
 
 interface EventPreviewCardProps {
@@ -27,22 +22,29 @@ export function EventPreviewCard({
       <div className="p-4 md:p-6">
         <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-6">
           {/* Cover Image */}
-          <div 
+          <div
             onClick={onChangePhoto}
-            className="relative aspect-square md:aspect-auto md:h-[200px] rounded-lg overflow-hidden bg-black/20 cursor-pointer hover:bg-black/30 transition-colors group"
+            className="relative aspect-square md:aspect-auto md:h-[200px] w-full max-w-[300px] rounded-lg overflow-hidden bg-black/20 cursor-pointer transition-colors group"
           >
             {event.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={event.coverImage}
                 alt={event.title}
-                className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                className="w-full h-full object-cover transition-opacity"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white/40 group-hover:text-white/60 transition-colors">
                 No Image
               </div>
             )}
+
+            {/* Hover overlay for changing image */}
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+              <span className="text-white font-medium text-sm">
+                Change Image
+              </span>
+            </div>
           </div>
 
           {/* Event Info */}

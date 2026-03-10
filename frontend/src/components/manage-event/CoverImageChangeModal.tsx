@@ -2,8 +2,7 @@
 
 import React, { useState, useRef, useTransition } from "react";
 import { X, Image as ImageIcon, Upload } from "lucide-react";
-import { eventManage } from "../../app/event/[slug]/manage/actions";
-import { eventStorage } from "@/lib/storage/event-storage";
+import { updateEventDetailsAction } from "@/actions/eventActions";
 
 interface CoverImageChangeModalProps {
   isOpen: boolean;
@@ -13,17 +12,10 @@ interface CoverImageChangeModalProps {
 }
 
 // Thin wrapper so cover image changes also route through the
-// shared `eventManage` server action without modifying it.
+// shared server action without modifying it.
 async function updateEventCoverImage(slug: string, imageData: string) {
-  const formData = new FormData();
-  formData.append("slug", slug);
-  formData.append("operation", "updateCoverImage");
-  formData.append("coverImage", imageData);
-
-  // We intentionally ignore the return value for now, since
-  // the server-side implementation is still evolving.
-  await eventManage(formData);
-  return { success: true as const };
+  // We use the new Server Action
+  return await updateEventDetailsAction({ slug, coverImage: imageData });
 }
 
 export function CoverImageChangeModal({
@@ -33,7 +25,7 @@ export function CoverImageChangeModal({
   slug,
 }: CoverImageChangeModalProps) {
   const [selectedImage, setSelectedImage] = useState<string>(
-    currentImage || ""
+    currentImage || "",
   );
   const [isPending, startTransition] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,25 +57,12 @@ export function CoverImageChangeModal({
   const handleSave = () => {
     startTransition(async () => {
       try {
-        // Get the current event
-        const event = eventStorage.getBySlug(slug);
+        // Call the server action to update database directly
+        const result = await updateEventCoverImage(slug, selectedImage);
 
-        if (!event) {
-          alert("Event not found");
-          return;
+        if (!result || (result && !result.success)) {
+          throw new Error("Failed to save via Server Action");
         }
-
-        // Update the event with new cover image
-        const updatedEvent = {
-          ...event,
-          coverImage: selectedImage,
-        };
-
-        // Save to localStorage
-        eventStorage.update(slug, updatedEvent);
-
-        // Also call the server action for cache revalidation
-        await updateEventCoverImage(slug, selectedImage);
 
         alert("Cover image updated successfully!");
         onClose();

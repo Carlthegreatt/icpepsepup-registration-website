@@ -4,7 +4,7 @@ export interface RegistrationFormData {
   agreedToPrivacy: boolean;                      
   firstName: string;                              
   lastName: string;                               
-  dynamicAnswers?: Record<string, string>;          
+  dynamicAnswers: Record<string, string | File>; 
 }
 
 export const INITIAL_DATA: RegistrationFormData = {

@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { AdminNavbar } from "@/components/admin/admin-navbar";
 import BokehBackground from "@/components/create-event/bokeh-background";
 import Squares from "@/components/create-event/squares-background";
-// 1. Swap LoadingSpinner for LoadingScreen
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { ErrorState } from "@/components/ui/error-state";
 import { useEvent } from "@/hooks/event/use-event";
 import { useGuests } from "@/hooks/guest/use-guests";
+import { useUserStore } from "@/store/useUserStore";
 import {
   GuestStatistics,
-  QuickActions,
   GuestListSection,
   EventPreviewCard,
   WhenWhereSidebar,
@@ -21,6 +20,7 @@ import {
   EventManagementForm,
 } from "@/components/manage-event";
 import BatchmailWorkspace from "@/components/batchmail/BatchmailWorkspace";
+import SurveyBuilder from "@/components/manage-event/survey/SurveyBuilder";
 
 export default function ManageEventPage() {
   const params = useParams();
@@ -28,10 +28,27 @@ export default function ManageEventPage() {
   const slug = params.slug as string;
   const { event, loading, error, refetch } = useEvent(slug);
   const { guests, stats, refetch: refetchGuests } = useGuests(slug);
+  const { role, userId, loading: roleLoading, initialize } = useUserStore();
   const [activeTab, setActiveTab] = useState("overview");
   const [showCoverImageModal, setShowCoverImageModal] = useState(false);
 
-  if (loading) {
+  const canManage =
+    !roleLoading &&
+    event &&
+    (role === "admin" || (userId != null && userId === event.organizerId));
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  useEffect(() => {
+    if (roleLoading || loading || !event) return;
+    if (!canManage) {
+      router.replace(`/event/${slug}`);
+    }
+  }, [canManage, roleLoading, loading, event, slug, router]);
+
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-urbanist">
         <BokehBackground />
@@ -50,6 +67,18 @@ export default function ManageEventPage() {
         message="The event you're trying to manage doesn't exist or has been removed."
         onAction={() => router.push("/")}
       />
+    );
+  }
+
+  if (!canManage) {
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-urbanist">
+        <BokehBackground />
+        <Squares direction="diagonal" speed={0.3} />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <LoadingScreen message="REDIRECTING..." colorTheme="orange" />
+        </div>
+      </div>
     );
   }
 
@@ -86,7 +115,7 @@ export default function ManageEventPage() {
 
         {/* Tab Navigation */}
         <div className="flex gap-4 md:gap-6 border-b border-white/10 mb-6 md:mb-8 overflow-x-auto -mx-3 md:mx-0 px-3 md:px-0">
-          {["Overview", "Guests", "Batchmail"].map((tab) => (
+          {["Overview", "Guests", "Batchmail", "Survey"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab.toLowerCase())}
@@ -110,11 +139,13 @@ export default function ManageEventPage() {
               checkedIn={stats?.checkedIn || 0}
               waitlist={stats?.waitlist || 0}
             />
-            <QuickActions />
             <GuestListSection
               guests={guests}
               slug={slug}
-              onRefresh={refetchGuests}
+              onRefresh={() => {
+                refetchGuests();
+                refetch();
+              }}
               event={event}
             />
           </>
@@ -146,7 +177,12 @@ export default function ManageEventPage() {
 
         {/* Batchmail Tab Content */}
         <div className={activeTab === "batchmail" ? "" : "hidden"}>
-          <BatchmailWorkspace />
+          <BatchmailWorkspace guests={guests} />
+        </div>
+
+        {/* Survey Tab Content */}
+        <div className={activeTab === "survey" ? "" : "hidden"}>
+          <SurveyBuilder slug={slug} initialConfig={event.postEventSurvey} />
         </div>
       </main>
 

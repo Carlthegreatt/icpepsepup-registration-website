@@ -37,9 +37,6 @@ export default function EventRegisterPage() {
   }
 
   return (
-    <RegistrationFlow 
-      eventSlug={slug} 
-      formQuestions={event.questions || []}
-    />
+    <RegistrationFlow eventSlug={slug} formQuestions={event.questions || []} />
   );
 }

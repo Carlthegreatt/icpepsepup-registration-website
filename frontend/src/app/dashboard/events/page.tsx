@@ -5,7 +5,7 @@ import { AdminNavbar } from "@/components/admin/admin-navbar";
 import { ActiveEvents } from "@/components/admin/active-events";
 import BokehBackground from "@/components/create-event/bokeh-background";
 import Squares from "@/components/create-event/squares-background";
-import { getEvents } from "@/app/event/actions";
+import { listEventsAction } from "@/actions/eventActions";
 
 type DbEvent = {
   slug?: string;
@@ -25,13 +25,10 @@ export default function EventsPage() {
   useEffect(() => {
     async function loadEvents() {
       setLoading(true);
-      const result = await getEvents();
+      const result = await listEventsAction();
 
       if (result.success && result.data) {
-        console.log("Loaded events from database:", result.data);
         setEvents(result.data);
-      } else {
-        console.error("Failed to load events:", result.error);
       }
       setLoading(false);
     }
@@ -52,8 +49,6 @@ export default function EventsPage() {
       status: event.status ?? "upcoming",
       coverImage: event.cover_image ?? undefined,
     }));
-
-  console.log("Transformed events:", transformedEvents);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-[family-name:var(--font-urbanist)]">

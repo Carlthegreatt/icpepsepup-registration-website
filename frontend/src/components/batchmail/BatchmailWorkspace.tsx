@@ -1,16 +1,22 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { driver } from "driver.js";
-import type { DriveStep } from "driver.js";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import CsvUploader, { CsvMapping, ParsedCsv } from "@/components/ui/CsvUploader";
-import TemplateLibrary from "@/components/ui/TemplateLibrary";
-import PreviewPane from "@/components/ui/PreviewPane";
-import CsvTable from "@/components/ui/CsvTable";
-import AttachmentsUploader, { type AttachIndex } from "@/components/ui/AttachmentsUploader";
+import type { CsvMapping } from "@/components/ui/CsvUploader";
 import Tabs from "@/components/ui/Tabs";
-import Docs from "@/components/sections/Docs";
+import type { Guest } from "@/types/guest";
+import BatchmailHeader from "@/components/batchmail/BatchmailHeader";
+import { buildGuestCsv } from "@/components/batchmail/batchmailCsv";
+import { TAB_TUTORIALS, buildSteps, ensureTabSelected, type TabId } from "@/components/batchmail/batchmailTutorial";
+import DocsTab from "@/components/batchmail/sections/DocsTab";
+import GuestsTab from "@/components/batchmail/sections/GuestsTab";
+import MessageTab from "@/components/batchmail/sections/MessageTab";
+import PreviewTab from "@/components/batchmail/sections/PreviewTab";
+
+type BatchmailWorkspaceProps = {
+  guests: Guest[];
+};
 
 type RenderedEmail = {
   to: string;
@@ -19,192 +25,54 @@ type RenderedEmail = {
   html: string;
 };
 
-type TabId = "csv" | "template" | "preview" | "docs";
-
-type StepConfig = {
-  selector: string;
-  title: string;
-  description: string;
-  side?: "top" | "bottom" | "left" | "right";
-  align?: "start" | "center" | "end";
-};
-
-const tabSelector = (id: string) =>
-  `[role="tab"][aria-controls="panel-${id}"]`;
-
-const TAB_TUTORIALS: Record<TabId, StepConfig[]> = {
-  csv: [
-    {
-      selector: tabSelector("csv"),
-      title: "CSV Workspace",
-      description: "Start here to upload your spreadsheet and configure mappings.",
-      side: "bottom",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-csv-uploader",
-      title: "Upload CSV",
-      description: "Drop your file or choose from disk. Columns auto-detect for quicker mapping.",
-      side: "right",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-attachments",
-      title: "Match Attachments",
-      description: "Optional: associate files per recipient. Diacritic-safe matching is built in.",
-      side: "right",
-      align: "center",
-    },
-    {
-      selector: "#tutorial-csv-table",
-      title: "Review Rows",
-      description: "Spot check your data, remap columns, and edit values directly.",
-      side: "top",
-      align: "start",
-    },
-  ],
-  template: [
-    {
-      selector: tabSelector("template"),
-      title: "Template Tab",
-      description: "Switch here to browse saved HTML templates, upload new ones, or edit from scratch.",
-      side: "bottom",
-      align: "center",
-    },
-    {
-      selector: "#tutorial-template-library",
-      title: "Template Library",
-      description: "Use raw or visual modes, adjust formatting, and click \"Use this template\" once satisfied.",
-      side: "right",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-upload-html",
-      title: "Upload or Replace HTML",
-      description: "Need to tweak an existing file? Upload a fresh HTML export or edit the template inline as needed.",
-      side: "right",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-email-message",
-      title: "Email Message Editor",
-      description: "Craft the body, toggle HTML mode, and preview the final email layout inside this surface.",
-      side: "left",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-insert-variable",
-      title: "Insert Variables",
-      description: "Drop recipient data wherever you need it—click here to insert placeholders like {{ name }}.",
-      side: "bottom",
-      align: "end",
-    },
-  ],
-  preview: [
-    {
-      selector: tabSelector("preview"),
-      title: "Preview Tab",
-      description: "Everything before send lives here: env checks, recipients, subjects, previews, and batches.",
-      side: "bottom",
-      align: "center",
-    },
-    {
-      selector: "#tutorial-env-controls",
-      title: "Sender Environment",
-      description: "Select your system variant, upload/paste a .env override, or reupload credentials before sending.",
-      side: "bottom",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-recipient-list",
-      title: "Recipient Snapshot",
-      description: "Double-check who will receive the run—scroll this list to verify every mapped email.",
-      side: "right",
-      align: "center",
-    },
-    {
-      selector: "#tutorial-subject-editor",
-      title: "Subject Controls",
-      description: "Change the subject to anything you want and inject variables like {{ name }} on the fly.",
-      side: "left",
-      align: "start",
-    },
-    {
-      selector: "#tutorial-preview-frame",
-      title: "Live Preview",
-      description: "Flip through rows to see exactly what each recipient will receive before exporting or sending.",
-      side: "left",
-      align: "center",
-    },
-    {
-      selector: "#tutorial-batch-preview",
-      title: "Batch Planner",
-      description: "Batch size adapts automatically—attachments force smaller batches (1 or 3) to respect limits.",
-      side: "top",
-      align: "start",
-    },
-  ],
-  docs: [
-    {
-      selector: tabSelector("docs"),
-      title: "Documentation Tab",
-      description: "Need reminders? This section aggregates tips, FAQ, and troubleshooting steps.",
-      side: "bottom",
-      align: "center",
-    },
-    {
-      selector: "#tutorial-docs",
-      title: "Docs Stack",
-      description: "Skim release notes, watch demos, or follow links to advanced workflows.",
-      side: "right",
-      align: "start",
-    },
-  ],
-};
-
-const buildSteps = (configs: StepConfig[]): DriveStep[] =>
-  configs.reduce<DriveStep[]>((acc, { selector, title, description, side, align }) => {
-    const element = document.querySelector<HTMLElement>(selector);
-    if (!element) return acc;
-    acc.push({
-      element,
-      popover: {
-        title,
-        description,
-        side,
-        align,
-      },
-    });
-    return acc;
-  }, []);
-
-export default function BatchmailWorkspace() {
+export default function BatchmailWorkspace({ guests }: BatchmailWorkspaceProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const [csv, setCsv] = useState<ParsedCsv | null>(null);
-  const [mapping, setMapping] = useState<CsvMapping | null>(null);
-  const [template, setTemplate] = useState<string>("<html>\n  <body>\n    <p>Hello {{ name }},</p>\n    <p>This is a sample template. Replace me!</p>\n  </body>\n</html>");
-  const [subjectTemplate, setSubjectTemplate] = useState<string>("{{ subject }}");
-  const [attachmentsByName, setAttachmentsByName] = useState<AttachIndex>({});
-  const [hasSelectedTemplate, setHasSelectedTemplate] = useState<boolean>(false);
+  const [recipientScope, setRecipientScope] = useState<"all" | "registered" | "pending">("all");
+  const filteredGuests = useMemo(() => {
+    if (recipientScope === "all") return guests;
+    if (recipientScope === "registered") {
+      return guests.filter((guest) => guest.is_registered);
+    }
+    return guests.filter((guest) => !guest.is_registered);
+  }, [guests, recipientScope]);
+  const recipientCountLabel = useMemo(() => {
+    if (recipientScope === "registered") return "Registered";
+    if (recipientScope === "pending") return "Pending";
+    return "All";
+  }, [recipientScope]);
+  const csv = useMemo(() => buildGuestCsv(filteredGuests), [filteredGuests]);
+  const mapping = useMemo<CsvMapping | null>(() => {
+    if (!csv) return null;
+    return { recipient: "email", name: "name", subject: null };
+  }, [csv]);
+  const [template, setTemplate] = useState<string>("");
+  const [subjectDraft, setSubjectDraft] = useState<string>("{{ subject }}");
+  const [headerDraft, setHeaderDraft] = useState<string>("Hi {{ recipient }},");
+  const [messageDraft, setMessageDraft] = useState<string>("");
+  const [subjectConfirmed, setSubjectConfirmed] = useState<string>("{{ subject }}");
+  const [headerConfirmed, setHeaderConfirmed] = useState<string>("Hi {{ recipient }},");
+  const [messageConfirmed, setMessageConfirmed] = useState<string>("");
+  const hasUnconfirmedChanges = useMemo(
+    () =>
+      subjectDraft !== subjectConfirmed ||
+      headerDraft !== headerConfirmed ||
+      messageDraft !== messageConfirmed,
+    [subjectDraft, subjectConfirmed, headerDraft, headerConfirmed, messageDraft, messageConfirmed]
+  );
+  const messageContentHtml = useMemo(
+    () => messageConfirmed.replace(/\n/g, "<br />"),
+    [messageConfirmed]
+  );
   const totalCount = useMemo(() => (csv?.rowCount ?? 0), [csv]);
-
-  const availableVars = useMemo(() => {
-    const s = new Set<string>();
-    if (csv?.headers) csv.headers.forEach(h => s.add(h));
-    if (mapping) { s.add("name"); s.add("recipient"); }
-    return Array.from(s);
-  }, [csv, mapping]);
+  const templateReady = template.trim().length > 0;
 
   const startTabTutorial = useCallback((tabId: TabId) => {
     if (typeof window === "undefined") return;
     const configs = TAB_TUTORIALS[tabId];
     if (!configs || configs.length === 0) return;
-    const tabButton = document.querySelector<HTMLButtonElement>(tabSelector(tabId));
-    if (tabButton && tabButton.getAttribute("aria-selected") !== "true") {
-      tabButton.click();
-    }
+    ensureTabSelected(tabId);
     requestAnimationFrame(() => {
       const steps = buildSteps(configs);
       if (!steps.length) return;
@@ -218,6 +86,23 @@ export default function BatchmailWorkspace() {
     });
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    fetch("/email-template/adph.html")
+      .then((res) => res.text())
+      .then((html) => {
+        if (!active) return;
+        setTemplate(html);
+      })
+      .catch(() => {
+        if (!active) return;
+        setTemplate("");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const onExportJson = async (htmlRender: (row: Record<string, string>) => string) => {
     if (!csv || !mapping) return;
     const nunjucks = await import("nunjucks");
@@ -226,8 +111,14 @@ export default function BatchmailWorkspace() {
       .map((r: Record<string, string>) => ({
         to: String(r[mapping.recipient]),
         name: r[mapping.name] ? String(r[mapping.name]) : undefined,
-        subject: subjectTemplate?.trim()
-          ? nunjucks.renderString(subjectTemplate, { ...r, name: r[mapping.name], recipient: r[mapping.recipient] })
+        subject: subjectConfirmed?.trim()
+          ? nunjucks.renderString(subjectConfirmed, {
+              ...r,
+              content: messageContentHtml,
+              header: headerConfirmed,
+              name: r[mapping.name],
+              recipient: r[mapping.recipient],
+            })
           : (mapping.subject ? String(r[mapping.subject]) : undefined),
         html: htmlRender(r),
       }));
@@ -243,145 +134,86 @@ export default function BatchmailWorkspace() {
 
   return (
     <div className="batchmail-dark space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-primary font-morganite">
-          BatchMail
-          <span className="keep-light-pill text-[12px] font-semibold px-2.5 py-1 rounded bg-white-100 text-slate-900 border border-slate-300 tracking-widest uppercase font-urbanist">
-            ADPH
-          </span>
-        </h1>
-        <p className="text-sm text-secondary">
-          Upload CSV, edit/upload Jinja-style HTML template, preview, and export. {totalCount ? `(${totalCount} rows)` : ""}
-        </p>
-      </header>
+      <BatchmailHeader totalCount={totalCount} />
 
       <div id="tutorial-tabs" className="rounded-xl border border-primary/20 bg-white p-4 shadow-sm">
         <Tabs
           items={[
             {
-              id: "csv",
-              label: "CSV",
+              id: "guests",
+              label: "Guests",
               content: (
-                <div className="space-y-4" id="tutorial-csv-stack">
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => startTabTutorial("csv")}
-                      className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
-                    >
-                      CSV Tutorial
-                    </button>
-                  </div>
-                  <section id="tutorial-csv-uploader">
-                    <CsvUploader
-                      onParsed={(data: { csv: ParsedCsv; mapping: CsvMapping }) => {
-                        setCsv(data.csv);
-                        setMapping(data.mapping);
-                        setHasSelectedTemplate(false);
-                      }}
-                      currentMapping={mapping ?? undefined}
-                    />
-                  </section>
-                  <section id="tutorial-attachments">
-                    <AttachmentsUploader
-                      csv={csv}
-                      mapping={mapping}
-                      value={attachmentsByName}
-                      onChange={setAttachmentsByName}
-                    />
-                  </section>
-                  <section id="tutorial-csv-table">
-                    <CsvTable
-                      csv={csv}
-                      mapping={mapping}
-                      onMappingChange={setMapping}
-                      onChange={setCsv}
-                    />
-                  </section>
-                </div>
+                <GuestsTab
+                  guests={guests}
+                  filteredGuests={filteredGuests}
+                  totalCount={totalCount}
+                />
               ),
             },
             {
-              id: "template",
-              label: "Template",
+              id: "message",
+              label: "Message",
               content: (
-                <div id="tutorial-template-library">
-                  <div className="flex justify-end pb-3">
-                    <button
-                      type="button"
-                      onClick={() => startTabTutorial("template")}
-                      className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
-                    >
-                      Template Tutorial
-                    </button>
-                  </div>
-                  <TemplateLibrary
-                    availableVars={availableVars}
-                    initialHtml={template}
-                    onUseTemplate={({ html }) => { setTemplate(html); setHasSelectedTemplate(true); }}
-                  />
-                </div>
+                <MessageTab
+                  recipientScope={recipientScope}
+                  setRecipientScope={setRecipientScope}
+                  recipientCountLabel={recipientCountLabel}
+                  totalCount={totalCount}
+                  subjectDraft={subjectDraft}
+                  setSubjectDraft={setSubjectDraft}
+                  headerDraft={headerDraft}
+                  setHeaderDraft={setHeaderDraft}
+                  messageDraft={messageDraft}
+                  setMessageDraft={setMessageDraft}
+                  hasUnconfirmedChanges={hasUnconfirmedChanges}
+                  onConfirmMessage={() => {
+                    setSubjectConfirmed(subjectDraft);
+                    setHeaderConfirmed(headerDraft);
+                    setMessageConfirmed(messageDraft);
+                  }}
+                />
               ),
             },
             {
               id: "preview",
               label: "Preview & Export",
               content: (
-                <div id="tutorial-preview-pane">
-                  <div className="flex justify-end pb-3">
-                    <button
-                      type="button"
-                      onClick={() => startTabTutorial("preview")}
-                      className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
-                    >
-                      Preview Tutorial
-                    </button>
-                  </div>
-                  <PreviewPane
-                    csv={csv}
-                    mapping={mapping}
-                    template={template}
-                    onExportJson={onExportJson}
-                    subjectTemplate={subjectTemplate}
-                    onSubjectChange={setSubjectTemplate}
-                    attachmentsByName={attachmentsByName}
-                  />
-                </div>
+                <PreviewTab
+                  startTutorial={() => startTabTutorial("preview")}
+                  csv={csv}
+                  mapping={mapping}
+                  template={template}
+                  onExportJson={onExportJson}
+                  subjectTemplate={subjectConfirmed}
+                  messageContentHtml={messageContentHtml}
+                  headerConfirmed={headerConfirmed}
+                />
               ),
             },
             {
               id: "docs",
               label: "Documentation",
               content: (
-                <div className="space-y-4" id="tutorial-docs">
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => startTabTutorial("docs")}
-                      className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
-                    >
-                      Docs Tutorial
-                    </button>
-                  </div>
-                  <Docs />
-                </div>
+                <DocsTab startTutorial={() => startTabTutorial("docs")} />
               ),
             },
           ]}
-          initialId={(searchParams.get("tab") as string) || "csv"}
+          initialId={(() => {
+            const raw = searchParams.get("tab") || "guests";
+            if (raw === "csv") return "guests";
+            if (raw === "template") return "preview";
+            if (raw === "preview" || raw === "docs" || raw === "guests" || raw === "message") return raw;
+            return "guests";
+          })()}
           isDisabled={(id) => {
-            if (id === "template") {
-              return !csv;
-            }
             if (id === "preview") {
-              return !csv || !mapping || !hasSelectedTemplate;
+              return !csv || !mapping || !templateReady;
             }
             return false;
           }}
           getDisabledTitle={(id) => {
-            if (id === "template" && !csv) return "Upload a CSV first to configure the template.";
-            if (id === "preview" && (!csv || !mapping)) return "Upload CSV and set column mapping first.";
-            if (id === "preview" && !hasSelectedTemplate) return "Choose a template and click \"Use this template\" first.";
+            if (id === "preview" && (!csv || !mapping)) return "Add guests first to preview or send.";
+            if (id === "preview" && !templateReady) return "Loading the ADPH template.";
             return undefined;
           }}
           onChange={(id) => {

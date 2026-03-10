@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { StatCard } from "./stat-card";
 import { ActiveEvents } from "./active-events";
 import { AnalyticsCharts } from "./analytics-charts";
-import { eventStorage } from "@/lib/storage/event-storage";
+import { listEventsAction } from "@/actions/eventActions";
 import { EventData } from "@/types/event";
 import { Users, Calendar, UserPlus, Building2 } from "lucide-react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -27,7 +27,7 @@ const mockStats = {
 interface AdminDashboardContentProps {
   activeTab: "dashboard" | "events" | "stats" | "create-event" | "export-data";
   setActiveTab: (
-    tab: "dashboard" | "events" | "stats" | "create-event" | "export-data"
+    tab: "dashboard" | "events" | "stats" | "create-event" | "export-data",
   ) => void;
 }
 
@@ -40,20 +40,24 @@ export const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 2. Force the loading state to true the moment the tab changes
-    setIsLoading(true);
-
-    // 3. Simulate the API delay
-    const timer = setTimeout(() => {
-      const loadedEvents = eventStorage.getAll();
-      console.log("Loaded events from storage:", loadedEvents);
-      setEvents(loadedEvents);
+    async function fetchEvents() {
+      // 2. Force the loading state to true the moment the tab changes
+      setIsLoading(true);
       
-      // 4. Reveal the content after 1.2 seconds
-      setIsLoading(false);
-    }, 1200);
-
-    return () => clearTimeout(timer);
+      try {
+        const response = await listEventsAction();
+        if (response.success && response.data) {
+          setEvents(response.data);
+        }
+      } catch (e) {
+        console.error("Failed to load events", e);
+      } finally {
+        // 3. Reveal the content once the API finishes loading
+        setIsLoading(false);
+      }
+    }
+    
+    fetchEvents();
   }, [activeTab]);
 
   // Transform EventData to match ActiveEvents component expected format

@@ -37,12 +37,23 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
+    // Check if the container already has a Leaflet map (happens in strict mode)
+    const container = mapRef.current;
+    if ((container as any)._leaflet_id) {
+      return;
+    }
+
     // Dynamically import Leaflet and CSS only on client side
     Promise.all([
       import("leaflet"),
       import("leaflet/dist/leaflet.css"),
       import("@/styles/leaflet-custom.css"),
     ]).then(([L]) => {
+      // Double-check container still exists and isn't already initialized
+      if (!container || (container as any)._leaflet_id) {
+        return;
+      }
+
       LeafletRef.current = L.default;
       const Leaflet = L.default;
 
@@ -55,7 +66,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
       });
 
       // Initialize map
-      const map = Leaflet.map(mapRef.current!).setView([14.5995, 120.9842], 12);
+      const map = Leaflet.map(container).setView([14.5995, 120.9842], 12);
 
       // Add light theme tile layer
       Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -77,8 +88,13 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
 
     return () => {
       if (mapInstanceRef.current) {
+        mapInstanceRef.current.off();
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
+      }
+      // Clear Leaflet's internal state from the DOM element
+      if (container) {
+        delete (container as any)._leaflet_id;
       }
     };
   }, []);

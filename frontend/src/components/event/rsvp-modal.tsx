@@ -20,7 +20,7 @@ export function RsvpModal({
   questions,
   requireApproval 
 }: RsvpModalProps) {
-  const [formData, setFormData] = useState<Record<number, string>>({});
+  const [formData, setFormData] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -33,7 +33,7 @@ export function RsvpModal({
     
     // Validate required questions
     const missingRequired = questions.filter(
-      q => q.required && q.text && !formData[q.id]?.trim()
+      q => q.required && q.text && !formData[String(q.id)]?.trim()
     );
 
     if (missingRequired.length > 0) {
@@ -57,10 +57,10 @@ export function RsvpModal({
     }, 1000);
   };
 
-  const handleInputChange = (questionId: number, value: string) => {
+  const handleInputChange = (questionId: number | string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [questionId]: value
+      [String(questionId)]: value
     }));
   };
 
@@ -152,7 +152,7 @@ export function RsvpModal({
                           </div>
                         </label>
                         <textarea
-                          value={formData[question.id] || ''}
+                          value={formData[String(question.id)] || ''}
                           onChange={(e) => handleInputChange(question.id, e.target.value)}
                           required={question.required}
                           rows={3}

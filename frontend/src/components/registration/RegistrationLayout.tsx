@@ -1,5 +1,5 @@
 import { RegistrationStepper } from './RegistrationStepper';
-import { ParallaxBackground } from '@/components/create-event/parallax-background';
+import AdminLoginBackground from '@/components/admin/AdminLoginBackground';
 
 interface RegistrationLayoutProps {
   children: React.ReactNode;
@@ -13,20 +13,24 @@ export function RegistrationLayout({
   totalSteps = 6,
 }: RegistrationLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-x-hidden font-montserrat">
-        <ParallaxBackground />
+    <div className="min-h-screen text-white relative overflow-hidden flex items-center justify-center p-4">
+      <AdminLoginBackground />
 
-        <main className="relative z-10 w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-6 md:py-10 min-h-screen flex flex-col justify-center">
-            {/* Stepper Header */}
-            <div className="mb-6 sm:mb-8 animate-fade-in">
-                <RegistrationStepper currentStep={currentStep} totalSteps={totalSteps} />
-            </div>
+      <main className="relative z-10 w-full max-w-[420px] sm:max-w-[480px] md:max-w-[520px] flex flex-col gap-6">
+        {/* Stepper Header */}
+        <div className="animate-fade-in">
+          <RegistrationStepper currentStep={currentStep} totalSteps={totalSteps} />
+        </div>
 
-            {/* Form Card */}
-            <div className="animate-fade-in animate-delay-200 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-10 shadow-2xl">
-                {children}
-            </div>
-        </main>
+        {/* Form Card - same as login/register */}
+        <div className="animate-fade-in animate-delay-200 relative overflow-hidden bg-[rgba(255,255,255,0.03)] backdrop-blur-md border border-[rgba(255,255,255,0.15)] rounded-[24px] p-6 sm:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          {children}
+        </div>
+
+        <p className="text-[rgba(255,255,255,0.25)] text-[10px] text-center font-medium">
+          Powered by Arduino Community Philippines
+        </p>
+      </main>
     </div>
   );
 }

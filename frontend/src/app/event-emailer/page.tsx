@@ -126,7 +126,7 @@ const TAB_TUTORIALS: Record<TabId, StepConfig[]> = {
       selector: "#tutorial-env-controls",
       title: "Sender Environment",
       description:
-        "Select your system variant, upload/paste a .env override, or reupload credentials before sending.",
+        "Sender uses the Arduino Day Philippines account configured in the app env.",
       side: "bottom",
       align: "start",
     },
@@ -199,7 +199,7 @@ const buildSteps = (configs: StepConfig[]): DriveStep[] =>
       });
       return acc;
     },
-    [],
+    []
   );
 
 function PageInner() {
@@ -209,7 +209,7 @@ function PageInner() {
   const [csv, setCsv] = useState<ParsedCsv | null>(null);
   const [mapping, setMapping] = useState<CsvMapping | null>(null);
   const [template, setTemplate] = useState<string>(
-    "<html>\n  <body>\n    <p>Hello {{ name }},</p>\n    <p>This is a sample template. Replace me!</p>\n  </body>\n</html>",
+    "<html>\n  <body>\n    <p>Hello {{ name }},</p>\n    <p>This is a sample template. Replace me!</p>\n  </body>\n</html>"
   );
   const [subjectTemplate, setSubjectTemplate] =
     useState<string>("{{ subject }}");
@@ -224,7 +224,7 @@ function PageInner() {
     const configs = TAB_TUTORIALS[tabId];
     if (!configs || configs.length === 0) return;
     const tabButton = document.querySelector<HTMLButtonElement>(
-      tabSelector(tabId),
+      tabSelector(tabId)
     );
     if (tabButton && tabButton.getAttribute("aria-selected") !== "true") {
       tabButton.click();
@@ -243,7 +243,7 @@ function PageInner() {
   }, []);
 
   const onExportJson = async (
-    htmlRender: (row: Record<string, string>) => string,
+    htmlRender: (row: Record<string, string>) => string
   ) => {
     if (!csv || !mapping) return;
     const nunjucks = await import("nunjucks");
@@ -259,8 +259,8 @@ function PageInner() {
               recipient: r[mapping.recipient],
             })
           : mapping.subject
-            ? String(r[mapping.subject])
-            : undefined,
+          ? String(r[mapping.subject])
+          : undefined,
         html: htmlRender(r),
       }));
 
@@ -444,7 +444,7 @@ function PageInner() {
             }}
             onChange={(id) => {
               const usp = new URLSearchParams(
-                Array.from(searchParams.entries()),
+                Array.from(searchParams.entries())
               );
               usp.set("tab", id);
               router.replace(`${pathname}?${usp.toString()}`);

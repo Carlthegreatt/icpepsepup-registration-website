@@ -29,30 +29,28 @@ export default function Docs() {
 
       <h2 className="mt-8">Environment Variables</h2>
       <p>
-        Create or upload a <strong>.env</strong> (or paste text) containing:
+        BatchMail uses the Arduino Day Philippines sender credentials configured
+        in the app environment.
       </p>
       <pre className="whitespace-pre-wrap break-word">
         <code>
-          # .env SENDER_EMAIL=you@example.com
-          SENDER_APP_PASSWORD=your-app-password SENDER_NAME=Your Display Name
+          # .env ARDUINODAYPH_SENDER_EMAIL=you@example.com
+          ARDUINODAYPH_SENDER_PASSWORD=your-app-password
+          ARDUINODAYPH_SENDER_NAME=Your Display Name
         </code>
       </pre>
       <ul>
         <li>
-          <strong>SENDER_EMAIL</strong> – Mailbox you will send from.
+          <strong>ARDUINODAYPH_SENDER_EMAIL</strong> – Mailbox you will send from.
         </li>
         <li>
-          <strong>SENDER_APP_PASSWORD</strong> – Provider generated app password
-          (e.g. Gmail).
+          <strong>ARDUINODAYPH_SENDER_PASSWORD</strong> – Provider generated app
+          password (e.g. Gmail).
         </li>
         <li>
-          <strong>SENDER_NAME</strong> – Friendly display name.
+          <strong>ARDUINODAYPH_SENDER_NAME</strong> – Friendly display name.
         </li>
       </ul>
-      <p>
-        <strong>Note:</strong> Uploaded env values are stored in memory only;
-        restarting the server clears them.
-      </p>
 
       <h2 className="mt-8">CSV Requirements</h2>
       <p>
@@ -126,7 +124,7 @@ export default function Docs() {
 
       <h2 className="mt-8">Sending Emails</h2>
       <ol>
-        <li>Upload/paste env and ensure the status badge shows success.</li>
+        <li>Ensure the status badge shows a valid sender env.</li>
         <li>Review recipient count and any warnings.</li>
         <li>
           Click <strong>Send Emails</strong>. Progress and logs stream live.
@@ -146,8 +144,8 @@ export default function Docs() {
       <h2 className="mt-8">Troubleshooting</h2>
       <ul>
         <li>
-          <strong>Missing env:</strong> Reupload/paste ensuring all three keys
-          exist.
+          <strong>Missing env:</strong> Ensure the Arduino Day Philippines
+          sender keys exist in the app environment.
         </li>
         <li>
           <strong>Auth failures:</strong> Verify correct app password & provider

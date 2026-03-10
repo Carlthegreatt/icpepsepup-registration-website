@@ -1,60 +1,66 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { canManageEvent } from "@/services/authService";
+import { Guest } from "@/types/guest";
 
 export async function GET(
-  request: Request,
+  _request: Request,
   context: { params: Promise<{ slug: string }> }
 ) {
-  try {
-    const supabase = await createClient();
-    const { slug } = await context.params;
-    
-    console.log("Fetching registrants for slug:", slug);
+  const { slug } = await context.params;
 
-    // First, get the event_id from the slug
+  if (!slug) {
+    return NextResponse.json({ error: "Missing slug" }, { status: 400 });
+  }
+
+  try {
+    const canManage = await canManageEvent(slug);
+    if (!canManage) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const supabase = await createClient();
+
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select("event_id")
       .eq("slug", slug)
       .single();
 
-    console.log("Event query result:", { event, eventError });
-
     if (eventError || !event) {
-      return NextResponse.json(
-        { success: false, error: "Event not found", details: eventError },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
-    // Fetch registrants for this event
-    const { data: registrants, error: registrantsError } = await supabase
+    const { data: guests, error: guestsError } = await supabase
       .from("registrants")
-      .select("*")
+      .select(`
+        registrant_id,
+        event_id,
+        users_id,
+        terms_approval,
+        form_answers,
+        is_registered,
+        qr_url,
+        users!users_id (
+          first_name,
+          last_name,
+          email
+        )
+      `)
       .eq("event_id", event.event_id);
 
-    console.log("Registrants query result:", { 
-      count: registrants?.length, 
-      error: registrantsError 
-    });
-
-    if (registrantsError) {
-      console.error("Error fetching registrants:", registrantsError);
+    if (guestsError) {
       return NextResponse.json(
-        { success: false, error: "Failed to fetch registrants", details: registrantsError },
+        { error: "Failed to fetch guests" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      guests: registrants || [],
-      count: registrants?.length || 0,
-    });
+    return NextResponse.json({ guests: (guests || []) as unknown as Guest[] });
   } catch (error) {
-    console.error("Error in registrants API:", error);
+    console.error("Error fetching registrants:", error);
     return NextResponse.json(
-      { success: false, error: "Internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
