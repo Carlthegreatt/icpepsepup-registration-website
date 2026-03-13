@@ -46,7 +46,10 @@ export const uploadQRCodeAction = withActionErrorHandler(
 );
 
 export const validateQRCodeAction = withActionErrorHandler(
-  async (qrData: QRCodeData, eventSlug: string): Promise<QRValidationResult> => {
+  async (
+    qrData: QRCodeData,
+    eventSlug: string,
+  ): Promise<QRValidationResult> => {
     const canManage = await canManageEvent(eventSlug);
     if (!canManage) {
       logger.warn("Unauthorized QR validation attempt", { eventSlug });
@@ -56,7 +59,7 @@ export const validateQRCodeAction = withActionErrorHandler(
     console.log("Validating QR code:", {
       qrDataEventSlug: qrData.event_slug,
       currentEventSlug: eventSlug,
-      matches: qrData.event_slug === eventSlug
+      matches: qrData.event_slug === eventSlug,
     });
 
     if (!qrData.event_slug) {
@@ -75,7 +78,7 @@ export const validateQRCodeAction = withActionErrorHandler(
     }
 
     const registrant = await getRegistrantById(qrData.registrant_id);
-    
+
     if (!registrant) {
       return {
         success: false,

@@ -21,6 +21,7 @@ import {
 } from "@/components/manage-event";
 import BatchmailWorkspace from "@/components/batchmail/BatchmailWorkspace";
 import SurveyBuilder from "@/components/manage-event/survey/SurveyBuilder";
+import SurveyDashboard from "@/components/manage-event/survey/SurveyDashboard";
 
 export default function ManageEventPage() {
   const params = useParams();
@@ -167,7 +168,10 @@ export default function ManageEventPage() {
 
         {/* Survey Tab Content */}
         <div className={activeTab === "survey" ? "" : "hidden"}>
-          <SurveyBuilder slug={slug} initialConfig={event.postEventSurvey} />
+          <div className="space-y-8">
+            <SurveyDashboard slug={slug} surveyConfig={event.postEventSurvey} />
+            <SurveyBuilder slug={slug} initialConfig={event.postEventSurvey} />
+          </div>
         </div>
       </main>
 

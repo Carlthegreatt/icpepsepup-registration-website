@@ -42,3 +42,39 @@ export async function insertSurveyResponse(eventId: string, userId: string, answ
     throw new Error(`Failed to insert survey response: ${error.message}`);
   }
 }
+
+export interface SurveyResponseWithUser {
+  survey_responses_id: string;
+  users_id: string;
+  answers: Record<string, unknown>;
+  created_at?: string;
+  users: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null;
+}
+
+export async function getSurveyResponsesByEvent(eventId: string): Promise<SurveyResponseWithUser[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("survey_responses")
+    .select(`
+      survey_responses_id,
+      users_id,
+      answers,
+      created_at,
+      users:users!users_id (
+        first_name,
+        last_name,
+        email
+      )
+    `)
+    .eq("event_id", eventId);
+
+  if (error) {
+    throw new Error(`Failed to fetch survey responses: ${error.message}`);
+  }
+
+  return (data || []) as unknown as SurveyResponseWithUser[];
+}
