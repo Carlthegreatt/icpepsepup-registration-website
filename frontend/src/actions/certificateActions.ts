@@ -22,7 +22,7 @@ export const saveCertificateConfigAction = withActionErrorHandler(
     }
 
     const supabase = await createClient();
-    
+
     // Save to database
     const { error } = await supabase
       .from("events")
@@ -30,14 +30,14 @@ export const saveCertificateConfigAction = withActionErrorHandler(
       .eq("slug", slug);
 
     if (error) {
-      throw new Error(`Failed to save certificate configuration: ${error.message}`);
+      throw new Error(
+        `Failed to save certificate configuration: ${error.message}`,
+      );
     }
 
-    revalidatePath(`/event/${slug}/manage`);
-    logger.info(
-      `Successfully saved certificate config for event: ${slug}`,
-    );
-    
+    revalidatePath(`/admin/events/${slug}/manage`);
+    logger.info(`Successfully saved certificate config for event: ${slug}`);
+
     return { success: true };
   },
 );

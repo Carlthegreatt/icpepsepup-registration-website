@@ -69,7 +69,7 @@ export async function updateEventDetailsAction(data: unknown) {
     await updateEventDetails(slug, details);
 
     // Revalidate Next.js cache
-    revalidatePath(`/event/${slug}/manage`);
+    revalidatePath(`/admin/events/${slug}/manage`);
     revalidatePath(`/event/${slug}`);
 
     logger.info("Successfully updated event details", { slug });
@@ -113,7 +113,7 @@ export async function updateEventSettingsAction(data: unknown) {
     );
 
     // Revalidate Next.js cache
-    revalidatePath(`/event/${validatedData.slug}/manage`);
+    revalidatePath(`/admin/events/${validatedData.slug}/manage`);
     revalidatePath(`/event/${validatedData.slug}`);
 
     logger.info("Successfully updated event settings", {
@@ -168,7 +168,7 @@ export async function addRegistrationQuestionAction(data: unknown) {
     );
 
     // Revalidate Next.js cache
-    revalidatePath(`/event/${validatedData.slug}/manage`);
+    revalidatePath(`/admin/events/${validatedData.slug}/manage`);
     revalidatePath(`/event/${validatedData.slug}/register`);
 
     logger.info("Successfully added registration question", {
@@ -222,7 +222,7 @@ export async function updateRegistrationQuestionAction(data: unknown) {
     );
 
     // Revalidate Next.js cache
-    revalidatePath(`/event/${validatedData.slug}/manage`);
+    revalidatePath(`/admin/events/${validatedData.slug}/manage`);
     revalidatePath(`/event/${validatedData.slug}/register`);
 
     logger.info("Successfully updated registration question", {
@@ -275,7 +275,7 @@ export async function removeRegistrationQuestionAction(data: unknown) {
     );
 
     // Revalidate Next.js cache
-    revalidatePath(`/event/${validatedData.slug}/manage`);
+    revalidatePath(`/admin/events/${validatedData.slug}/manage`);
     revalidatePath(`/event/${validatedData.slug}/register`);
 
     logger.info("Successfully removed registration question", {
@@ -315,7 +315,7 @@ export async function saveRegistrationQuestionsAction(
 
     await saveRegistrationQuestions(slug, questions);
 
-    revalidatePath(`/event/${slug}/manage`);
+    revalidatePath(`/admin/events/${slug}/manage`);
     revalidatePath(`/event/${slug}/register`);
 
     logger.info("Successfully saved registration questions", { slug });

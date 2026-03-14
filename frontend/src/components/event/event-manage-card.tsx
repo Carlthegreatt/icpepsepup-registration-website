@@ -9,7 +9,7 @@ export function EventManageCard({ eventSlug }: EventManageCardProps) {
   const router = useRouter();
 
   const handleManageClick = () => {
-    router.push(`/event/${eventSlug}/manage`);
+    router.push(`/admin/events/${eventSlug}/manage`);
   };
 
   return (

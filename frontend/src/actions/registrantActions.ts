@@ -26,7 +26,7 @@ export const createRegistrantAction = withActionErrorHandler(
     const result = await registerForEvent(validatedData);
 
     revalidatePath(`/event/${validatedData.event_id}`);
-    revalidatePath(`/event/${validatedData.event_id}/manage`);
+    revalidatePath(`/admin/events/${validatedData.event_id}/manage`);
 
     return { result };
   },
@@ -44,7 +44,7 @@ export const updateGuestStatusAction = withActionErrorHandler(
     }
 
     await updateGuestStatus(validatedData.guestId, validatedData.isRegistered);
-    revalidatePath(`/event/${slug}/manage`);
+    revalidatePath(`/admin/events/${slug}/manage`);
     revalidatePath(`/event/${slug}`);
     logger.info(`Successfully updated guest ${validatedData.guestId} status`);
   },
@@ -62,7 +62,7 @@ export const deleteGuestAction = withActionErrorHandler(
     }
 
     await deleteGuest(validatedData.guestId);
-    revalidatePath(`/event/${slug}/manage`);
+    revalidatePath(`/admin/events/${slug}/manage`);
     logger.info(`Successfully deleted guest ${validatedData.guestId}`);
   },
 );
@@ -73,7 +73,7 @@ export const updateGuestIsGoingAction = withActionErrorHandler(
       throw new UnauthorizedError("Unauthorized");
     }
     await setIsGoing(data.guestId, data.isGoing);
-    revalidatePath(`/event/${slug}/manage`);
+    revalidatePath(`/admin/events/${slug}/manage`);
     revalidatePath(`/event/${slug}`);
   },
 );
