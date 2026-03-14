@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { AdminNavbar } from "@/components/admin/admin-navbar";
 import BokehBackground from "@/components/create-event/bokeh-background";
 import Squares from "@/components/create-event/squares-background";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { ErrorState } from "@/components/ui/error-state";
 import { useEvent } from "@/hooks/event/use-event";
 import { useGuests } from "@/hooks/guest/use-guests";
@@ -21,6 +21,8 @@ import {
 } from "@/components/manage-event";
 import BatchmailWorkspace from "@/components/batchmail/BatchmailWorkspace";
 import SurveyBuilder from "@/components/manage-event/survey/SurveyBuilder";
+import SurveyDashboard from "@/components/manage-event/survey/SurveyDashboard";
+import CertificateBuilder from "@/components/manage-event/certificate/CertificateBuilder";
 
 export default function ManageEventPage() {
   const params = useParams();
@@ -49,7 +51,15 @@ export default function ManageEventPage() {
   }, [canManage, roleLoading, loading, event, slug, router]);
 
   if (loading || roleLoading) {
-    return <LoadingSpinner message="Loading event management..." />;
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-urbanist">
+        <BokehBackground />
+        <Squares direction="diagonal" speed={0.3} />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <LoadingScreen message="LOADING EVENT MANAGEMENT..." colorTheme="orange" />
+        </div>
+      </div>
+    );
   }
 
   if (error || !event) {
@@ -63,7 +73,15 @@ export default function ManageEventPage() {
   }
 
   if (!canManage) {
-    return <LoadingSpinner message="Redirecting..." />;
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-urbanist">
+        <BokehBackground />
+        <Squares direction="diagonal" speed={0.3} />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <LoadingScreen message="REDIRECTING..." colorTheme="orange" />
+        </div>
+      </div>
+    );
   }
 
   const eventUrl = `${window.location.origin}/event/${slug}`;
@@ -80,7 +98,7 @@ export default function ManageEventPage() {
 
       <AdminNavbar activeTab="events" />
 
-      <main className="relative z-10 w-full max-w-6xl mx-auto px-3 md:px-6 lg:px-8 py-4 md:py-10 pb-16 mt-16">
+      <main className="relative z-10 w-full max-w-6xl mx-auto px-3 md:px-6 lg:px-8 py-4 md:py-10 pb-16 mt-16 animate-in fade-in duration-500">
         <div className="flex items-center justify-between gap-3 mb-4 md:mb-6">
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white truncate">
@@ -99,7 +117,7 @@ export default function ManageEventPage() {
 
         {/* Tab Navigation */}
         <div className="flex gap-4 md:gap-6 border-b border-white/10 mb-6 md:mb-8 overflow-x-auto -mx-3 md:mx-0 px-3 md:px-0">
-          {["Overview", "Guests", "Batchmail", "Survey"].map((tab) => (
+          {["Overview", "Guests", "Batchmail", "Survey", "Certificate"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab.toLowerCase())}
@@ -167,7 +185,15 @@ export default function ManageEventPage() {
 
         {/* Survey Tab Content */}
         <div className={activeTab === "survey" ? "" : "hidden"}>
-          <SurveyBuilder slug={slug} initialConfig={event.postEventSurvey} />
+          <div className="space-y-8">
+            <SurveyDashboard slug={slug} surveyConfig={event.postEventSurvey} />
+            <SurveyBuilder slug={slug} initialConfig={event.postEventSurvey} />
+          </div>
+        </div>
+
+        {/* Certificate Tab Content */}
+        <div className={activeTab === "certificate" ? "" : "hidden"}>
+          <CertificateBuilder slug={slug} initialConfig={event.certificateConfig} />
         </div>
       </main>
 

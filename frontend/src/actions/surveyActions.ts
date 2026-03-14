@@ -8,7 +8,11 @@ import {
 import {
   saveEventSurveySettings,
   submitSurvey,
+  getSurveyDashboardStats,
+  exportSurveyDashboardCsv,
+  getSurveyDashboardDetails,
 } from "@/services/surveyService";
+import { generateCertificate } from "@/services/certificateService";
 
 import { logger } from "@/utils/logger";
 import { canManageEvent } from "@/services/authService";
@@ -59,9 +63,66 @@ export const submitSurveyResponseAction = withActionErrorHandler(
 
     await submitSurvey(validatedData.slug, user.id, validatedData.answers);
 
+    // Fetch the correct full name from the users table, instead of just auth metadata
+    const { data: userProfile } = await supabase
+      .from("users")
+      .select("first_name, last_name")
+      .eq("users_id", user.id)
+      .single();
+
+    let userName = user.user_metadata?.full_name || user.user_metadata?.first_name || "Participant";
+    
+    // Prefer database record if available
+    if (userProfile?.first_name && userProfile?.last_name) {
+      userName = `${userProfile.first_name} ${userProfile.last_name}`;
+    } else if (userProfile?.first_name) {
+      userName = userProfile.first_name;
+    }
+
+    const certificateBase64 = await generateCertificate(userName, validatedData.slug);
+
     revalidatePath(`/event/${validatedData.slug}/manage`);
     logger.info(
       `Successfully submitted survey response for event: ${validatedData.slug} by user: ${user.id}`,
     );
+
+    return {
+      certificateBase64,
+    };
+  },
+);
+
+export const getSurveyDashboardStatsAction = withActionErrorHandler(
+  async (slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      logger.warn(`Unauthorized survey dashboard access for slug: ${slug}`);
+      throw new UnauthorizedError("Unauthorized");
+    }
+    return await getSurveyDashboardStats(slug);
+  },
+);
+
+export const getSurveyDashboardDetailsAction = withActionErrorHandler(
+  async (slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      logger.warn(`Unauthorized survey dashboard details access for slug: ${slug}`);
+      throw new UnauthorizedError("Unauthorized");
+    }
+    return await getSurveyDashboardDetails(slug);
+  },
+);
+
+export const exportSurveyDashboardCsvAction = withActionErrorHandler(
+  async (slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      logger.warn(`Unauthorized survey export attempt for slug: ${slug}`);
+      throw new UnauthorizedError("Unauthorized");
+    }
+    const result = await exportSurveyDashboardCsv(slug);
+    if (!result.success) {
+      throw new Error(result.error || "Failed to export survey dashboard");
+    }
+    logger.info(`Successfully exported survey dashboard for event: ${slug}`);
+    return result;
   },
 );
