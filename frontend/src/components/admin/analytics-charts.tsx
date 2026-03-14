@@ -13,42 +13,48 @@ import {
 } from "recharts";
 import { TrendingUp, Users, Calendar, CheckCircle } from "lucide-react";
 
-// Mock data for charts
-const registrationTrendData = [
-  { month: "Jan", date: "Jan 2026", registrations: 180, volunteers: 45 },
-  { month: "Feb", date: "Feb 2026", registrations: 220, volunteers: 52 },
-  { month: "Mar", date: "Mar 2026", registrations: 195, volunteers: 48 },
-  { month: "Apr", date: "Apr 2026", registrations: 280, volunteers: 68 },
-  { month: "May", date: "May 2026", registrations: 310, volunteers: 75 },
-  { month: "Jun", date: "Jun 2026", registrations: 340, volunteers: 82 },
-];
+type RegistrationTrendPoint = {
+  month: string;
+  date: string;
+  registrations: number;
+  surveys: number;
+};
 
-const capacityTrendData = [
-  { month: "Jan", date: "Jan 2026", utilized: 72, available: 28 },
-  { month: "Feb", date: "Feb 2026", utilized: 68, available: 32 },
-  { month: "Mar", date: "Mar 2026", utilized: 75, available: 25 },
-  { month: "Apr", date: "Apr 2026", utilized: 82, available: 18 },
-  { month: "May", date: "May 2026", utilized: 78, available: 22 },
-  { month: "Jun", date: "Jun 2026", utilized: 85, available: 15 },
-];
+type CapacityTrendPoint = {
+  month: string;
+  date: string;
+  utilized: number;
+  available: number;
+};
 
-const eventTimelineData = [
-  { month: "Jan", date: "Jan 2026", active: 4, finished: 2, upcoming: 3 },
-  { month: "Feb", date: "Feb 2026", active: 5, finished: 3, upcoming: 4 },
-  { month: "Mar", date: "Mar 2026", active: 3, finished: 4, upcoming: 5 },
-  { month: "Apr", date: "Apr 2026", active: 6, finished: 2, upcoming: 3 },
-  { month: "May", date: "May 2026", active: 5, finished: 5, upcoming: 6 },
-  { month: "Jun", date: "Jun 2026", active: 7, finished: 3, upcoming: 4 },
-];
+type EventTimelinePoint = {
+  month: string;
+  date: string;
+  active: number;
+  finished: number;
+  upcoming: number;
+};
 
-const attendanceData = [
-  { month: "Jan", date: "Jan 2026", attended: 165, registered: 180 },
-  { month: "Feb", date: "Feb 2026", attended: 205, registered: 220 },
-  { month: "Mar", date: "Mar 2026", attended: 180, registered: 195 },
-  { month: "Apr", date: "Apr 2026", attended: 260, registered: 280 },
-  { month: "May", date: "May 2026", attended: 290, registered: 310 },
-  { month: "Jun", date: "Jun 2026", attended: 320, registered: 340 },
-];
+type AttendancePoint = {
+  month: string;
+  date: string;
+  attended: number;
+  registered: number;
+};
+
+type DashboardChartsData = {
+  registrationTrendData: RegistrationTrendPoint[];
+  capacityTrendData: CapacityTrendPoint[];
+  eventTimelineData: EventTimelinePoint[];
+  attendanceData: AttendancePoint[];
+};
+
+type AnalyticsChartsProps = {
+  data?: DashboardChartsData;
+  totalEvents?: number;
+  capacityUtilization?: number;
+  attendanceRate?: number;
+};
 
 type TooltipPayloadEntry = {
   name: string;
@@ -87,33 +93,53 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
       </div>
     );
   }
+
   return null;
 };
 
-export const AnalyticsCharts: React.FC = () => {
-  const currentDate = new Date();
-  const startDate = new Date(currentDate);
-  startDate.setMonth(currentDate.getMonth() - 5);
+function calculateTrendPercent(values: number[]) {
+  if (values.length < 2) return 0;
 
-  const formatDateRange = () => {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    return `${months[startDate.getMonth()]} - ${
-      months[currentDate.getMonth()]
-    } ${currentDate.getFullYear()}`;
+  const previous = values[values.length - 2] ?? 0;
+  const latest = values[values.length - 1] ?? 0;
+
+  if (previous === 0) {
+    return latest > 0 ? 100 : 0;
+  }
+
+  return Math.round(((latest - previous) / previous) * 100);
+}
+
+function getTimelineLabel(data: Array<{ date: string }>) {
+  if (data.length === 0) return "No timeline data";
+  if (data.length === 1) return data[0].date;
+  return `${data[0].date} - ${data[data.length - 1].date}`;
+}
+
+export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
+  data,
+  totalEvents = 0,
+  capacityUtilization = 0,
+  attendanceRate = 0,
+}) => {
+  const fallbackData: DashboardChartsData = {
+    registrationTrendData: [],
+    capacityTrendData: [],
+    eventTimelineData: [],
+    attendanceData: [],
   };
+
+  const analyticsData = data ?? fallbackData;
+
+  const registrationTrend = analyticsData.registrationTrendData;
+  const capacityTrend = analyticsData.capacityTrendData;
+  const eventTimeline = analyticsData.eventTimelineData;
+  const attendanceTrend = analyticsData.attendanceData;
+
+  const timelineLabel = getTimelineLabel(registrationTrend);
+  const registrationTrendPercent = calculateTrendPercent(
+    registrationTrend.map((item) => item.registrations),
+  );
 
   return (
     <div className="space-y-6">
@@ -129,12 +155,11 @@ export const AnalyticsCharts: React.FC = () => {
           style={{ fontFamily: "Urbanist, sans-serif" }}
         >
           <span className="text-[#06b6d4] font-semibold">Timeline:</span>{" "}
-          {formatDateRange()}
+          {timelineLabel}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Registration Trends */}
         <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="w-5 h-5 text-[#60a5fa]" />
@@ -149,11 +174,11 @@ export const AnalyticsCharts: React.FC = () => {
             className="text-sm text-gray-400 mb-4"
             style={{ fontFamily: "Urbanist, sans-serif" }}
           >
-            Showing total visitors for the last 6 months • Jan 2026 - Jun 2026
+            Registered attendees and submitted surveys over the last 6 months
           </p>
           <div className="pointer-events-auto">
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={registrationTrendData}>
+              <AreaChart data={registrationTrend}>
                 <defs>
                   <linearGradient
                     id="colorRegistrations"
@@ -165,13 +190,7 @@ export const AnalyticsCharts: React.FC = () => {
                     <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.8} />
                     <stop offset="95%" stopColor="#60a5fa" stopOpacity={0.1} />
                   </linearGradient>
-                  <linearGradient
-                    id="colorVolunteers"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
+                  <linearGradient id="colorSurveys" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#34d399" stopOpacity={0.8} />
                     <stop offset="95%" stopColor="#34d399" stopOpacity={0.1} />
                   </linearGradient>
@@ -210,14 +229,16 @@ export const AnalyticsCharts: React.FC = () => {
                   fillOpacity={1}
                   fill="url(#colorRegistrations)"
                   strokeWidth={2}
+                  name="Registrations"
                 />
                 <Area
                   type="monotone"
-                  dataKey="volunteers"
+                  dataKey="surveys"
                   stroke="#34d399"
                   fillOpacity={1}
-                  fill="url(#colorVolunteers)"
+                  fill="url(#colorSurveys)"
                   strokeWidth={2}
+                  name="Survey Responses"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -227,19 +248,21 @@ export const AnalyticsCharts: React.FC = () => {
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              January - June 2026
+              {timelineLabel}
             </span>
             <span
               className="text-sm font-semibold text-[#34d399] flex items-center gap-1"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
               <TrendingUp className="w-4 h-4" />
-              Trending up by 5.2% this month
+              {registrationTrendPercent >= 0
+                ? `Up ${registrationTrendPercent}%`
+                : `Down ${Math.abs(registrationTrendPercent)}%`}{" "}
+              vs last month
             </span>
           </div>
         </div>
 
-        {/* Capacity Utilization */}
         <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <Users className="w-5 h-5 text-[#c084fc]" />
@@ -254,11 +277,11 @@ export const AnalyticsCharts: React.FC = () => {
             className="text-sm text-gray-400 mb-4"
             style={{ fontFamily: "Urbanist, sans-serif" }}
           >
-            Event capacity trends over time • Jan 2026 - Jun 2026
+            Capacity used vs available for events started each month
           </p>
           <div className="pointer-events-auto">
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={capacityTrendData}>
+              <AreaChart data={capacityTrend}>
                 <defs>
                   <linearGradient
                     id="colorUtilized"
@@ -316,6 +339,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fill="url(#colorUtilized)"
                   strokeWidth={2}
                   stackId="1"
+                  name="Utilized %"
                 />
                 <Area
                   type="monotone"
@@ -325,6 +349,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fill="url(#colorAvailable)"
                   strokeWidth={2}
                   stackId="1"
+                  name="Available %"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -334,18 +359,17 @@ export const AnalyticsCharts: React.FC = () => {
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              January - June 2026
+              {timelineLabel}
             </span>
             <span
               className="text-sm font-semibold text-[#c084fc]"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              Avg: 78% capacity
+              Avg: {capacityUtilization}% capacity
             </span>
           </div>
         </div>
 
-        {/* Event Timeline */}
         <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="w-5 h-5 text-[#34d399]" />
@@ -360,11 +384,11 @@ export const AnalyticsCharts: React.FC = () => {
             className="text-sm text-gray-400 mb-4"
             style={{ fontFamily: "Urbanist, sans-serif" }}
           >
-            Active, finished, and upcoming events • Jan 2026 - Jun 2026
+            Active, finished, and upcoming events by month window
           </p>
           <div className="pointer-events-auto">
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={eventTimelineData}>
+              <AreaChart data={eventTimeline}>
                 <defs>
                   <linearGradient id="colorActive" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#34d399" stopOpacity={0.8} />
@@ -425,6 +449,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fillOpacity={1}
                   fill="url(#colorActive)"
                   strokeWidth={2}
+                  name="Active"
                 />
                 <Area
                   type="monotone"
@@ -433,6 +458,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fillOpacity={1}
                   fill="url(#colorFinished)"
                   strokeWidth={2}
+                  name="Finished"
                 />
                 <Area
                   type="monotone"
@@ -441,6 +467,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fillOpacity={1}
                   fill="url(#colorUpcoming)"
                   strokeWidth={2}
+                  name="Upcoming"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -450,18 +477,17 @@ export const AnalyticsCharts: React.FC = () => {
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              January - June 2026
+              {timelineLabel}
             </span>
             <span
               className="text-sm font-semibold text-[#34d399]"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              12 total events
+              {totalEvents} total events
             </span>
           </div>
         </div>
 
-        {/* Attendance Rate */}
         <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="w-5 h-5 text-[#22c55e]" />
@@ -476,11 +502,11 @@ export const AnalyticsCharts: React.FC = () => {
             className="text-sm text-gray-400 mb-4"
             style={{ fontFamily: "Urbanist, sans-serif" }}
           >
-            Comparing registrations to actual attendance • Jan 2026 - Jun 2026
+            Check-ins compared to new registrations each month
           </p>
           <div className="pointer-events-auto">
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={attendanceData}>
+              <AreaChart data={attendanceTrend}>
                 <defs>
                   <linearGradient
                     id="colorAttended"
@@ -537,6 +563,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fillOpacity={1}
                   fill="url(#colorRegistered)"
                   strokeWidth={2}
+                  name="Registered"
                 />
                 <Area
                   type="monotone"
@@ -545,6 +572,7 @@ export const AnalyticsCharts: React.FC = () => {
                   fillOpacity={1}
                   fill="url(#colorAttended)"
                   strokeWidth={2}
+                  name="Attended"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -554,13 +582,13 @@ export const AnalyticsCharts: React.FC = () => {
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              January - June 2026
+              {timelineLabel}
             </span>
             <span
               className="text-sm font-semibold text-[#22c55e]"
               style={{ fontFamily: "Urbanist, sans-serif" }}
             >
-              92% attendance rate
+              {attendanceRate}% attendance rate
             </span>
           </div>
         </div>

@@ -1,33 +1,82 @@
 "use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/useUserStore';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/useUserStore";
+import { useState } from "react";
 
-import { AdminNavbar } from '@/components/admin/admin-navbar';
-import { StatCard } from '@/components/admin/stat-card';
-import { AnalyticsCharts } from '@/components/admin/analytics-charts';
-import BokehBackground from '@/components/create-event/bokeh-background';
-import Squares from '@/components/create-event/squares-background';
-import { 
-  Users, 
-  Calendar, 
-  UserPlus, 
-  Building2,
-} from 'lucide-react';
+import { AdminNavbar } from "@/components/admin/admin-navbar";
+import { StatCard } from "@/components/admin/stat-card";
+import { AnalyticsCharts } from "@/components/admin/analytics-charts";
+import BokehBackground from "@/components/create-event/bokeh-background";
+import Squares from "@/components/create-event/squares-background";
+import { Users, Calendar, CheckCircle, MessageSquare } from "lucide-react";
+import { getDashboardAnalyticsAction } from "@/actions/eventActions";
 
-const mockStats = {
-  totalRegistrants: 1247,
-  totalEvents: 12,
-  activeEvents: 5,
-  upcomingEvents: 3,
-  volunteers: 89,
-  partneredOrgs: 15,
+type DashboardData = {
+  stats: {
+    totalRegistrants: number;
+    totalEvents: number;
+    activeEvents: number;
+    upcomingEvents: number;
+    checkedInCount: number;
+    surveyResponses: number;
+    attendanceRate: number;
+    capacityUtilization: number;
+  };
+  charts: {
+    registrationTrendData: Array<{
+      month: string;
+      date: string;
+      registrations: number;
+      surveys: number;
+    }>;
+    capacityTrendData: Array<{
+      month: string;
+      date: string;
+      utilized: number;
+      available: number;
+    }>;
+    eventTimelineData: Array<{
+      month: string;
+      date: string;
+      active: number;
+      finished: number;
+      upcoming: number;
+    }>;
+    attendanceData: Array<{
+      month: string;
+      date: string;
+      registered: number;
+      attended: number;
+    }>;
+  };
+};
+
+const emptyDashboardData: DashboardData = {
+  stats: {
+    totalRegistrants: 0,
+    totalEvents: 0,
+    activeEvents: 0,
+    upcomingEvents: 0,
+    checkedInCount: 0,
+    surveyResponses: 0,
+    attendanceRate: 0,
+    capacityUtilization: 0,
+  },
+  charts: {
+    registrationTrendData: [],
+    capacityTrendData: [],
+    eventTimelineData: [],
+    attendanceData: [],
+  },
 };
 
 export default function AdminDashboard() {
-  const { role, loading, initialize, userId,  } = useUserStore();
+  const { role, loading, initialize } = useUserStore();
   const router = useRouter();
+  const [dashboardData, setDashboardData] =
+    useState<DashboardData>(emptyDashboardData);
 
   useEffect(() => {
     initialize();
@@ -39,6 +88,19 @@ export default function AdminDashboard() {
     }
   }, [loading, role, router]);
 
+  useEffect(() => {
+    async function loadDashboardData() {
+      const result = await getDashboardAnalyticsAction();
+      if (result.success && result.data) {
+        setDashboardData(result.data);
+      }
+    }
+
+    if (role) {
+      loadDashboardData();
+    }
+  }, [role]);
+
   if (loading || !role) {
     return (
       <div className="min-h-screen bg-[#0a1520] flex items-center justify-center">
@@ -47,11 +109,13 @@ export default function AdminDashboard() {
     );
   }
 
+  const { stats, charts } = dashboardData;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-[family-name:var(--font-urbanist)]">
       <BokehBackground />
       <Squares direction="diagonal" speed={0.3} />
-      
+
       <div className="relative z-10">
         <AdminNavbar activeTab="dashboard" />
         <main className="flex-1 px-4 md:px-8 py-8 pt-28">
@@ -60,38 +124,44 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <StatCard
                 title="Total Registrants"
-                value={mockStats.totalRegistrants}
+                value={stats.totalRegistrants}
                 icon={Users}
-                trend="+12% from last month"
-                trendUp={true}
+                trend={`${stats.totalEvents} total events`}
+                trendUp={stats.totalEvents >= 0}
                 color="bg-blue-500/20"
               />
               <StatCard
                 title="Active Events"
-                value={mockStats.activeEvents}
+                value={stats.activeEvents}
                 icon={Calendar}
-                trend={`${mockStats.upcomingEvents} upcoming`}
+                trend={`${stats.upcomingEvents} upcoming`}
                 trendUp={true}
                 color="bg-purple-500/20"
               />
               <StatCard
-                title="Volunteers"
-                value={mockStats.volunteers}
-                icon={UserPlus}
-                trend="+8% this week"
+                title="Checked-in Attendees"
+                value={stats.checkedInCount}
+                icon={CheckCircle}
+                trend={`${stats.attendanceRate}% attendance rate`}
                 trendUp={true}
                 color="bg-green-500/20"
               />
               <StatCard
-                title="Partnered Orgs"
-                value={mockStats.partneredOrgs}
-                icon={Building2}
+                title="Survey Responses"
+                value={stats.surveyResponses}
+                icon={MessageSquare}
+                trend={`${stats.capacityUtilization}% capacity used`}
                 color="bg-orange-500/20"
               />
             </div>
 
             {/* Analytics Overview */}
-            <AnalyticsCharts />
+            <AnalyticsCharts
+              data={charts}
+              totalEvents={stats.totalEvents}
+              capacityUtilization={stats.capacityUtilization}
+              attendanceRate={stats.attendanceRate}
+            />
           </div>
         </main>
       </div>

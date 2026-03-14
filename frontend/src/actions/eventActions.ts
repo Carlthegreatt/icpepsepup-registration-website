@@ -20,6 +20,7 @@ import {
   saveRegistrationQuestions,
   createEvent,
 } from "@/services/eventService";
+import { getDashboardAnalytics } from "@/services/dashboardService";
 
 import { logger } from "@/utils/logger";
 import { canManageEvent } from "@/services/authService";
@@ -40,6 +41,12 @@ export const getEventAction = withActionErrorHandler(async (slug: string) => {
 export const listEventsAction = withActionErrorHandler(async () => {
   const data = await listAllEvents();
   logger.info("Fetched all events list");
+  return data;
+});
+
+export const getDashboardAnalyticsAction = withActionErrorHandler(async () => {
+  const data = await getDashboardAnalytics();
+  logger.info("Fetched dashboard analytics");
   return data;
 });
 
@@ -300,7 +307,10 @@ export async function saveRegistrationQuestionsAction(
 ) {
   try {
     if (!(await canManageEvent(slug))) {
-      return { success: false, error: "You are not authorized to update this event" };
+      return {
+        success: false,
+        error: "You are not authorized to update this event",
+      };
     }
 
     await saveRegistrationQuestions(slug, questions);
@@ -312,7 +322,9 @@ export async function saveRegistrationQuestionsAction(
     return { success: true };
   } catch (error: any) {
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to save registration questions";
+      error instanceof Error
+        ? error.message
+        : "Failed to save registration questions";
     logger.error("Failed to save registration questions", error);
     return { success: false, error: errorMessage };
   }
