@@ -35,15 +35,15 @@ export function GuestTableRow({
       <td className="font-urbanist text-white text-sm py-4 px-2">
         <div>
           <p className="font-medium">
-            {guest.users?.first_name || 'N/A'} {guest.users?.last_name || ''}
+            {guest.users?.first_name || "N/A"} {guest.users?.last_name || ""}
           </p>
           <p className="text-xs text-white/60 md:hidden">
-            {guest.users?.email || 'No email'}
+            {guest.users?.email || "No email"}
           </p>
         </div>
       </td>
       <td className="font-urbanist text-white/80 text-sm py-4 px-2 hidden md:table-cell">
-        {guest.users?.email || 'No email'}
+        {guest.users?.email || "No email"}
       </td>
       <td className="font-urbanist text-white/80 text-sm py-4 px-2 hidden lg:table-cell">
         {guest.terms_approval ? (
@@ -58,8 +58,8 @@ export function GuestTableRow({
             !guest.is_registered
               ? "pending"
               : guest.is_going === false
-              ? "not-going"
-              : "registered"
+                ? "not-going"
+                : "registered"
           }
           onChange={(e) => onStatusChange(guest.registrant_id, e.target.value)}
           disabled={isPending}
@@ -67,8 +67,8 @@ export function GuestTableRow({
             !guest.is_registered
               ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/30"
               : guest.is_going === false
-              ? "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
-              : "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30"
+                ? "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
+                : "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30"
           }`}
         >
           <option value="registered" className="bg-[#0a1520] text-green-400">
@@ -101,14 +101,16 @@ export function GuestTableRow({
       </td>
       <td className="py-4 px-2 hidden lg:table-cell">
         <div className="flex justify-center">
-          <button
-            onClick={() => onGenerateQR(guest)}
-            disabled={isPending || !guest.is_registered}
-            className="p-1.5 hover:bg-purple-500/20 rounded text-purple-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title={guest.is_registered ? "Generate QR Code Ticket" : "Cannot generate QR for pending guests"}
-          >
-            <QrCode size={16} />
-          </button>
+          {guest.is_registered && guest.is_going && (
+            <button
+              onClick={() => onGenerateQR(guest)}
+              disabled={isPending}
+              className="p-1.5 hover:bg-purple-500/20 rounded text-purple-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Generate QR Code Ticket"
+            >
+              <QrCode size={16} />
+            </button>
+          )}
         </div>
       </td>
       <td className="py-4 px-2">

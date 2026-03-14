@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { LogOut, Clock } from "lucide-react";
 import BokehBackground from "@/components/create-event/bokeh-background";
 import Squares from "@/components/create-event/squares-background";
-import { LoadingScreen } from "@/components/ui/loading-screen"; 
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { ErrorState } from "@/components/ui/error-state";
 import { EventCoverImage } from "@/components/event/event-cover-image";
 import { EventDateTime } from "@/components/event/event-date-time";
@@ -17,18 +17,25 @@ import { EventAbout } from "@/components/event/event-about";
 import { EventHost } from "@/components/event/event-host";
 import { LocationMapPreview } from "@/components/event/location-map-preview";
 import { useEvent } from "@/hooks/event/use-event";
-import { getCurrentUserEmail } from "@/app/event/actions"; 
+import { getCurrentUserEmail } from "@/app/event/actions";
 
 import { setLastViewedEventSlug } from "@/utils/last-viewed-event";
 import { logoutAction } from "@/actions/authActions";
 import { getUserInfoAction } from "@/actions/userActions";
-import { checkUserRegistrationAction, setIsGoingAction } from "@/actions/registrantActions";
+import {
+  checkUserRegistrationAction,
+  setIsGoingAction,
+} from "@/actions/registrantActions";
 import { useUserStore } from "@/store/useUserStore";
+import { Guest } from "@/types/guest";
+import { generateSingleQRAction } from "@/actions/qrClientActions";
+import { useNotification } from "@/hooks/use-notification";
 
 export default function EventPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { showSuccess, showError } = useNotification();
   const slug = params.slug as string;
   const { event, loading, error, refetch } = useEvent(slug);
   const { role, userId, loading: roleLoading, initialize } = useUserStore();
@@ -40,6 +47,7 @@ export default function EventPage() {
     registrationStatus: "approved" | "pending" | null;
     isGoing?: boolean;
     qrUrl?: string | null;
+    guest?: Guest;
   } | null>(null);
 
   const isLoggedIn = !roleLoading && userId != null;
@@ -75,18 +83,19 @@ export default function EventPage() {
       try {
         // Fetch organizer's details using the server action
         const result = await getUserInfoAction({ userId: event.organizerId });
-        
+
         if (result.success && result.data) {
           // Set name (full name if available, otherwise fallback)
-          const displayName = result.data.fullName || result.data.email || "Event Organizer";
+          const displayName =
+            result.data.fullName || result.data.email || "Event Organizer";
           setHostName(displayName);
-          
+
           // Set email
           setHostEmail(result.data.email || undefined);
         } else {
           // Fallback: check if it's the current logged-in user using your Server Action
           const currentUser = await getCurrentUserEmail();
-          
+
           if (currentUser && currentUser.id === event.organizerId) {
             setHostName(currentUser.email ?? "You");
             setHostEmail(currentUser.email ?? undefined);
@@ -112,7 +121,7 @@ export default function EventPage() {
   useEffect(() => {
     async function checkRegistration() {
       if (!userId || !slug) return;
-      
+
       try {
         const result = await checkUserRegistrationAction(slug);
         if (result.success && result.data) {
@@ -127,19 +136,19 @@ export default function EventPage() {
   }, [userId, slug, event]);
 
   useEffect(() => {
-    const refreshParam = searchParams.get('refresh');
+    const refreshParam = searchParams.get("refresh");
     if (refreshParam) {
       router.refresh();
       refetch();
       const url = new URL(window.location.href);
-      url.searchParams.delete('refresh');
-      window.history.replaceState({}, '', url.toString());
+      url.searchParams.delete("refresh");
+      window.history.replaceState({}, "", url.toString());
     }
   }, [searchParams, refetch, router]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         router.refresh();
         refetch();
       }
@@ -150,14 +159,36 @@ export default function EventPage() {
       refetch();
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
     };
   }, [refetch, router]);
+
+  const handleGenerateQR = async () => {
+    if (!registrationStatus?.guest || !slug) return;
+    try {
+      const result = await generateSingleQRAction(
+        registrationStatus.guest,
+        slug,
+      );
+      if (result.success && result.url) {
+        showSuccess("Ticket generated successfully!");
+        setRegistrationStatus((prev) =>
+          prev ? { ...prev, qrUrl: result.url } : null,
+        );
+      } else {
+        console.error("QR Gen Error:", result.error);
+        showError(result.error || "Failed to generate ticket");
+      }
+    } catch (e) {
+      console.error(e);
+      showError("An unexpected error occurred");
+    }
+  };
 
   if (loading) {
     return (
@@ -165,7 +196,7 @@ export default function EventPage() {
         <BokehBackground />
         <Squares direction="diagonal" speed={0.3} />
         <div className="relative z-10 flex items-center justify-center min-h-screen">
-        <LoadingScreen message="LOADING EVENT..." colorTheme="orange" />
+          <LoadingScreen message="LOADING EVENT..." colorTheme="orange" />
         </div>
       </div>
     );
@@ -240,31 +271,29 @@ export default function EventPage() {
             <EventLocation location={event.location} />
 
             {/* Location Map Preview */}
-            <LocationMapPreview
-              location={event.location}
-              className="mb-6"
-            />
+            <LocationMapPreview location={event.location} className="mb-6" />
 
             {/* Pending Approval Alert */}
-            {registrationStatus?.isRegistered && 
-             registrationStatus?.registrationStatus === "pending" && 
-             event.requireApproval && (
-              <div className="mb-6 bg-yellow-500/10 backdrop-blur-md rounded-xl p-4 border border-yellow-500/30">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-yellow-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-urbanist text-base font-bold text-yellow-400 mb-1">
-                      Application Pending
-                    </h3>
-                    <p className="text-white/70 text-sm">
-                      Your registration is awaiting approval from the event host. You'll be notified once it's reviewed.
-                    </p>
+            {registrationStatus?.isRegistered &&
+              registrationStatus?.registrationStatus === "pending" &&
+              event.requireApproval && (
+                <div className="mb-6 bg-yellow-500/10 backdrop-blur-md rounded-xl p-4 border border-yellow-500/30">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-urbanist text-base font-bold text-yellow-400 mb-1">
+                        Application Pending
+                      </h3>
+                      <p className="text-white/70 text-sm">
+                        Your registration is awaiting approval from the event
+                        host. You'll be notified once it's reviewed.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Registration Card */}
             <EventRegistrationCard
@@ -273,17 +302,53 @@ export default function EventPage() {
               capacity={event.capacity}
               registeredCount={event.registeredCount}
               isUserRegistered={registrationStatus?.isRegistered || false}
-              registrationApprovalStatus={registrationStatus?.registrationStatus || null}
+              registrationApprovalStatus={
+                registrationStatus?.registrationStatus || null
+              }
               isGoing={registrationStatus?.isGoing ?? true}
               qrUrl={registrationStatus?.qrUrl ?? null}
+              eventTitle={event.title}
+              eventDate={
+                event.startDate
+                  ? new Date(event.startDate).toLocaleDateString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : ""
+              }
+              eventTime={event.startTime || ""}
+              eventEndTime={event.endTime || ""}
+              eventLocation={event.location || ""}
+              attendeeName={
+                registrationStatus?.guest?.users
+                  ? `${registrationStatus.guest.users.first_name} ${registrationStatus.guest.users.last_name}`
+                  : "Guest"
+              }
               forgotPasswordHref={`/forgot-password?next=${encodeURIComponent(`/event/${slug}/register`)}`}
               onRsvpClick={() => router.push(`/event/${slug}/register`)}
               onNotGoingClick={async () => {
                 const result = await setIsGoingAction(slug, false);
                 if (result.success) {
-                  setRegistrationStatus((prev) => prev ? { ...prev, isGoing: false } : prev);
+                  setRegistrationStatus((prev) =>
+                    prev ? { ...prev, isGoing: false } : prev,
+                  );
+                } else {
+                  showError(result.error || "Failed to update status");
                 }
               }}
+              onGoingClick={async () => {
+                const result = await setIsGoingAction(slug, true);
+                if (result.success) {
+                  setRegistrationStatus((prev) =>
+                    prev ? { ...prev, isGoing: true } : prev,
+                  );
+                } else {
+                  showError(result.error || "Failed to update status");
+                }
+              }}
+              onGenerateQR={handleGenerateQR}
             />
 
             {/* About - Below RSVP */}
