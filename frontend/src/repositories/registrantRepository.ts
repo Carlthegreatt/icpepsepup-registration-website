@@ -23,6 +23,7 @@ export async function createRegistrant(registrantData: {
   terms_approval: boolean;
   form_answers: Record<string, string>;
   is_registered: boolean;
+  is_going: boolean;
 }) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -42,12 +43,22 @@ export async function updateGuestStatus(guestId: string, isRegistered: boolean) 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
-    .update({ is_registered: isRegistered })
+    .update({ is_registered: isRegistered, is_going: isRegistered })
     .eq("registrant_id", guestId)
     .select();
 
   if (error) throw new Error(`Failed to update guest status: ${error.message}`);
   return data;
+}
+
+export async function updateGuestIsGoing(guestId: string, isGoing: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("registrants")
+    .update({ is_going: isGoing })
+    .eq("registrant_id", guestId);
+
+  if (error) throw new Error(`Failed to update guest is_going: ${error.message}`);
 }
 
 export async function getRegistrantStatusEmailAndEvent(guestId: string) {
@@ -102,6 +113,7 @@ export async function getRegistrantsByEvent(eventId: string): Promise<Guest[]> {
       terms_approval,
       form_answers,
       is_registered,
+      is_going,
       qr_url,
       users!users_id (
         first_name,
@@ -129,6 +141,7 @@ export async function getRegistrantById(registrantId: string): Promise<Guest | n
       terms_approval,
       form_answers,
       is_registered,
+      is_going,
       qr_url,
       users!users_id (
         first_name,

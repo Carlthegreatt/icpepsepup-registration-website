@@ -10,7 +10,8 @@ import {
 import {
   registerForEvent,
   updateGuestStatus,
-  deleteGuest 
+  deleteGuest,
+  setIsGoing,
 } from "@/services/registrantService";
 import { canManageEvent } from "@/services/authService";
 import { logger } from "@/utils/logger";
@@ -66,6 +67,38 @@ export const deleteGuestAction = withActionErrorHandler(
   },
 );
 
+export const updateGuestIsGoingAction = withActionErrorHandler(
+  async (data: { guestId: string; isGoing: boolean }, slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+    await setIsGoing(data.guestId, data.isGoing);
+    revalidatePath(`/event/${slug}/manage`);
+    revalidatePath(`/event/${slug}`);
+  },
+);
+
+export const setIsGoingAction = withActionErrorHandler(
+  async (eventSlug: string, isGoing: boolean) => {
+    const { createClient } = await import("@/lib/supabase/server");
+    const { getEventIdAndApprovalBySlug } = await import("@/repositories/eventRepository");
+    const { getRegistrantByUserAndEvent } = await import("@/repositories/registrantRepository");
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new UnauthorizedError("Not authenticated");
+
+    const eventData = await getEventIdAndApprovalBySlug(eventSlug);
+    if (!eventData) throw new Error("Event not found");
+
+    const registrant = await getRegistrantByUserAndEvent(user.id, eventData.event_id);
+    if (!registrant) throw new Error("Registration not found");
+
+    await setIsGoing(registrant.registrant_id, isGoing);
+    revalidatePath(`/event/${eventSlug}`);
+  },
+);
+
 export const exportGuestsAction = withActionErrorHandler(
   async (slug: string) => {
     if (!(await canManageEvent(slug))) {
@@ -112,13 +145,14 @@ export const checkUserRegistrationAction = withActionErrorHandler(
 
     const { data: registrantDetails } = await supabase
       .from("registrants")
-      .select("is_registered, qr_url")
+      .select("is_registered, is_going, qr_url")
       .eq("registrant_id", registrant.registrant_id)
       .single();
 
     return { 
       isRegistered: true, 
       registrationStatus: (registrantDetails?.is_registered ? "approved" : "pending") as "approved" | "pending",
+      isGoing: registrantDetails?.is_going ?? false,
       qrUrl: (registrantDetails?.qr_url as string | null) ?? null,
     };
   },

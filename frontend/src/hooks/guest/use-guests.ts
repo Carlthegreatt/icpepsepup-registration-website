@@ -33,14 +33,15 @@ async function getEventGuests(slug: string): Promise<GuestsResult> {
 
 function computeGuestStatistics(guests: Guest[]): GuestStats {
   const totalRsvp = guests.length;
-  const totalRegistered = guests.filter((g) => g.is_registered).length;
+  const totalRegistered = guests.filter((g) => g.is_registered && g.is_going !== false).length;
+  const notGoing = guests.filter((g) => g.is_registered && g.is_going === false).length;
   
   return {
     totalRsvp,
     totalRegistered,
     checkedIn: 0,
     waitlist: 0,
-    notGoing: 0, // TODO: not yet implemented
+    notGoing,
   };
 }
 

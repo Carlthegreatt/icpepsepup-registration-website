@@ -30,6 +30,7 @@ export function GuestListSearchFilter({
         <option value="all" style={{ backgroundColor: '#0a1520', color: '#ffffff' }}>All Status</option>
         <option value="registered" style={{ backgroundColor: '#0a1520', color: '#ffffff' }}>Registered</option>
         <option value="pending" style={{ backgroundColor: '#0a1520', color: '#ffffff' }}>Pending</option>
+        <option value="not-going" style={{ backgroundColor: '#0a1520', color: '#ffffff' }}>Not Going</option>
       </select>
     </div>
   );

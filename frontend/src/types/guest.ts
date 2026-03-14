@@ -5,6 +5,7 @@ export interface Guest {
   terms_approval: boolean;
   form_answers: Record<string, string>;
   is_registered: boolean;
+  is_going: boolean;
   qr_url: string | null;
   users: {
     first_name: string;

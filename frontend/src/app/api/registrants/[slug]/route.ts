@@ -40,6 +40,7 @@ export async function GET(
         terms_approval,
         form_answers,
         is_registered,
+        is_going,
         qr_url,
         users!users_id (
           first_name,

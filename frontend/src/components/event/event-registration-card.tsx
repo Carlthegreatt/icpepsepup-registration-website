@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { CheckCircle, Users, Ticket, Check, Download } from "lucide-react";
+import { CheckCircle, Users, Ticket, Check, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface EventRegistrationCardProps {
@@ -10,9 +10,11 @@ interface EventRegistrationCardProps {
   registeredCount?: number;
   isUserRegistered?: boolean;
   registrationApprovalStatus?: "approved" | "pending" | null;
+  isGoing?: boolean;
   qrUrl?: string | null;
   forgotPasswordHref?: string;
   onRsvpClick: () => void;
+  onNotGoingClick?: () => void;
 }
 
 export function EventRegistrationCard({
@@ -22,9 +24,11 @@ export function EventRegistrationCard({
   registeredCount = 0,
   isUserRegistered = false,
   registrationApprovalStatus = null,
+  isGoing = true,
   qrUrl = null,
   forgotPasswordHref = "/forgot-password",
   onRsvpClick,
+  onNotGoingClick,
 }: EventRegistrationCardProps) {
   const capacityNum = parseInt(capacity) || 0;
   const slotsAvailable = capacityNum - registeredCount;
@@ -54,7 +58,17 @@ export function EventRegistrationCard({
         </div>
       )}
 
-      {isUserRegistered && isApproved && (
+      {isUserRegistered && isApproved && !isGoing && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/30 mb-4">
+          <X
+            size={16}
+            className="text-red-400 mt-0.5 flex-shrink-0"
+          />
+          <p className="text-white/80 text-xs">You have marked yourself as not going</p>
+        </div>
+      )}
+
+      {isUserRegistered && isApproved && isGoing && (
         <div className="flex items-start gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/30 mb-4">
           <Check
             size={16}
@@ -64,7 +78,7 @@ export function EventRegistrationCard({
         </div>
       )}
 
-      {isUserRegistered && isApproved && qrUrl && (
+      {isUserRegistered && isApproved && isGoing && qrUrl && (
         <div className="mb-4 flex flex-col items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
           <p className="text-xs text-white/50 font-urbanist">Your QR Ticket</p>
           <div className="rounded-xl overflow-hidden border border-white/20 bg-white p-2">
@@ -87,6 +101,17 @@ export function EventRegistrationCard({
             Download QR Code
           </a>
         </div>
+      )}
+
+      {isUserRegistered && isApproved && isGoing && onNotGoingClick && (
+        <button
+          type="button"
+          onClick={onNotGoingClick}
+          className="w-full mb-4 flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-all text-sm font-medium"
+        >
+          <X size={14} />
+          Not Going
+        </button>
       )}
 
       <Button
