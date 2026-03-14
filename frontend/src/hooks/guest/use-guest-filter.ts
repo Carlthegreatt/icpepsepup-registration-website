@@ -17,7 +17,10 @@ export function useGuestFilter(guests: Guest[]) {
         guest.users.email?.toLowerCase().includes(lowerQuery);
 
       const matchesStatus = statusFilter === "all" || 
-        (statusFilter === "registered" ? guest.is_registered : !guest.is_registered);
+        (statusFilter === "registered" ? guest.is_registered && guest.is_going !== false
+          : statusFilter === "pending" ? !guest.is_registered
+          : statusFilter === "not-going" ? guest.is_registered && guest.is_going === false
+          : true);
 
       return matchesSearch && matchesStatus;
     });

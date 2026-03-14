@@ -70,6 +70,9 @@ export function GuestTableHeader({
         <th className="font-urbanist text-left text-xs md:text-sm font-medium text-white/60 pb-3 px-2">
           Status
         </th>
+        <th className="font-urbanist text-left text-xs md:text-sm font-medium text-white/60 pb-3 px-2 hidden md:table-cell">
+          Going
+        </th>
         <th className="font-urbanist text-center text-xs md:text-sm font-medium text-white/60 pb-3 px-2 hidden lg:table-cell">
           <div className="flex flex-col items-center gap-1">
             <span>Generate QR</span>

@@ -49,6 +49,7 @@ export async function registerForEvent({
     terms_approval: terms_approval || true,
     form_answers,
     is_registered,
+    is_going: is_registered,
   });
 
   if (authUser.email) {
@@ -113,6 +114,11 @@ export async function updateGuestStatus(guestId: string, isRegistered: boolean) 
 export async function deleteGuest(guestId: string) {
   const { deleteGuest } = await import("@/repositories/registrantRepository");
   return await deleteGuest(guestId);
+}
+
+export async function setIsGoing(guestId: string, isGoing: boolean) {
+  const { updateGuestIsGoing } = await import("@/repositories/registrantRepository");
+  return await updateGuestIsGoing(guestId, isGoing);
 }
 
 export async function getEventRegistrants(eventId: string) {

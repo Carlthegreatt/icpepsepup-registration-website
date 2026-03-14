@@ -22,7 +22,7 @@ import { getCurrentUserEmail } from "@/app/event/actions";
 import { setLastViewedEventSlug } from "@/utils/last-viewed-event";
 import { logoutAction } from "@/actions/authActions";
 import { getUserInfoAction } from "@/actions/userActions";
-import { checkUserRegistrationAction } from "@/actions/registrantActions";
+import { checkUserRegistrationAction, setIsGoingAction } from "@/actions/registrantActions";
 import { useUserStore } from "@/store/useUserStore";
 
 export default function EventPage() {
@@ -38,6 +38,7 @@ export default function EventPage() {
   const [registrationStatus, setRegistrationStatus] = useState<{
     isRegistered: boolean;
     registrationStatus: "approved" | "pending" | null;
+    isGoing?: boolean;
     qrUrl?: string | null;
   } | null>(null);
 
@@ -273,9 +274,16 @@ export default function EventPage() {
               registeredCount={event.registeredCount}
               isUserRegistered={registrationStatus?.isRegistered || false}
               registrationApprovalStatus={registrationStatus?.registrationStatus || null}
+              isGoing={registrationStatus?.isGoing ?? true}
               qrUrl={registrationStatus?.qrUrl ?? null}
               forgotPasswordHref={`/forgot-password?next=${encodeURIComponent(`/event/${slug}/register`)}`}
               onRsvpClick={() => router.push(`/event/${slug}/register`)}
+              onNotGoingClick={async () => {
+                const result = await setIsGoingAction(slug, false);
+                if (result.success) {
+                  setRegistrationStatus((prev) => prev ? { ...prev, isGoing: false } : prev);
+                }
+              }}
             />
 
             {/* About - Below RSVP */}

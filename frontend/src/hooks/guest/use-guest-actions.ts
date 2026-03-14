@@ -4,6 +4,7 @@ import {
   updateGuestStatusAction,
   deleteGuestAction,
   exportGuestsAction,
+  updateGuestIsGoingAction,
 } from "@/actions/registrantActions";
 import {
   generateSingleQRAction,
@@ -40,13 +41,14 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
 
   const handleStatusChange = useCallback(
     (guestId: string, newStatus: string) => {
-      const isRegistered = newStatus === "registered";
-
       startTransition(async () => {
-        const result = await updateGuestStatusAction(
-          { guestId, isRegistered },
-          slug,
-        );
+        let result;
+        if (newStatus === "not-going") {
+          result = await updateGuestIsGoingAction({ guestId, isGoing: false }, slug);
+        } else {
+          const isRegistered = newStatus === "registered";
+          result = await updateGuestStatusAction({ guestId, isRegistered }, slug);
+        }
 
         if (result.success) {
           onRefresh();

@@ -1,4 +1,4 @@
-import { Eye, Trash2, QrCode } from "lucide-react";
+import { Eye, Trash2, QrCode, Check, X } from "lucide-react";
 import { Guest } from "@/types/guest";
 
 interface GuestTableRowProps {
@@ -54,13 +54,21 @@ export function GuestTableRow({
       </td>
       <td className="py-4 px-2">
         <select
-          value={guest.is_registered ? "registered" : "pending"}
+          value={
+            !guest.is_registered
+              ? "pending"
+              : guest.is_going === false
+              ? "not-going"
+              : "registered"
+          }
           onChange={(e) => onStatusChange(guest.registrant_id, e.target.value)}
           disabled={isPending}
           className={`font-urbanist px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-cyan-500/50 ${
-            guest.is_registered
-              ? "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30"
-              : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/30"
+            !guest.is_registered
+              ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/30"
+              : guest.is_going === false
+              ? "bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30"
+              : "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30"
           }`}
         >
           <option value="registered" className="bg-[#0a1520] text-green-400">
@@ -69,7 +77,27 @@ export function GuestTableRow({
           <option value="pending" className="bg-[#0a1520] text-yellow-400">
             Pending
           </option>
+          <option value="not-going" className="bg-[#0a1520] text-red-400">
+            Not Going
+          </option>
         </select>
+      </td>
+      <td className="py-4 px-2 hidden md:table-cell">
+        {guest.is_registered ? (
+          guest.is_going === false ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
+              <X size={11} />
+              Not Going
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+              <Check size={11} />
+              Going
+            </span>
+          )
+        ) : (
+          <span className="text-xs text-white/30">—</span>
+        )}
       </td>
       <td className="py-4 px-2 hidden lg:table-cell">
         <div className="flex justify-center">
