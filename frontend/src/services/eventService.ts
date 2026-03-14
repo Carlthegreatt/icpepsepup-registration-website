@@ -53,6 +53,7 @@ function mapRowToEvent(row: any): EventData {
     questions,
     createdAt: row.created_at ?? new Date().toISOString(),
     postEventSurvey: row.post_event_survey,
+    certificateConfig: row.certificate_config,
   };
 }
 

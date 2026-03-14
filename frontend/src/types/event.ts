@@ -1,5 +1,24 @@
 import { SurveyConfig } from "./survey";
 
+export interface CertificateConfig {
+  isEnabled: boolean;
+  templateUrl: string;
+  text: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+    baseFontSize: number;
+    thresholdLength: number;
+    minFontSize: number;
+    maxFontSize: number;
+    fontFile: string;
+    fontWeight: number;
+    fontStyle: "normal" | "italic";
+  };
+}
+
 export type QuestionType = 'text' | 'multiple_choice' | 'dropdown' | 'file_upload';
 
 export interface Question {
@@ -35,6 +54,7 @@ export interface EventData {
   questions: Question[];
   createdAt: string;
   postEventSurvey?: SurveyConfig;
+  certificateConfig?: CertificateConfig;
 }
 
 export interface EventFormData {
@@ -68,6 +88,7 @@ export interface EventInsertData {
   form_questions: Question[] | null;
   status: string;
   cover_image?: string | null;
+  certificate_config?: CertificateConfig | null;
 }
 
 // Type for validated event creation input (from Zod schema)
@@ -84,4 +105,5 @@ export interface CreateEventInput {
   capacity?: string | null;
   coverImage?: string | null;
   questions?: Question[] | null;
+  certificateConfig?: CertificateConfig | null;
 }
