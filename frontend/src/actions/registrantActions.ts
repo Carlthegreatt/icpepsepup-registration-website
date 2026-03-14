@@ -184,3 +184,20 @@ export const checkUserRegistrationAction = withActionErrorHandler(
     };
   },
 );
+
+export const getMyEventsAction = withActionErrorHandler(async () => {
+  const { createClient } = await import("@/lib/supabase/server");
+  const { getUserRegistrationsWithEvents } =
+    await import("@/repositories/registrantRepository");
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new UnauthorizedError("Not authenticated");
+  }
+
+  return await getUserRegistrationsWithEvents(user.id);
+});

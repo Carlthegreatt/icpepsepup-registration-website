@@ -33,9 +33,14 @@ export default function UserLoginForm({
       const res = await getUserRoleAction();
       if (cancelled) return;
       const data: any = res.data ?? {};
-      
+
       // Update global store
-      const userRole = data?.role === "admin" ? "admin" : data?.role === "user" ? "user" : null;
+      const userRole =
+        data?.role === "admin"
+          ? "admin"
+          : data?.role === "user"
+            ? "user"
+            : null;
       useUserStore.getState().setUser(userRole, data?.userId ?? null);
 
       if (userRole === "admin") {
@@ -43,7 +48,7 @@ export default function UserLoginForm({
         return;
       }
       const lastSlug = getLastViewedEventSlug();
-      router.replace(lastSlug ? `/event/${lastSlug}` : "/dashboard");
+      router.replace(lastSlug ? `/event/${lastSlug}` : "/my-events");
     })();
     return () => {
       cancelled = true;
@@ -69,7 +74,7 @@ export default function UserLoginForm({
           </p>
         </div>
       )}
-      
+
       {state?.success && (
         <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-400/30 px-4 py-3 text-center">
           <p className="text-emerald-200 text-xs">

@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { Guest } from "@/types/guest";
 
-export async function getRegistrantByUserAndEvent(userId: string, eventId: string) {
+export async function getRegistrantByUserAndEvent(
+  userId: string,
+  eventId: string,
+) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
@@ -39,7 +42,10 @@ export async function createRegistrant(registrantData: {
   return data;
 }
 
-export async function updateGuestStatus(guestId: string, isRegistered: boolean) {
+export async function updateGuestStatus(
+  guestId: string,
+  isRegistered: boolean,
+) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
@@ -58,14 +64,16 @@ export async function updateGuestIsGoing(guestId: string, isGoing: boolean) {
     .update({ is_going: isGoing })
     .eq("registrant_id", guestId);
 
-  if (error) throw new Error(`Failed to update guest is_going: ${error.message}`);
+  if (error)
+    throw new Error(`Failed to update guest is_going: ${error.message}`);
 }
 
 export async function getRegistrantStatusEmailAndEvent(guestId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
-    .select(`
+    .select(
+      `
       registrant_id,
       is_registered,
       users:users!users_id (
@@ -74,7 +82,8 @@ export async function getRegistrantStatusEmailAndEvent(guestId: string) {
       event:events!event_id (
         event_name
       )
-    `)
+    `,
+    )
     .eq("registrant_id", guestId)
     .maybeSingle();
 
@@ -82,14 +91,12 @@ export async function getRegistrantStatusEmailAndEvent(guestId: string) {
     throw new Error(`Failed to fetch registrant details: ${error.message}`);
   }
 
-  return data as
-    | {
-        registrant_id: string;
-        is_registered: boolean;
-        users: { email: string } | null;
-        event: { event_name: string | null } | null;
-      }
-    | null;
+  return data as {
+    registrant_id: string;
+    is_registered: boolean;
+    users: { email: string } | null;
+    event: { event_name: string | null } | null;
+  } | null;
 }
 
 export async function deleteGuest(guestId: string) {
@@ -106,7 +113,8 @@ export async function getRegistrantsByEvent(eventId: string): Promise<Guest[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
-    .select(`
+    .select(
+      `
       registrant_id,
       event_id,
       users_id,
@@ -120,7 +128,8 @@ export async function getRegistrantsByEvent(eventId: string): Promise<Guest[]> {
         last_name,
         email
       )
-    `)
+    `,
+    )
     .eq("event_id", eventId);
 
   if (error) {
@@ -130,11 +139,14 @@ export async function getRegistrantsByEvent(eventId: string): Promise<Guest[]> {
   return (data || []) as unknown as Guest[];
 }
 
-export async function getRegistrantById(registrantId: string): Promise<Guest | null> {
+export async function getRegistrantById(
+  registrantId: string,
+): Promise<Guest | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
-    .select(`
+    .select(
+      `
       registrant_id,
       event_id,
       users_id,
@@ -148,7 +160,8 @@ export async function getRegistrantById(registrantId: string): Promise<Guest | n
         last_name,
         email
       )
-    `)
+    `,
+    )
     .eq("registrant_id", registrantId)
     .maybeSingle();
 
@@ -159,10 +172,13 @@ export async function getRegistrantById(registrantId: string): Promise<Guest | n
   return data as unknown as Guest;
 }
 
-export async function getRegistrantCountByEventSlug(eventSlug: string): Promise<number> {
+export async function getRegistrantCountByEventSlug(
+  eventSlug: string,
+): Promise<number> {
   const supabase = await createClient();
-  const { getEventIdAndApprovalBySlug } = await import("@/repositories/eventRepository");
-  
+  const { getEventIdAndApprovalBySlug } =
+    await import("@/repositories/eventRepository");
+
   const eventData = await getEventIdAndApprovalBySlug(eventSlug);
   if (!eventData) {
     return 0;
@@ -179,4 +195,55 @@ export async function getRegistrantCountByEventSlug(eventSlug: string): Promise<
   }
 
   return count ?? 0;
+}
+
+export type UserRegistrationWithEvent = {
+  registrant_id: string;
+  is_registered: boolean | null;
+  is_going: boolean | null;
+  qr_url: string | null;
+  created_at: string | null;
+  event: {
+    event_id: string;
+    slug: string | null;
+    event_name: string | null;
+    start_date: string | null;
+    end_date: string | null;
+    cover_image: string | null;
+    location: string | null;
+  } | null;
+};
+
+export async function getUserRegistrationsWithEvents(
+  userId: string,
+): Promise<UserRegistrationWithEvent[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("registrants")
+    .select(
+      `
+      registrant_id,
+      is_registered,
+      is_going,
+      qr_url,
+      created_at,
+      event:events!event_id (
+        event_id,
+        slug,
+        event_name,
+        start_date,
+        end_date,
+        cover_image,
+        location
+      )
+    `,
+    )
+    .eq("users_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to fetch user registrations: ${error.message}`);
+  }
+
+  return (data || []) as unknown as UserRegistrationWithEvent[];
 }

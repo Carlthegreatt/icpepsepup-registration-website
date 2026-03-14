@@ -1,11 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import AdminLoginBackground from "@/components/admin/AdminLoginBackground";
 import UserLoginForm from "@/components/users/UserLoginForm";
+import { getUserRole } from "@/services/authService";
 
 type PageProps = { searchParams: Promise<{ registered?: string }> };
 
 export default async function Home({ searchParams }: PageProps) {
+  const { role } = await getUserRole();
+  if (role === "admin") {
+    redirect("/dashboard");
+  }
+
+  if (role === "user") {
+    redirect("/my-events");
+  }
+
   const { registered } = await searchParams;
 
   return (
