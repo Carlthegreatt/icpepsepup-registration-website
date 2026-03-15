@@ -8,7 +8,19 @@ export async function getRegistrantByUserAndEvent(
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("registrants")
-    .select("registrant_id")
+    .select(
+      `
+      registrant_id,
+      is_registered,
+      is_going,
+      qr_data,
+      users!users_id (
+        first_name,
+        last_name,
+        email
+      )
+    `,
+    )
     .eq("users_id", userId)
     .eq("event_id", eventId)
     .maybeSingle();

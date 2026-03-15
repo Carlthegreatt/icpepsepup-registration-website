@@ -144,7 +144,7 @@ export const exportGuestsAction = withActionErrorHandler(
 
 export const checkUserRegistrationAction = withActionErrorHandler(
   async (eventSlug: string) => {
-    const { getRegistrantByUserAndEvent, getRegistrantById } =
+    const { getRegistrantByUserAndEvent } =
       await import("@/repositories/registrantRepository");
     const { getEventIdAndApprovalBySlug } =
       await import("@/repositories/eventRepository");
@@ -179,16 +179,14 @@ export const checkUserRegistrationAction = withActionErrorHandler(
       };
     }
 
-    const guest = await getRegistrantById(registrant.registrant_id);
-
     return {
       isRegistered: true,
-      registrationStatus: (guest?.is_registered ? "approved" : "pending") as
-        | "approved"
-        | "pending",
-      isGoing: guest?.is_going ?? null,
-      qrData: (guest?.qr_data as string | null) ?? null,
-      guest,
+      registrationStatus: (registrant.is_registered
+        ? "approved"
+        : "pending") as "approved" | "pending",
+      isGoing: registrant.is_going ?? null,
+      qrData: (registrant.qr_data as string | null) ?? null,
+      guest: registrant,
     };
   },
 );
