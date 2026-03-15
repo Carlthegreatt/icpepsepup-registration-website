@@ -48,12 +48,22 @@ export async function updateGuestStatus(
   qrData: string | null,
 ) {
   const supabase = await createClient();
+  const payload = isRegistered
+    ? {
+        is_registered: true,
+        qr_data: qrData,
+      }
+    : {
+        is_registered: false,
+        is_going: null,
+        check_in: false,
+        check_in_time: null,
+        qr_data: null,
+      };
+
   const { data, error } = await supabase
     .from("registrants")
-    .update({
-      is_registered: isRegistered,
-      qr_data: qrData,
-    })
+    .update(payload)
     .eq("registrant_id", guestId)
     .select();
 

@@ -23,11 +23,11 @@ async function getEventGuests(slug: string): Promise<GuestsResult> {
   try {
     const response = await fetch(`/api/registrants/${slug}`);
     const data = await response.json();
-    
+
     if (!response.ok) {
       return { success: false, error: data.error || "Failed to fetch guests" };
     }
-    
+
     return { success: true, guests: data.guests || [] };
   } catch (error) {
     console.error("Error fetching guests:", error);
@@ -37,9 +37,13 @@ async function getEventGuests(slug: string): Promise<GuestsResult> {
 
 function computeGuestStatistics(guests: Guest[]): GuestStats {
   const totalRsvp = guests.length;
-  const totalRegistered = guests.filter((g) => g.is_registered && g.is_going !== false).length;
-  const notGoing = guests.filter((g) => g.is_registered && g.is_going === false).length;
-  
+  const totalRegistered = guests.filter(
+    (g) => g.is_registered && g.is_going !== false,
+  ).length;
+  const notGoing = guests.filter(
+    (g) => g.is_registered && g.is_going === false,
+  ).length;
+
   return {
     totalRsvp,
     totalRegistered,
@@ -118,6 +122,7 @@ export function useGuests(slug: string): UseGuestsReturn {
           return {
             ...guest,
             is_registered: false,
+            is_going: null,
             qr_data: null,
           };
         }),
