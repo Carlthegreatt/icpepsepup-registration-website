@@ -20,7 +20,10 @@ import { LocationMapPreview } from "@/components/event/location-map-preview";
 import { useEvent } from "@/hooks/event/use-event";
 import { getCurrentUserEmail } from "@/app/event/actions";
 
-import { setLastViewedEventSlug } from "@/utils/last-viewed-event";
+import {
+  setLastViewedEventSlug,
+  getLastViewedEventSlug,
+} from "@/utils/last-viewed-event";
 import { logoutAction } from "@/actions/authActions";
 import { getUserInfoAction } from "@/actions/userActions";
 import {
@@ -73,7 +76,8 @@ export default function EventPage() {
     try {
       await logoutAction();
       useUserStore.getState().clearUser();
-      router.replace("/");
+      const lastSlug = getLastViewedEventSlug();
+      router.replace(lastSlug ? `/event/${lastSlug}` : "/");
     } finally {
       setLoggingOut(false);
     }
