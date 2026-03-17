@@ -41,18 +41,18 @@ async function getEventGuests(slug: string): Promise<GuestsResult> {
 
 function computeGuestStatistics(guests: Guest[]): GuestStats {
   const totalRsvp = guests.length;
-  const totalRegistered = guests.filter(
-    (g) => g.is_registered && g.is_going !== false,
-  ).length;
+  const totalRegistered = guests.filter((g) => g.is_registered).length;
   const notGoing = guests.filter(
     (g) => g.is_registered && g.is_going === false,
   ).length;
   const checkedIn = guests.filter((g) => g.check_in === true).length;
-  const going = guests.filter((g) => g.is_registered && g.is_going !== false).length;
+  const going = guests.filter(
+    (g) => g.is_registered && g.is_going === true,
+  ).length;
   const notResponded = guests.filter((g) => !g.is_registered).length;
 
-  const goingGuests = guests.filter((g) => g.is_registered && g.is_going !== false);
-  const ticketsReady = goingGuests.filter((g) => !!g.qr_data).length;
+  const goingGuests = guests.filter((g) => g.is_registered && g.is_going === true);
+  const ticketsReady = goingGuests.filter((g) => !!g.qr_data && !g.check_in).length;
   const ticketsMissing = goingGuests.filter((g) => !g.qr_data).length;
 
   return {

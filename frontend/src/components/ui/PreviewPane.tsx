@@ -58,6 +58,8 @@ export default function PreviewPane({
   extraContext,
   showSubjectEditor = true,
 }: Props) {
+  type QueueStatus = "queued" | "sending" | "sent" | "error";
+
   const [showSendModal, setShowSendModal] = useState(false);
   const [sendModalLogs, setSendModalLogs] = useState<
     Array<{
@@ -75,6 +77,10 @@ export default function PreviewPane({
     failed: number;
   }>({ sent: 0, failed: 0 });
   const [sendModalTotal, setSendModalTotal] = useState<number | null>(null);
+  const [sendQueue, setSendQueue] = useState<
+    Array<{ index: number; batch: number; to: string; status: QueueStatus; error?: string }>
+  >([]);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [currentBatchIndex, setCurrentBatchIndex] = useState<number>(0);
   const [batchAssignments, setBatchAssignments] = useState<
     Array<{ batch: number; recipients: string[] }>
@@ -285,6 +291,7 @@ export default function PreviewPane({
     const total = allRows.length;
     const BATCH_SIZE = Math.max(1, Math.min(batchSize, maxBatchSize));
     setShowSendModal(true);
+    setSendError(null);
     setSendModalLogs([]);
     setSendModalSummary({ sent: 0, failed: 0 });
     setSendModalTotal(total);
@@ -297,11 +304,26 @@ export default function PreviewPane({
       assignments.push({ batch: i / BATCH_SIZE + 1, recipients: recips });
     }
     setBatchAssignments(assignments);
+    setSendQueue(
+      allRows.map((row, idx) => ({
+        index: idx,
+        batch: Math.floor(idx / BATCH_SIZE) + 1,
+        to: String(row[mapping.recipient]),
+        status: "queued",
+      }))
+    );
     try {
       setIsSending(true);
       for (let start = 0; start < total; start += BATCH_SIZE) {
         setCurrentBatchIndex(start / BATCH_SIZE);
         const batch = allRows.slice(start, start + BATCH_SIZE);
+        setSendQueue((prev) =>
+          prev.map((item) =>
+            item.index >= start && item.index < start + batch.length
+              ? { ...item, status: "sending", error: undefined }
+              : item
+          )
+        );
         const body = {
           rows: batch,
           mapping,
@@ -320,19 +342,30 @@ export default function PreviewPane({
         if (!res.ok || !res.body) {
           const data = await res.json().catch(() => null);
           // mark whole batch as failed
-          for (const r of batch) {
+          for (let batchIdx = 0; batchIdx < batch.length; batchIdx += 1) {
+            const r = batch[batchIdx];
             const to = String(r[mapping.recipient] || "");
+            const errMsg = data?.error || "Batch failed";
             setSendModalLogs((prev) => [
               ...prev,
               {
                 to,
                 status: "error",
-                error: data?.error || "Batch failed",
+                error: errMsg,
                 attachments: 0,
                 timestamp: new Date().toISOString(),
               },
             ]);
+            const queueIndex = start + batchIdx;
+            setSendQueue((prev) =>
+              prev.map((item) =>
+                item.index === queueIndex
+                  ? { ...item, status: "error", error: errMsg }
+                  : item
+              )
+            );
           }
+          setSendError((prev) => prev || (data?.error || "One batch failed to send."));
           setSendModalSummary((prev) => ({
             sent: prev.sent,
             failed: prev.failed + batch.length,
@@ -363,6 +396,8 @@ export default function PreviewPane({
                     : prev
                 );
               } else if (obj.type === "item") {
+                const queueIndex =
+                  typeof obj.index === "number" ? start + obj.index : null;
                 setSendModalLogs((prev) => [
                   ...prev,
                   {
@@ -375,6 +410,21 @@ export default function PreviewPane({
                     timestamp: obj.timestamp,
                   },
                 ]);
+                if (queueIndex != null) {
+                  setSendQueue((prev) =>
+                    prev.map((item) =>
+                      item.index === queueIndex
+                        ? {
+                            ...item,
+                            status:
+                              obj.status === "sent" ? "sent" : "error",
+                            error:
+                              obj.status === "error" ? obj.error || "Send failed" : undefined,
+                          }
+                        : item
+                    )
+                  );
+                }
                 setSendModalSummary((prev) => ({
                   sent: obj.status === "sent" ? prev.sent + 1 : prev.sent,
                   failed:
@@ -383,14 +433,58 @@ export default function PreviewPane({
               } else if (obj.type === "done") {
                 // no-op; counts already tracked
               }
-            } catch {}
+            } catch {
+              setSendError((prev) => prev || "Received invalid stream data while sending.");
+            }
+          }
+        }
+        if (buffer.trim()) {
+          try {
+            const obj = JSON.parse(buffer.trim());
+            if (obj.type === "item") {
+              const queueIndex =
+                typeof obj.index === "number" ? start + obj.index : null;
+              setSendModalLogs((prev) => [
+                ...prev,
+                {
+                  to: obj.to,
+                  status: obj.status,
+                  subject: obj.subject,
+                  error: obj.error,
+                  messageId: obj.messageId,
+                  attachments: obj.attachments,
+                  timestamp: obj.timestamp,
+                },
+              ]);
+              if (queueIndex != null) {
+                setSendQueue((prev) =>
+                  prev.map((item) =>
+                    item.index === queueIndex
+                      ? {
+                          ...item,
+                          status: obj.status === "sent" ? "sent" : "error",
+                          error:
+                            obj.status === "error" ? obj.error || "Send failed" : undefined,
+                        }
+                      : item
+                  )
+                );
+              }
+              setSendModalSummary((prev) => ({
+                sent: obj.status === "sent" ? prev.sent + 1 : prev.sent,
+                failed: obj.status === "error" ? prev.failed + 1 : prev.failed,
+              }));
+            }
+          } catch {
+            setSendError((prev) => prev || "Failed to parse final stream response.");
           }
         }
         // small pause between batches
         await new Promise((r) => setTimeout(r, 200));
       }
     } catch (e) {
-      alert(`Send error: ${(e as Error).message}`);
+      const message = e instanceof Error ? e.message : "Unexpected send error";
+      setSendError(message);
     } finally {
       setIsSending(false);
       setCooldownSec(5);
@@ -402,7 +496,9 @@ export default function PreviewPane({
     template,
     subjectTemplate,
     attachmentsByName,
+    extraContext,
     batchSize,
+    maxBatchSize,
   ]);
 
 
@@ -459,12 +555,7 @@ export default function PreviewPane({
               onClick={async () => {
                 if (!ready || !csv || !mapping || isSending || cooldownSec > 0)
                   return;
-                try {
-                  await doSendEmails();
-                } catch (e) {
-                  alert(`Send error: ${(e as Error).message}`);
-                } finally {
-                }
+                await doSendEmails();
               }}
               className={`px-3 py-1 rounded border text-sm ${
                 ready && envOk !== false && !isSending && cooldownSec === 0
@@ -505,6 +596,11 @@ export default function PreviewPane({
             {/* Stream Send button removed per user request */}
           </div>
         </div>
+        {sendError && (
+          <div className="rounded border border-red-200 bg-red-50 text-red-700 text-xs px-3 py-2">
+            Send error: {sendError}
+          </div>
+        )}
 
         {/* Attachments uploader moved to CSV tab */}
 
@@ -743,6 +839,11 @@ export default function PreviewPane({
               </button>
             </div>
             <div className="p-4 space-y-3">
+              {sendError && (
+                <div className="rounded border border-red-500/30 bg-red-500/10 text-red-300 text-xs px-3 py-2">
+                  {sendError}
+                </div>
+              )}
               <div className="text-xs flex gap-4 items-center text-secondary">
                 <span>
                   <strong className="text-primary">Sent:</strong> {sendModalSummary.sent}
@@ -798,6 +899,38 @@ export default function PreviewPane({
                         </span>
                         <span className="flex-1 wrap-break-word">
                           {b.recipients.join(", ")}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {/* Queue overview */}
+              {sendQueue.length > 0 && (
+                <div className="border border-primary/20 rounded p-2 bg-slate-950/70 text-xs">
+                  <div className="mb-1 font-semibold text-primary">
+                    Queue ({sendQueue.length})
+                  </div>
+                  <div className="max-h-28 overflow-auto space-y-1">
+                    {sendQueue.map((item) => (
+                      <div
+                        key={`queue-${item.index}-${item.to}`}
+                        className="flex items-center gap-2 text-secondary"
+                      >
+                        <span className="min-w-[58px] text-primary/80">B{item.batch}</span>
+                        <span className="flex-1 wrap-break-word">{item.to}</span>
+                        <span
+                          className={`px-2 py-0.5 rounded border ${
+                            item.status === "sent"
+                              ? "border-emerald-400/40 text-emerald-300"
+                              : item.status === "error"
+                                ? "border-rose-400/40 text-rose-300"
+                                : item.status === "sending"
+                                  ? "border-cyan-400/40 text-cyan-300"
+                                  : "border-primary/30 text-primary/80"
+                          }`}
+                        >
+                          {item.status}
                         </span>
                       </div>
                     ))}

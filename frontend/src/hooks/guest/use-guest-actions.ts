@@ -17,6 +17,56 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
   const [isPending, startTransition] = useTransition();
   const { showSuccess, showError, showConfirm } = useNotification();
 
+  const updateGuestStatusDirect = useCallback(
+    async (
+      guestId: string,
+      newStatus: "registered" | "pending" | "not-going",
+    ): Promise<{
+      success: boolean;
+      error?: string;
+      patch?: {
+        qr_data?: string | null;
+        is_going?: boolean | null;
+      };
+    }> => {
+      let result;
+      if (newStatus === "not-going") {
+        result = await updateGuestIsGoingAction({ guestId, isGoing: false }, slug);
+      } else {
+        const isRegistered = newStatus === "registered";
+        result = await updateGuestStatusAction({ guestId, isRegistered }, slug);
+      }
+
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error || "Failed to update status",
+        };
+      }
+
+      const updatedGuest =
+        result.data &&
+        typeof result.data === "object" &&
+        "guest" in result.data &&
+        result.data.guest &&
+        typeof result.data.guest === "object"
+          ? (result.data.guest as {
+              qr_data?: string | null;
+              is_going?: boolean | null;
+            })
+          : undefined;
+
+      return {
+        success: true,
+        patch: {
+          qr_data: updatedGuest?.qr_data,
+          is_going: updatedGuest?.is_going,
+        },
+      };
+    },
+    [slug],
+  );
+
   const handleDeleteGuest = useCallback(
     (guestId: string) => {
       if (!showConfirm("Are you sure you want to remove this guest?")) return;
@@ -49,44 +99,16 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
       ) => void,
     ) => {
       startTransition(async () => {
-        let result;
-        if (newStatus === "not-going") {
-          result = await updateGuestIsGoingAction(
-            { guestId, isGoing: false },
-            slug,
-          );
-        } else {
-          const isRegistered = newStatus === "registered";
-          result = await updateGuestStatusAction(
-            { guestId, isRegistered },
-            slug,
-          );
-        }
-
+        const result = await updateGuestStatusDirect(guestId, newStatus);
         if (result.success) {
-          const updatedGuest =
-            result.data &&
-            typeof result.data === "object" &&
-            "guest" in result.data &&
-            result.data.guest &&
-            typeof result.data.guest === "object"
-              ? (result.data.guest as {
-                  qr_data?: string | null;
-                  is_going?: boolean | null;
-                })
-              : undefined;
-
-          onGuestStatusUpdated?.(guestId, newStatus, {
-            qr_data: updatedGuest?.qr_data,
-            is_going: updatedGuest?.is_going,
-          });
+          onGuestStatusUpdated?.(guestId, newStatus, result.patch);
           showSuccess("Status updated successfully");
         } else {
           showError(result.error || "Failed to update status");
         }
       });
     },
-    [slug, showSuccess, showError],
+    [updateGuestStatusDirect, showSuccess, showError],
   );
 
   const handleExport = useCallback(async () => {
@@ -117,21 +139,7 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
 
       startTransition(async () => {
         const results = await Promise.all(
-          guests.map((g) => {
-            if (newStatus === "not-going") {
-              return updateGuestIsGoingAction(
-                { guestId: g.registrant_id, isGoing: false },
-                slug,
-              );
-            }
-            return updateGuestStatusAction(
-              {
-                guestId: g.registrant_id,
-                isRegistered: newStatus === "registered",
-              },
-              slug,
-            );
-          }),
+          guests.map((g) => updateGuestStatusDirect(g.registrant_id, newStatus)),
         );
 
         const failed = results.filter((r) => !r.success).length;
@@ -148,7 +156,7 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
         }
       });
     },
-    [slug, onRefresh, showSuccess, showError],
+    [updateGuestStatusDirect, onRefresh, showSuccess, showError],
   );
 
   return {
@@ -157,5 +165,6 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
     handleStatusChange,
     handleExport,
     handleBulkStatusChange,
+    updateGuestStatusDirect,
   };
 }

@@ -21,6 +21,7 @@ interface GuestStatisticsProps {
 
 export function GuestStatistics({
   totalRsvp = 0,
+  totalRegistered = 0,
   checkedIn = 0,
   going = 0,
   notGoing = 0,
@@ -35,7 +36,7 @@ export function GuestStatistics({
         <p className="text-xs font-medium text-white/50 uppercase tracking-wider mb-3">
           Attendance
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
           <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-white/10 shrink-0">
@@ -53,11 +54,26 @@ export function GuestStatistics({
 
           <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
-              <span className="p-1.5 rounded-lg bg-amber-500/20 shrink-0">
-            <Clock className="w-4 h-4 text-amber-400" />
+              <span className="p-1.5 rounded-lg bg-green-500/20 shrink-0">
+                <CheckCircle className="w-4 h-4 text-green-400" />
               </span>
               <p className="font-urbanist text-white/60 text-xs truncate">
-                Not Responded
+                Registered
+              </p>
+            </div>
+            <p className="font-urbanist text-xl md:text-3xl font-bold text-green-400">
+              {totalRegistered}
+            </p>
+            <p className="text-xs text-white/40 mt-1">Approved guests</p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="p-1.5 rounded-lg bg-amber-500/20 shrink-0">
+                <Clock className="w-4 h-4 text-amber-400" />
+              </span>
+              <p className="font-urbanist text-white/60 text-xs truncate">
+                For Approval
               </p>
             </div>
             <p className="font-urbanist text-xl md:text-3xl font-bold text-amber-400">
@@ -69,7 +85,7 @@ export function GuestStatistics({
           <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-emerald-500/20 shrink-0">
-            <UserCheck className="w-4 h-4 text-emerald-400" />
+                <UserCheck className="w-4 h-4 text-emerald-400" />
               </span>
               <p className="font-urbanist text-white/60 text-xs truncate">
                 Going
@@ -84,7 +100,7 @@ export function GuestStatistics({
           <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-blue-500/20 shrink-0">
-            <CheckCircle className="w-4 h-4 text-blue-400" />
+                <CheckCircle className="w-4 h-4 text-blue-400" />
               </span>
               <p className="font-urbanist text-white/60 text-xs truncate">
                 Checked In
@@ -99,7 +115,7 @@ export function GuestStatistics({
           <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-red-500/20 shrink-0">
-            <XCircle className="w-4 h-4 text-red-400" />
+                <XCircle className="w-4 h-4 text-red-400" />
               </span>
               <p className="font-urbanist text-white/60 text-xs truncate">
                 Not Going
@@ -109,6 +125,9 @@ export function GuestStatistics({
               {notGoing}
             </p>
             <p className="text-xs text-white/40 mt-1">Declined</p>
+            <p className="text-[11px] text-white/30 mt-0.5">
+              {notResponded} pending approval
+            </p>
           </div>
         </div>
       </div>
