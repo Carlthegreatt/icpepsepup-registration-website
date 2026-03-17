@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, {
   useCallback,
@@ -42,6 +42,7 @@ interface QRScannerModalProps {
   isOpen: boolean;
   onClose: () => void;
   eventSlug: string;
+  onCheckInSuccess?: () => void;
 }
 
 type ModalTab = "scanner" | "manual";
@@ -50,6 +51,7 @@ export function QRScannerModal({
   isOpen,
   onClose,
   eventSlug,
+  onCheckInSuccess,
 }: QRScannerModalProps) {
   const SCAN_DEBOUNCE_MS = 1500;
   const [activeTab, setActiveTab] = useState<ModalTab>("scanner");
@@ -128,7 +130,7 @@ export function QRScannerModal({
       ],
     });
 
-    return fuse.search(manualSearch).map((item) => item.item.guest);
+    return fuse.search(manualSearch).map((item: { item: { guest: Guest } }) => item.item.guest);
   }, [manualGuests, manualSearch]);
 
   const handleManualCheckIn = async (guest: Guest) => {
@@ -232,6 +234,7 @@ export function QRScannerModal({
 
       if (result.success && result.data && result.data.success) {
         addToast("success", "Valid ticket!", result.data.guestName);
+        onCheckInSuccess?.();
         setTimeout(() => {
           isProcessingRef.current = false;
         }, SCAN_DEBOUNCE_MS);
@@ -464,7 +467,7 @@ export function QRScannerModal({
                   <Loader2 className="w-8 h-8 text-white animate-spin" />
                   {isValidating && (
                     <p className="text-white/70 text-sm">
-                      Validating ticketâ€¦
+                      Validating ticket...
                     </p>
                   )}
                 </div>
@@ -572,7 +575,7 @@ export function QRScannerModal({
                           </td>
                         </tr>
                       ) : (
-                        filteredManualGuests.map((guest) => {
+                        filteredManualGuests.map((guest: Guest) => {
                           const fullName =
                             `${guest.users?.first_name || ""} ${guest.users?.last_name || ""}`.trim() ||
                             "Guest";

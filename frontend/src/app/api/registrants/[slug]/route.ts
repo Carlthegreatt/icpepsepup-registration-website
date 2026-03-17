@@ -45,6 +45,7 @@ export async function GET(
         check_in,
         check_in_time,
         qr_data,
+        check_in,
         users!users_id (
           first_name,
           last_name,

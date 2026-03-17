@@ -8,6 +8,9 @@ import {
 import {
   saveEventSurveySettings,
   submitSurvey,
+  getSurveyDashboardStats,
+  exportSurveyDashboardCsv,
+  getSurveyDashboardDetails,
 } from "@/services/surveyService";
 import { generateCertificate } from "@/services/certificateService";
 
@@ -92,5 +95,40 @@ export const submitSurveyResponseAction = withActionErrorHandler(
     return {
       certificateBase64,
     };
+  },
+);
+
+export const getSurveyDashboardStatsAction = withActionErrorHandler(
+  async (slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      logger.warn(`Unauthorized survey dashboard access for slug: ${slug}`);
+      throw new UnauthorizedError("Unauthorized");
+    }
+    return await getSurveyDashboardStats(slug);
+  },
+);
+
+export const getSurveyDashboardDetailsAction = withActionErrorHandler(
+  async (slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      logger.warn(`Unauthorized survey dashboard details access for slug: ${slug}`);
+      throw new UnauthorizedError("Unauthorized");
+    }
+    return await getSurveyDashboardDetails(slug);
+  },
+);
+
+export const exportSurveyDashboardCsvAction = withActionErrorHandler(
+  async (slug: string) => {
+    if (!(await canManageEvent(slug))) {
+      logger.warn(`Unauthorized survey export attempt for slug: ${slug}`);
+      throw new UnauthorizedError("Unauthorized");
+    }
+    const result = await exportSurveyDashboardCsv(slug);
+    if (!result.success) {
+      throw new Error(result.error || "Failed to export survey dashboard");
+    }
+    logger.info(`Successfully exported survey dashboard for event: ${slug}`);
+    return result;
   },
 );

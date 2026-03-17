@@ -6,7 +6,7 @@ export interface Guest {
   form_answers: Record<string, string>;
   is_registered: boolean;
   is_going: boolean | null;
-  check_in?: boolean;
+  check_in?: boolean | null;
   check_in_time?: string | null;
   qr_data: string | null;
   users: {
@@ -20,6 +20,9 @@ export interface GuestStats {
   totalRsvp: number;
   totalRegistered: number;
   checkedIn: number;
-  waitlist: number;
+  going: number;
   notGoing: number;
+  notResponded: number;
+  ticketsReady: number;
+  ticketsMissing: number;
 }

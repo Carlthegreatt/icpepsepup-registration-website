@@ -149,19 +149,38 @@ export function GuestTableRow({
         </td>
         <td className="py-4 px-2 hidden md:table-cell">
           <div className="flex justify-center">
-            {guest.is_registered && guest.qr_data ? (
-              <button
-                onClick={handleOpenQrModal}
-                disabled={isGeneratingQr}
-                className="p-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-colors disabled:opacity-50"
-                title="View Ticket QR"
-              >
-                {isGeneratingQr ? (
-                  <Loader2 size={15} className="animate-spin" />
+            {guest.is_registered && guest.is_going === true ? (
+              <div className="inline-flex items-center gap-2">
+                {guest.check_in ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/20 px-2.5 py-1 text-xs font-medium text-cyan-300">
+                    <Check size={11} />
+                    Checked In
+                  </span>
+                ) : guest.qr_data ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-300">
+                    Ready
+                  </span>
                 ) : (
-                  <QrCode size={15} />
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-yellow-500/30 bg-yellow-500/20 px-2.5 py-1 text-xs font-medium text-yellow-300">
+                    Missing
+                  </span>
                 )}
-              </button>
+
+                {guest.qr_data && (
+                  <button
+                    onClick={handleOpenQrModal}
+                    disabled={isGeneratingQr}
+                    className="p-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 transition-colors disabled:opacity-50"
+                    title="View Ticket QR"
+                  >
+                    {isGeneratingQr ? (
+                      <Loader2 size={15} className="animate-spin" />
+                    ) : (
+                      <QrCode size={15} />
+                    )}
+                  </button>
+                )}
+              </div>
             ) : (
               <span className="text-xs text-white/30">—</span>
             )}
