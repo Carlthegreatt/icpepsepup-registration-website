@@ -14,15 +14,7 @@
 >
   <tbody>
     <tr>
-      <td
-        style="
-          word-break: break-word;
-          border-collapse: collapse !important;
-          vertical-align: top;
-          padding: 0;
-        "
-      >
-        <!-- Main Content Wrapper -->
+      <td style="padding: 20px 10px">
         <table
           style="
             width: 100%;
@@ -35,24 +27,24 @@
           cellpadding="0"
           cellspacing="0"
         >
-          <!-- Header Image -->
+          <!-- HEADER -->
           <tr>
             <td align="center" style="padding: 0">
               <img
                 src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/header.png"
-                alt="Header"
                 style="
                   display: block;
                   width: 100%;
                   max-width: 650px;
                   height: auto;
-                  border: none;
                   border-radius: 16px 16px 0 0;
                 "
+                alt="Arduino Day Philippines"
               />
             </td>
           </tr>
-          <!-- Content Section -->
+
+          <!-- TITLE -->
           <tr>
             <td
               style="
@@ -67,7 +59,6 @@
                   font-size: 16px;
                   font-weight: 400;
                   color: #003333;
-                  line-height: 140%;
                 "
               >
                 <strong>Empowering Makers, Igniting Innovation!</strong>
@@ -75,217 +66,312 @@
             </td>
           </tr>
 
-          <!-- Email Body -->
           <tr>
             <td
               style="
-                padding: 32px 40px;
-                color: #2c2c2c;
+                padding: 0 40px 32px 40px;
                 font-family: &quot;IBM Plex Sans&quot;, sans-serif;
-                text-align: left;
-                word-break: break-word;
+                color: #444;
+                line-height: 1.8;
               "
             >
-              <p
-                style="
-                  font-size: 15px;
-                  line-height: 1.8;
-                  margin: 0 0 8px 0;
-                  color: #1a1a1a;
-                "
-              >
-                <strong>Registration Confirmation</strong>
-              </p>
-              <p
-                style="
-                  font-size: 15px;
-                  line-height: 1.8;
-                  margin: 0 0 24px 0;
-                  color: #4a4a4a;
-                "
-              >
+              <p style="font-size: 15px; margin-bottom: 20px">
                 We are pleased to confirm that your spot at
-                <strong>{{ event_name }}</strong> is secured. We look forward to
-                welcoming you at the event.
+                <strong>{{ event_name }}</strong> is secured.
               </p>
 
-              <!-- Signature -->
-              <p
+              <!-- TICKET SECTION -->
+              <div
                 style="
-                  font-size: 15px;
-                  line-height: 1.8;
-                  margin: 0 0 4px 0;
-                  color: #4a4a4a;
+                  background: #f9f9f9;
+                  border: 1px solid #eee;
+                  padding: 24px;
+                  border-radius: 12px;
+                  margin-bottom: 24px;
+                  text-align: center;
                 "
               >
-                Sincerely,
+                <p style="font-size: 15px; margin-bottom: 16px; color: #333">
+                  <strong>Next Step: Download Your Ticket</strong>
+                </p>
+
+                <a
+                  href="https://join.arduinodayphilippines.cc/event/arduino-day-philippines-2026-1772791655557"
+                  style="
+                    background: #003333;
+                    color: #fff;
+                    padding: 14px 24px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    font-size: 15px;
+                    display: inline-block;
+                  "
+                >
+                  Download Your Ticket
+                </a>
+
+                <div
+                  style="
+                    margin-top: 20px;
+                    text-align: left;
+                    font-size: 14px;
+                    color: #444;
+                  "
+                >
+                  <strong>How to download your ticket:</strong>
+
+                  <ol style="padding-left: 18px; margin-top: 10px">
+                    <li>
+                      Click the <strong>Download Your Ticket</strong> button
+                      above.
+                    </li>
+                    <li>Press the <strong>RSVP / Login</strong> button.</li>
+                    <li>
+                      Enter your <strong>Email</strong> and
+                      <strong>Password</strong>.
+                    </li>
+                    <li>
+                      After logging in, click <strong>Download Ticket</strong>.
+                    </li>
+                    <li>Save the ticket on your phone or print it.</li>
+                  </ol>
+
+                  <p style="font-size: 13px; color: #666; margin-top: 10px">
+                    If you are unable to attend, please select
+                    <strong>"Not Going"</strong> on the event page.
+                  </p>
+                </div>
+
+                <p style="font-size: 13px; margin-top: 12px; color: #666">
+                  Please have your ticket ready (digital or printed) for entry.
+                </p>
+              </div>
+
+              <!-- EVENT REMINDERS -->
+              <div
+                style="
+                  background: #f9f9f9;
+                  border: 1px solid #eee;
+                  border-radius: 12px;
+                  padding: 24px;
+                  margin-bottom: 24px;
+                "
+              >
+                <h3 style="text-align: center; color: #003333; margin-top: 0">
+                  PLEASE READ THIS EVENT REMINDERS CAREFULLY
+                </h3>
+
+                <h4 style="color: #003333; margin-bottom: 6px">Registration</h4>
+
+                <p style="font-size: 14px; margin: 4px 0">
+                  <strong>Time:</strong> 8:00 AM – 9:00 AM
+                </p>
+                <p style="font-size: 14px; margin: 4px 0">
+                  <strong>Location:</strong> Humbon Gate
+                </p>
+                <p style="font-size: 14px; margin: 4px 0">
+                  <strong>Late Registration:</strong> APC Cafeteria
+                </p>
+
+                <p style="font-size: 14px; margin: 8px 0 4px 0">
+                  <strong>Instructions:</strong>
+                </p>
+                <ul style="padding-left: 18px; font-size: 14px; margin: 0">
+                  <li>
+                    Upon registration, please locate the table corresponding to
+                    the first letter of your surname and present your ticket to
+                    the registration officer.
+                  </li>
+                  <li>Your ID may be requested for verification purposes.</li>
+                  <li>
+                    Workshop registration is
+                    <strong>first-come, first-served</strong>.
+                  </li>
+                </ul>
+
+                <h4 style="color: #003333; margin-top: 20px">
+                  Dress Code (For Non-APC Students)
+                </h4>
+
+                <p style="font-size: 14px; margin: 4px 0">
+                  <strong>Acceptable Tops:</strong> T-shirts, polo shirts,
+                  collared shirts, blouses
+                </p>
+
+                <p style="font-size: 14px; margin: 4px 0">
+                  <strong>Acceptable Bottoms:</strong> Jeans, chinos, joggers,
+                  leggings, jeggings
+                </p>
+
+                <p style="font-size: 14px; margin: 4px 0">
+                  <strong>Acceptable Footwear:</strong> Rubber shoes, topsiders,
+                  sneakers, loafers
+                </p>
+
+                <p style="font-size: 14px; margin: 8px 0 4px 0">
+                  <strong>Prohibited Attire:</strong>
+                </p>
+
+                <ul style="padding-left: 18px; font-size: 14px; margin: 0">
+                  <li>Pedal pushers / capri pants</li>
+                  <li>Slippers or flip-flops</li>
+                  <li>Platform shoes</li>
+                  <li>Skirts with excessively high hemlines or slits</li>
+                  <li>Hats and beanies during seminars/workshops</li>
+                  <li>Clothing with offensive words or images</li>
+                  <li>Backless, see-through, or midriff-exposing tops</li>
+                  <li>Tank tops or spaghetti straps without outerwear</li>
+                </ul>
+
+                <h4 style="color: #003333; margin-top: 20px">
+                  Food & Merchandise
+                </h4>
+
+                <p style="font-size: 14px; margin: 4px 0">
+                  Food and Arduino merchandise will be available for purchase
+                  during the event.
+                </p>
+
+                <p style="font-size: 14px; margin: 8px 0 4px 0">
+                  <strong>Food Stall Locations:</strong>
+                </p>
+
+                <ul style="padding-left: 18px; font-size: 14px; margin: 0">
+                  <li>1st Floor Parking (outside Humbon Gate)</li>
+                  <li>1st Floor Cafeteria</li>
+                  <li>7th Floor</li>
+                </ul>
+              </div>
+
+              <!-- DP BLAST SECTION -->
+              <div
+                style="
+                  background: #e8f6f6;
+                  border: 1px solid #d5eeee;
+                  border-radius: 12px;
+                  padding: 24px;
+                  margin-bottom: 24px;
+                  text-align: center;
+                  font-family: &quot;IBM Plex Sans&quot;, sans-serif;
+                "
+              >
+                <h3 style="margin-top: 0; color: #003333">
+                  Join the Arduino Day Philippines DP Blast!
+                </h3>
+
+                <p
+                  style="
+                    font-size: 14px;
+                    color: #444;
+                    line-height: 1.7;
+                    margin-bottom: 16px;
+                  "
+                >
+                  Show your excitement for
+                  <strong>Arduino Day Philippines 2026</strong> by joining our
+                  <strong>DP Blast</strong> and updating your Facebook profile
+                  picture! Let your friends know you’re part of the maker
+                  celebration.
+                </p>
+
+                <a
+                  href="https://frame.arduinodayphilippines.cc/Arduino-Day-Philippines-2026"
+                  style="
+                    background: #003333;
+                    color: #ffffff;
+                    padding: 12px 22px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    font-size: 14px;
+                    display: inline-block;
+                  "
+                  target="_blank"
+                >
+                  Join the DP Blast
+                </a>
+
+                <p style="font-size: 13px; color: #666; margin-top: 12px">
+                  Download the DP frame and share it on Facebook to support the
+                  event.
+                </p>
+              </div>
+              <!-- SOCIAL LINKS -->
+              <p style="font-size: 14px; margin-bottom: 16px">
+                Stay updated by checking our
+                <a
+                  href="https://www.facebook.com/arduinodayph"
+                  style="color: #006666"
+                  target="_blank"
+                >
+                  <strong>Facebook Page</strong>
+                </a>
+                and visiting our
+                <a
+                  href="https://arduinodayphilippines.cc"
+                  style="color: #006666"
+                  target="_blank"
+                >
+                  <strong>Official Website</strong>
+                </a>
+                for announcements and updates.
               </p>
-              <p
-                style="
-                  font-size: 15px;
-                  line-height: 1.8;
-                  margin: 0;
-                  color: #1a1a1a;
-                "
-              >
+
+              <p style="font-size: 15px; color: #003333">
+                <strong
+                  >You won’t want to miss it — see you this Saturday!</strong
+                >
+              </p>
+
+              <p style="margin-bottom: 0">Continuously Innovating,</p>
+              <p style="margin-top: 0">
                 <strong>Arduino Day Philippines Team</strong>
               </p>
 
-              <!-- Logo -->
-              <div style="text-align: center; padding-top: 24px">
+              <div style="text-align: center; padding-top: 30px">
                 <img
                   src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/logo.png"
-                  style="width: 117px; height: auto; border-radius: 8px"
+                  style="width: 117px; border-radius: 8px"
+                  alt="Arduino Day Logo"
                 />
               </div>
             </td>
           </tr>
 
-          <!-- Footer -->
+          <!-- FOOTER -->
           <tr>
             <td
               style="
-                background-color: #f5f5f5;
+                background: #f5f5f5;
                 text-align: center;
                 padding: 32px 24px;
                 border-radius: 0 0 16px 16px;
               "
             >
-              <!-- Social Icons -->
-              <div style="margin: 0 0 20px 0; text-align: center">
+              <div style="margin-bottom: 20px">
                 <a
-                  href="#"
-                  style="
-                    display: inline-block;
-                    margin: 0 12px;
-                    vertical-align: middle;
-                    transition: opacity 0.3s;
-                  "
-                >
-                  <img
-                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/website.png"
-                    alt="Website"
-                    style="
-                      width: 32px;
-                      height: 32px;
-                      border-radius: 8px;
-                      display: block;
-                    "
-                  />
-                </a>
-                <a
-                  href="#"
-                  style="
-                    display: inline-block;
-                    margin: 0 12px;
-                    vertical-align: middle;
-                    transition: opacity 0.3s;
-                  "
-                >
-                  <img
-                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/email.png"
-                    alt="Email"
-                    style="
-                      width: 32px;
-                      height: 32px;
-                      border-radius: 8px;
-                      display: block;
-                    "
-                  />
-                </a>
-                <a
-                  href="#"
-                  style="
-                    display: inline-block;
-                    margin: 0 12px;
-                    vertical-align: middle;
-                    transition: opacity 0.3s;
-                  "
+                  href="https://www.facebook.com/arduinodayph"
+                  style="margin: 0 8px"
                 >
                   <img
                     src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/facebook.png"
-                    alt="Facebook"
-                    style="
-                      width: 32px;
-                      height: 32px;
-                      border-radius: 8px;
-                      display: block;
-                    "
+                    width="32"
                   />
                 </a>
+
                 <a
-                  href="#"
-                  style="
-                    display: inline-block;
-                    margin: 0 12px;
-                    vertical-align: middle;
-                    transition: opacity 0.3s;
-                  "
+                  href="https://arduinodayphilippines.cc"
+                  style="margin: 0 8px"
                 >
                   <img
-                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/linkedin.png"
-                    alt="LinkedIn"
-                    style="
-                      width: 32px;
-                      height: 32px;
-                      border-radius: 8px;
-                      display: block;
-                    "
-                  />
-                </a>
-                <a
-                  href="#"
-                  style="
-                    display: inline-block;
-                    margin: 0 12px;
-                    vertical-align: middle;
-                    transition: opacity 0.3s;
-                  "
-                >
-                  <img
-                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/instagram.png"
-                    alt="Instagram"
-                    style="
-                      width: 32px;
-                      height: 32px;
-                      border-radius: 8px;
-                      display: block;
-                    "
-                  />
-                </a>
-                <a
-                  href="#"
-                  style="
-                    display: inline-block;
-                    margin: 0 12px;
-                    vertical-align: middle;
-                    transition: opacity 0.3s;
-                  "
-                >
-                  <img
-                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/tiktok.png"
-                    alt="TikTok"
-                    style="
-                      width: 32px;
-                      height: 32px;
-                      border-radius: 8px;
-                      display: block;
-                    "
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/website.png"
+                    width="32"
                   />
                 </a>
               </div>
 
-              <!-- Copyright -->
-              <p
-                style="
-                  font-size: 13px;
-                  color: #3a3a3a;
-                  font-family: &quot;Source Sans Pro&quot;, sans-serif;
-                  margin: 0;
-                  line-height: 1.5;
-                  letter-spacing: 0.2px;
-                "
-              >
+              <p style="font-size: 13px; color: #3a3a3a; margin: 0">
                 Copyright © 2026 Arduino Day Philippines
               </p>
             </td>
