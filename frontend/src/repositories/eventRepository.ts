@@ -67,7 +67,45 @@ export async function listEvents() {
   if (error) {
     throw new Error(`Failed to fetch events: ${error.message}`);
   }
-  return data;
+
+  const events = data ?? [];
+  if (events.length === 0) {
+    return events;
+  }
+
+  const eventIds = events
+    .map((event) => event.event_id)
+    .filter((id): id is string => typeof id === "string" && id.length > 0);
+
+  if (eventIds.length === 0) {
+    return events;
+  }
+
+  const { data: registrants, error: registrantsError } = await supabase
+    .from("registrants")
+    .select("event_id")
+    .in("event_id", eventIds)
+    .eq("is_registered", true);
+
+  if (registrantsError) {
+    throw new Error(
+      `Failed to fetch event registrant counts: ${registrantsError.message}`,
+    );
+  }
+
+  const registeredCountByEventId = new Map<string, number>();
+  for (const row of registrants ?? []) {
+    if (!row.event_id) continue;
+    registeredCountByEventId.set(
+      row.event_id,
+      (registeredCountByEventId.get(row.event_id) ?? 0) + 1,
+    );
+  }
+
+  return events.map((event) => ({
+    ...event,
+    registered: registeredCountByEventId.get(event.event_id) ?? 0,
+  }));
 }
 
 export async function updateEventDetails(slug: string, details: any) {
