@@ -31,43 +31,55 @@ export async function GET(
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
-    const { data: guests, error: guestsError } = await supabase
-      .from("registrants")
-      .select(
-        `
-        registrant_id,
-        created_at,
-        event_id,
-        users_id,
-        terms_approval,
-        form_answers,
-        is_registered,
-        is_going,
-        check_in,
-        check_in_time,
-        qr_data,
-        check_in,
-        users!users_id (
-          first_name,
-          last_name,
-          email
-        )
-      `,
-      )
-      .eq("event_id", event.event_id);
+    const pageSize = 1000;
+    let from = 0;
+    let hasMore = true;
+    const allGuests: unknown[] = [];
 
-    if (guestsError) {
-      return NextResponse.json(
-        { error: "Failed to fetch guests" },
-        { status: 500 },
-      );
+    while (hasMore) {
+      const { data: guests, error: guestsError } = await supabase
+        .from("registrants")
+        .select(
+          `
+          registrant_id,
+          created_at,
+          event_id,
+          users_id,
+          terms_approval,
+          form_answers,
+          is_registered,
+          is_going,
+          check_in,
+          check_in_time,
+          qr_data,
+          users!users_id (
+            first_name,
+            last_name,
+            email
+          )
+        `,
+        )
+        .eq("event_id", event.event_id)
+        .range(from, from + pageSize - 1);
+
+      if (guestsError) {
+        return NextResponse.json(
+          { error: "Failed to fetch guests" },
+          { status: 500 },
+        );
+      }
+
+      const batch = guests || [];
+      allGuests.push(...batch);
+
+      if (batch.length < pageSize) {
+        hasMore = false;
+      } else {
+        from += pageSize;
+      }
     }
 
-    const guestsForEvent = (guests || []).filter(
-      (guest) => guest.event_id === event.event_id,
-    );
-
-    return NextResponse.json({ guests: guestsForEvent as unknown as Guest[] });
+    return NextResponse.json({ guests: allGuests as Guest[] });
   } catch (error) {
     console.error("Error fetching registrants:", error);
     return NextResponse.json(
