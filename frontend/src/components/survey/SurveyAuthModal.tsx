@@ -25,7 +25,9 @@ export function SurveyAuthModal({ eventSlug }: SurveyAuthModalProps) {
 
   const handleLogin = () => {
     // Redirect to login with a next parameter so they come back to the survey
-    const nextUrl = encodeURIComponent(pathname || `/event/${eventSlug}/survey`);
+    const nextUrl = encodeURIComponent(
+      pathname || `/event/${eventSlug}/survey`,
+    );
     router.push(`/auth/login?next=${nextUrl}`);
   };
 
@@ -42,15 +44,16 @@ export function SurveyAuthModal({ eventSlug }: SurveyAuthModalProps) {
           <div className="mx-auto w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center mb-4">
             <LogIn className="w-6 h-6 text-cyan-400" />
           </div>
-          
+
           <h2 className="font-urbanist text-2xl font-bold text-white">
             Authentication Required
           </h2>
-          
+
           <p className="text-white/70 font-urbanist text-sm sm:text-base">
-            You must be logged in to answer the survey. This helps us ensure only authentic attendees provide feedback.
+            You must be logged in to answer the survey. This helps us ensure
+            only authentic attendees provide feedback.
           </p>
-          
+
           <div className="pt-6 space-y-3">
             <button
               onClick={handleLogin}
@@ -59,7 +62,7 @@ export function SurveyAuthModal({ eventSlug }: SurveyAuthModalProps) {
               <LogIn className="w-4 h-4" />
               Sign in to continue
             </button>
-            
+
             <button
               onClick={handleBack}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 text-white/90 rounded-xl font-medium transition-all"
@@ -71,6 +74,6 @@ export function SurveyAuthModal({ eventSlug }: SurveyAuthModalProps) {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

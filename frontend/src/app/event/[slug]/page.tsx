@@ -72,10 +72,12 @@ export default function EventPage() {
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
 
   const isLoggedIn = !roleLoading && userId != null;
-  const registrationOpen = !!event && isRegistrationOpen({
-    registrationOpen: event.registrationOpen,
-    status: event.status,
-  });
+  const registrationOpen =
+    !!event &&
+    isRegistrationOpen({
+      registrationOpen: event.registrationOpen,
+      status: event.status,
+    });
 
   const handleLogout = async () => {
     setLoggingOut(true);
