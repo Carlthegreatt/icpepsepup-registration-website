@@ -145,306 +145,301 @@ export function RegistrationQuestionsModal({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4">
-      {/* Backdrop */}
+      {/* Backdrop - Slightly more transparent to emphasize the modal glass blur */}
       <div
-        className="absolute inset-0 bg-black/90 backdrop-blur-md animate-in fade-in duration-300"
+        className="absolute inset-0 bg-black/80 backdrop-blur-lg animate-in fade-in duration-500"
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="relative w-full max-w-3xl bg-gradient-to-b from-[#0f0f05] to-[#050502] border border-yellow-900/30 rounded-2xl sm:rounded-3xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-300 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        {/* Glow Effect */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-yellow-500/5 via-transparent to-amber-600/5 opacity-50 pointer-events-none" />
+      {/* Glass Modal Container */}
+      <div className="relative w-full max-w-3xl bg-[rgba(15,15,5,0.7)] backdrop-blur-3xl border border-yellow-500/20 rounded-3xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-300 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0_0_20px_rgba(250,204,21,0.05)]">
+        {/* Decorative Inner Glow Layers */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-yellow-500/10 blur-[80px] pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-48 h-48 bg-amber-600/5 blur-[60px] pointer-events-none" />
 
-        {/* Header */}
-        <div className="relative flex items-start justify-between p-5 sm:p-7 md:p-9 border-b border-yellow-900/20">
+        {/* Header - Glassy with subtle separator */}
+        <div className="relative flex items-start justify-between p-6 sm:p-8 md:p-10 border-b border-yellow-500/10 bg-white/[0.02]">
           <div className="flex-1 pr-4">
-            <h2 className="font-morganite text-3xl sm:text-4xl font-bold text-yellow-400 tracking-wider uppercase mb-1">
+            <h2 className="font-morganite text-4xl sm:text-5xl font-bold text-yellow-400 tracking-widest uppercase mb-1 drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]">
               Form Schema
             </h2>
-            <p className="text-yellow-100/40 text-[10px] sm:text-xs uppercase font-bold tracking-widest">
-              Configure custom data points for registration requirements
+            <p className="text-yellow-100/40 text-[10px] sm:text-xs uppercase font-black tracking-[0.2em]">
+              Architecting Attendee Data Collection
             </p>
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 w-10 h-10 rounded-xl bg-yellow-500/5 hover:bg-yellow-500/10 border border-yellow-900/30 flex items-center justify-center transition-all active:scale-90"
+            className="flex-shrink-0 w-11 h-11 rounded-2xl bg-yellow-500/5 hover:bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center transition-all active:scale-90 group"
           >
-            <X size={20} className="text-yellow-400/70" />
+            <X
+              size={22}
+              className="text-yellow-400/50 group-hover:text-yellow-400 transition-colors"
+            />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="relative flex-1 overflow-y-auto custom-scrollbar p-5 sm:p-7 md:p-9">
-          <div className="space-y-6">
+        {/* Content - Layered Glass Panels */}
+        <div className="relative flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 md:p-10">
+          <div className="space-y-8">
             {questions.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="w-20 h-20 rounded-full bg-yellow-500/5 border border-yellow-900/20 flex items-center justify-center mx-auto mb-5 shadow-inner">
-                  <HelpCircle className="w-10 h-10 text-yellow-900/40" />
+              <div className="text-center py-20 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-sm">
+                <div className="w-24 h-24 rounded-full bg-yellow-500/5 border border-yellow-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                  <HelpCircle className="w-12 h-12 text-yellow-900/30" />
                 </div>
-                <p className="text-yellow-100/30 text-sm font-bold uppercase tracking-widest mb-8">
-                  No Custom Fields Configured
+                <p className="text-yellow-100/30 text-sm font-black uppercase tracking-[0.2em] mb-10">
+                  Data Structure Empty
                 </p>
                 <button
                   onClick={addQuestion}
-                  className="mx-auto flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 text-[#0a0a05] font-black uppercase tracking-[0.2em] text-xs shadow-[0_4px_20px_rgba(250,204,21,0.2)] hover:shadow-[0_6px_25px_rgba(250,204,21,0.4)] transition-all active:scale-95"
+                  className="mx-auto flex items-center gap-3 px-10 py-4 rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 text-[#0a0a05] font-black uppercase tracking-[0.3em] text-xs shadow-[0_10px_30px_rgba(250,204,21,0.3)] hover:shadow-[0_15px_40px_rgba(250,204,21,0.5)] transition-all active:scale-95"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-5 h-5" />
                   Initialize Schema
                 </button>
               </div>
             ) : (
               <>
-                {questions.map((question, index) => (
-                  <div
-                    key={question.id}
-                    className="bg-black/40 backdrop-blur-md border border-yellow-900/20 rounded-2xl p-5 hover:border-yellow-500/30 transition-all group"
-                  >
-                    <div className="flex flex-col md:flex-row items-start gap-4 mb-5">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-600 border border-yellow-400/30 flex items-center justify-center text-[#0a0a05] text-sm font-black shadow-[0_0_15px_rgba(250,204,21,0.2)]">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 w-full space-y-4">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="text"
-                            placeholder="QUESTION TEXT"
-                            value={question.text}
-                            onChange={(e) =>
-                              updateQuestion(
-                                question.id,
-                                "text",
-                                e.target.value,
-                              )
-                            }
-                            className="bg-transparent border-none outline-none text-base font-bold focus:ring-0 flex-1 p-0 placeholder-yellow-900/30 text-white uppercase tracking-wide"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeQuestion(question.id)}
-                            className="flex-shrink-0 p-2 hover:bg-red-500/10 rounded-lg transition-colors group/trash"
-                          >
-                            <Trash2 className="w-4 h-4 text-white/20 group-hover/trash:text-red-400" />
-                          </button>
+                <div className="space-y-6">
+                  {questions.map((question, index) => (
+                    <div
+                      key={question.id}
+                      className="bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-3xl p-6 md:p-8 hover:bg-white/[0.05] hover:border-yellow-500/20 transition-all duration-500 group relative"
+                    >
+                      {/* Side Index Accent */}
+                      <div className="absolute top-0 left-0 bottom-0 w-1 bg-yellow-500/0 rounded-full group-hover:bg-yellow-500/60 transition-colors" />
+
+                      <div className="flex flex-col md:flex-row items-start gap-6 mb-6">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-600 border border-white/20 flex items-center justify-center text-[#0a0a05] text-lg font-black shadow-[0_0_20px_rgba(250,204,21,0.2)]">
+                          {index + 1}
                         </div>
-
-                        <div className="flex flex-wrap gap-3">
-                          <div className="relative">
-                            <select
-                              value={question.type || "text"}
-                              onChange={(e) => {
-                                updateQuestion(
-                                  question.id,
-                                  "type",
-                                  e.target.value as QuestionType,
-                                );
-                                if (
-                                  (e.target.value === "multiple_choice" ||
-                                    e.target.value === "dropdown") &&
-                                  !question.options
-                                ) {
-                                  updateQuestion(question.id, "options", [
-                                    "Option 1",
-                                    "Option 2",
-                                  ]);
-                                }
-                                if (e.target.value === "file_upload") {
-                                  updateQuestion(
-                                    question.id,
-                                    "allowedFileTypes",
-                                    [".pdf"],
-                                  );
-                                }
-                              }}
-                              className="bg-[#1a1405] border border-yellow-900/50 rounded-xl pl-3 pr-10 py-2 text-[11px] font-bold text-yellow-400 uppercase tracking-widest focus:border-yellow-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 appearance-none cursor-pointer"
-                            >
-                              {questionTypes.map((type) => (
-                                <option key={type.value} value={type.value}>
-                                  {type.label.toUpperCase()}
-                                </option>
-                              ))}
-                            </select>
-                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-yellow-600 pointer-events-none" />
-                          </div>
-
-                          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-yellow-500/5 border border-yellow-900/50">
+                        <div className="flex-1 w-full space-y-5">
+                          <div className="flex items-center gap-4">
                             <input
-                              type="checkbox"
-                              id={`required-${question.id}`}
-                              checked={question.required}
+                              type="text"
+                              placeholder="DEFINE DATA POINT TITLE"
+                              value={question.text}
                               onChange={(e) =>
                                 updateQuestion(
                                   question.id,
-                                  "required",
-                                  e.target.checked,
+                                  "text",
+                                  e.target.value,
                                 )
                               }
-                              className="w-4 h-4 rounded bg-black/40 border-yellow-900 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 cursor-pointer"
+                              className="bg-transparent border-none outline-none text-lg font-bold focus:ring-0 flex-1 p-0 placeholder-yellow-900/20 text-white uppercase tracking-wider"
                             />
-                            <label
-                              htmlFor={`required-${question.id}`}
-                              className="text-[10px] text-yellow-100/50 uppercase tracking-widest font-black cursor-pointer select-none"
+                            <button
+                              type="button"
+                              onClick={() => removeQuestion(question.id)}
+                              className="flex-shrink-0 p-2.5 hover:bg-red-500/10 rounded-xl transition-all group/trash border border-transparent hover:border-red-500/20"
                             >
-                              Mandatory
-                            </label>
+                              <Trash2 className="w-5 h-5 text-white/10 group-hover/trash:text-red-400" />
+                            </button>
+                          </div>
+
+                          <div className="flex flex-wrap gap-4">
+                            <div className="relative group/select">
+                              <select
+                                value={question.type || "text"}
+                                onChange={(e) => {
+                                  updateQuestion(
+                                    question.id,
+                                    "type",
+                                    e.target.value as QuestionType,
+                                  );
+                                  if (
+                                    (e.target.value === "multiple_choice" ||
+                                      e.target.value === "dropdown") &&
+                                    !question.options
+                                  ) {
+                                    updateQuestion(question.id, "options", [
+                                      "Option 1",
+                                      "Option 2",
+                                    ]);
+                                  }
+                                  if (e.target.value === "file_upload") {
+                                    updateQuestion(
+                                      question.id,
+                                      "allowedFileTypes",
+                                      [".pdf"],
+                                    );
+                                  }
+                                }}
+                                className="bg-[#1a1405]/60 backdrop-blur-md border border-yellow-900/50 rounded-xl pl-4 pr-12 py-2.5 text-xs font-black text-yellow-400 uppercase tracking-widest focus:border-yellow-400 focus:outline-none focus:ring-0 appearance-none cursor-pointer group-hover/select:border-yellow-500 transition-colors"
+                              >
+                                {questionTypes.map((type) => (
+                                  <option key={type.value} value={type.value}>
+                                    {type.label.toUpperCase()}
+                                  </option>
+                                ))}
+                              </select>
+                              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-yellow-600 pointer-events-none" />
+                            </div>
+
+                            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-yellow-500/5 border border-yellow-900/30 group/check cursor-pointer">
+                              <input
+                                type="checkbox"
+                                id={`required-${question.id}`}
+                                checked={question.required}
+                                onChange={(e) =>
+                                  updateQuestion(
+                                    question.id,
+                                    "required",
+                                    e.target.checked,
+                                  )
+                                }
+                                className="w-5 h-5 rounded bg-black/40 border-yellow-900 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 cursor-pointer transition-transform group-hover/check:scale-110"
+                              />
+                              <label
+                                htmlFor={`required-${question.id}`}
+                                className="text-[10px] text-yellow-100/40 uppercase tracking-[0.2em] font-black cursor-pointer select-none group-hover/check:text-yellow-400 transition-colors"
+                              >
+                                Mandatory
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Logic Panels */}
-                    <div className="md:pl-12 space-y-4">
-                      {/* Validation Pattern for Text Input */}
-                      {question.type === "text" && (
-                        <div className="bg-yellow-500/5 border border-yellow-900/20 rounded-xl p-4 space-y-3">
-                          <div className="text-[10px] text-yellow-500 font-black uppercase tracking-[0.2em]">
-                            Input Verification
-                          </div>
-                          <div className="relative">
-                            <select
-                              value={
-                                validationPatterns.find(
-                                  (p) =>
-                                    p.pattern === question.validationPattern,
-                                )?.value || ""
-                              }
-                              onChange={(e) => {
-                                const selected = validationPatterns.find(
-                                  (p) => p.value === e.target.value,
-                                );
-                                if (selected) {
-                                  updateQuestion(
-                                    question.id,
-                                    "validationPattern",
-                                    selected.pattern,
-                                  );
-                                  updateQuestion(
-                                    question.id,
-                                    "validationMessage",
-                                    selected.message,
-                                  );
-                                }
-                              }}
-                              className="w-full bg-[#1a1405] border border-yellow-900/50 rounded-xl pl-4 pr-10 py-2.5 text-xs font-bold text-yellow-50 uppercase tracking-widest focus:border-yellow-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 appearance-none"
-                            >
-                              {validationPatterns.map((pattern) => (
-                                <option
-                                  key={pattern.value}
-                                  value={pattern.value}
-                                >
-                                  {pattern.label.toUpperCase()}
-                                </option>
-                              ))}
-                            </select>
-                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-yellow-600 pointer-events-none" />
-                          </div>
-                          {question.validationPattern && (
-                            <div className="text-[10px] text-yellow-500/40 uppercase font-black tracking-widest pl-1">
-                              Target Pattern:{" "}
-                              <span className="text-yellow-100/60 font-mono lowercase tracking-normal italic">
-                                {
+                      {/* Logic Sub-Panels (Nested Glass) */}
+                      <div className="md:pl-16 space-y-5">
+                        {question.type === "text" && (
+                          <div className="bg-black/20 border border-white/5 rounded-2xl p-5 space-y-4 shadow-inner">
+                            <div className="text-[10px] text-yellow-500 font-black uppercase tracking-[0.2em]">
+                              Validation Protocol
+                            </div>
+                            <div className="relative">
+                              <select
+                                value={
                                   validationPatterns.find(
                                     (p) =>
                                       p.pattern === question.validationPattern,
-                                  )?.example
+                                  )?.value || ""
                                 }
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Options Editor */}
-                      {(question.type === "multiple_choice" ||
-                        question.type === "dropdown") && (
-                        <div className="bg-yellow-500/5 border border-yellow-900/20 rounded-xl p-4 space-y-3">
-                          <div className="text-[10px] text-yellow-500 font-black uppercase tracking-[0.2em]">
-                            Defined Options
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {(question.options || []).map(
-                              (option, optionIndex) => (
-                                <div
-                                  key={optionIndex}
-                                  className="flex items-center gap-2 group/option"
-                                >
-                                  <input
-                                    type="text"
-                                    value={option}
-                                    onChange={(e) =>
-                                      updateOption(
-                                        question.id,
-                                        optionIndex,
-                                        e.target.value,
-                                      )
-                                    }
-                                    placeholder={`Option ${optionIndex + 1}`}
-                                    className="flex-1 bg-black/30 border border-yellow-900/50 rounded-lg px-3 py-2 text-xs font-bold text-white placeholder-yellow-900/30 focus:border-yellow-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 transition-all"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      removeOption(question.id, optionIndex)
-                                    }
-                                    className="p-2 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-0"
-                                    disabled={
-                                      (question.options?.length || 0) <= 2
-                                    }
+                                onChange={(e) => {
+                                  const selected = validationPatterns.find(
+                                    (p) => p.value === e.target.value,
+                                  );
+                                  if (selected) {
+                                    updateQuestion(
+                                      question.id,
+                                      "validationPattern",
+                                      selected.pattern,
+                                    );
+                                    updateQuestion(
+                                      question.id,
+                                      "validationMessage",
+                                      selected.message,
+                                    );
+                                  }
+                                }}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-xs font-bold text-yellow-50 uppercase tracking-widest focus:border-yellow-400 transition-all appearance-none"
+                              >
+                                {validationPatterns.map((pattern) => (
+                                  <option
+                                    key={pattern.value}
+                                    value={pattern.value}
                                   >
-                                    <X className="w-3.5 h-3.5 text-red-400/60" />
-                                  </button>
-                                </div>
-                              ),
-                            )}
+                                    {pattern.label.toUpperCase()}
+                                  </option>
+                                ))}
+                              </select>
+                              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-yellow-600 pointer-events-none" />
+                            </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => addOption(question.id)}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-500/5 border border-dashed border-yellow-500/20 hover:border-yellow-400 hover:bg-yellow-500/10 text-yellow-400 text-[10px] font-black uppercase tracking-[0.2em] transition-all"
-                          >
-                            <Plus className="w-3 h-3" />
-                            Append Option
-                          </button>
-                        </div>
-                      )}
+                        )}
 
-                      {/* File Upload Info */}
-                      {question.type === "file_upload" && (
-                        <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
-                          <div className="flex items-center gap-2 text-amber-400">
-                            <FileUp size={14} />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                              System Restriction
-                            </span>
+                        {(question.type === "multiple_choice" ||
+                          question.type === "dropdown") && (
+                          <div className="bg-black/20 border border-white/5 rounded-2xl p-5 space-y-5 shadow-inner">
+                            <div className="text-[10px] text-yellow-500 font-black uppercase tracking-[0.2em]">
+                              Data Set Options
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {(question.options || []).map(
+                                (option, optionIndex) => (
+                                  <div
+                                    key={optionIndex}
+                                    className="flex items-center gap-2 group/option"
+                                  >
+                                    <input
+                                      type="text"
+                                      value={option}
+                                      onChange={(e) =>
+                                        updateOption(
+                                          question.id,
+                                          optionIndex,
+                                          e.target.value,
+                                        )
+                                      }
+                                      placeholder={`Option ${optionIndex + 1}`}
+                                      className="flex-1 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white placeholder-white/10 focus:border-yellow-400 focus:bg-white/[0.06] transition-all"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        removeOption(question.id, optionIndex)
+                                      }
+                                      className="p-2.5 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-0 group-hover/option:opacity-100 opacity-20"
+                                      disabled={
+                                        (question.options?.length || 0) <= 2
+                                      }
+                                    >
+                                      <X className="w-4 h-4 text-red-400/60" />
+                                    </button>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => addOption(question.id)}
+                              className="flex items-center gap-3 px-5 py-3 rounded-xl bg-yellow-500/5 border border-dashed border-yellow-500/20 hover:border-yellow-400 hover:bg-yellow-500/10 text-yellow-400 text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Append Field
+                            </button>
                           </div>
-                          <p className="text-[10px] text-amber-100/40 uppercase font-bold tracking-widest mt-1">
-                            Only encrypted PDF containers will be accepted via
-                            secure upload
-                          </p>
-                        </div>
-                      )}
+                        )}
+
+                        {question.type === "file_upload" && (
+                          <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-4 backdrop-blur-sm">
+                            <div className="p-3 bg-amber-500/10 rounded-xl">
+                              <FileUp className="text-amber-400 w-5 h-5" />
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400 mb-1">
+                                System Restriction
+                              </div>
+                              <p className="text-[10px] text-amber-100/40 uppercase font-bold tracking-widest leading-relaxed">
+                                Only encrypted PDF containers will be accepted
+                                via secure encrypted channel
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
 
                 <button
                   type="button"
                   onClick={addQuestion}
-                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl bg-yellow-500/5 backdrop-blur-md border border-dashed border-yellow-500/20 hover:border-yellow-400 hover:bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-[0.3em] transition-all group active:scale-[0.99]"
+                  className="w-full flex items-center justify-center gap-4 py-6 rounded-3xl bg-white/[0.02] backdrop-blur-md border border-dashed border-white/10 hover:border-yellow-400 hover:bg-yellow-500/5 text-yellow-400/50 hover:text-yellow-400 text-xs font-black uppercase tracking-[0.4em] transition-all group active:scale-[0.98]"
                 >
-                  <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                  Add New Data Point
+                  <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-500" />
+                  Add New Data Schema
                 </button>
               </>
             )}
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="relative p-6 md:p-8 border-t border-yellow-900/20 bg-black/40">
+        {/* Footer - Solid Glass with High Contrast Button */}
+        <div className="relative p-8 md:p-10 border-t border-yellow-500/10 bg-white/[0.02] backdrop-blur-md">
           <button
             onClick={onClose}
-            className="w-full py-4 rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 text-[#0a0a05] font-black uppercase tracking-[0.3em] text-sm shadow-[0_4px_25px_rgba(250,204,21,0.2)] hover:shadow-[0_8px_30px_rgba(250,204,21,0.4)] transition-all active:scale-[0.99]"
+            className="w-full py-5 rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 text-[#0a0a05] font-black uppercase tracking-[0.4em] text-sm shadow-[0_10px_40px_rgba(250,204,21,0.2)] hover:shadow-[0_15px_50px_rgba(250,204,21,0.4)] transition-all active:scale-[0.99] active:brightness-90"
           >
             Confirm Configuration
           </button>
