@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Shield, CheckCircle } from 'lucide-react';
+import { useState } from "react";
+import { Shield, CheckCircle } from "lucide-react";
 
 interface Step0Props {
   onNext: () => void;
@@ -11,102 +11,112 @@ export function Step0({ onNext }: Step0Props) {
   return (
     <div className="flex flex-col h-full animate-in fade-in duration-500">
       <div className="flex flex-col items-center text-center mb-3 sm:mb-4">
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[rgba(93,216,216,0.15)] border border-[#5da5a5] flex items-center justify-center mb-2 sm:mb-3">
-          <Shield size={20} className="text-[#5dd8d8] sm:w-6 sm:h-6" />
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center mb-2 sm:mb-3 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
+          <Shield size={20} className="text-yellow-400 sm:w-6 sm:h-6" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-[#f5f5f5] tracking-tight">Privacy Policy</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-[#f5f5f5] tracking-tight">
+          Privacy Policy
+        </h2>
       </div>
-      
-      <p className="text-[rgba(197,213,213,0.8)] mb-3 sm:mb-4 leading-relaxed text-[11px] sm:text-sm text-center">
-        Please read and understand our privacy policy before proceeding with registration.
+
+      <p className="text-yellow-100/60 mb-3 sm:mb-4 leading-relaxed text-[11px] sm:text-sm text-center">
+        Please read and understand our privacy policy before proceeding with
+        registration.
       </p>
 
       {/* Scrollable Content Box */}
-      <div className="h-[240px] sm:h-[280px] md:h-[320px] bg-[rgba(15,30,30,0.9)] border border-[#5da5a5]/50 rounded-xl p-4 sm:p-5 overflow-y-auto custom-scrollbar mb-3 sm:mb-4">
+      <div className="h-[240px] sm:h-[280px] md:h-[320px] bg-[rgba(25,25,10,0.8)] border border-yellow-900/50 rounded-xl p-4 sm:p-5 overflow-y-auto custom-scrollbar mb-3 sm:mb-4">
         <div className="space-y-5 text-xs sm:text-sm">
           <section>
-            <h3 className="text-sm font-semibold text-[#d5e5e5] mb-2 flex items-center gap-2">
-              <CheckCircle size={16} className="text-[#5dd8d8]" />
+            <h3 className="text-sm font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+              <CheckCircle size={16} className="text-yellow-400" />
               Data Collection
             </h3>
-            <p className="text-[rgba(197,213,213,0.85)] leading-relaxed ml-6">
-              We collect personal information including your name, email address, mobile number, 
-              occupation, and institution for event registration and communication purposes.
+            <p className="text-yellow-100/60 leading-relaxed ml-6">
+              We collect personal information including your name, email
+              address, mobile number, occupation, and institution for event
+              registration and communication purposes.
             </p>
           </section>
 
           <section>
-            <h3 className="text-sm font-semibold text-[#d5e5e5] mb-2 flex items-center gap-2">
-              <CheckCircle size={16} className="text-[#5dd8d8]" />
+            <h3 className="text-sm font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+              <CheckCircle size={16} className="text-yellow-400" />
               How We Use Your Data
             </h3>
-            <p className="text-[rgba(197,213,213,0.85)] leading-relaxed ml-6">
-              Your information will be used to process your event registration, send event updates, 
-              and communicate important information. We may also use your data to improve our services 
-              and future events.
+            <p className="text-yellow-100/60 leading-relaxed ml-6">
+              Your information will be used to process your event registration,
+              send event updates, and communicate important information. We may
+              also use your data to improve our services and future events.
             </p>
           </section>
 
           <section>
-            <h3 className="text-sm font-semibold text-[#d5e5e5] mb-2 flex items-center gap-2">
-              <CheckCircle size={16} className="text-[#5dd8d8]" />
+            <h3 className="text-sm font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+              <CheckCircle size={16} className="text-yellow-400" />
               Data Security
             </h3>
-            <p className="text-[rgba(197,213,213,0.85)] leading-relaxed ml-6">
-              We implement appropriate security measures to protect your personal information from 
-              unauthorized access, alteration, disclosure, or destruction.
+            <p className="text-yellow-100/60 leading-relaxed ml-6">
+              We implement appropriate security measures to protect your
+              personal information from unauthorized access, alteration,
+              disclosure, or destruction.
             </p>
           </section>
 
           <section>
-            <h3 className="text-sm font-semibold text-[#d5e5e5] mb-2 flex items-center gap-2">
-              <CheckCircle size={16} className="text-[#5dd8d8]" />
+            <h3 className="text-sm font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+              <CheckCircle size={16} className="text-yellow-400" />
               Data Sharing
             </h3>
-            <p className="text-[rgba(197,213,213,0.85)] leading-relaxed ml-6">
-              We do not sell or rent your personal information to third parties. Your data may be 
-              shared with event sponsors only if you explicitly consent to scholarship or career opportunities.
+            <p className="text-yellow-100/60 leading-relaxed ml-6">
+              We do not sell or rent your personal information to third parties.
+              Your data may be shared with event sponsors only if you explicitly
+              consent to scholarship or career opportunities.
             </p>
           </section>
 
           <section>
-            <h3 className="text-sm font-semibold text-[#d5e5e5] mb-2 flex items-center gap-2">
-              <CheckCircle size={16} className="text-[#5dd8d8]" />
+            <h3 className="text-sm font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+              <CheckCircle size={16} className="text-yellow-400" />
               Your Rights
             </h3>
-            <p className="text-[rgba(197,213,213,0.85)] leading-relaxed ml-6">
-              You have the right to access, correct, or delete your personal information at any time. 
-              You may also opt out of communications by contacting us directly.
+            <p className="text-yellow-100/60 leading-relaxed ml-6">
+              You have the right to access, correct, or delete your personal
+              information at any time. You may also opt out of communications by
+              contacting us directly.
             </p>
           </section>
 
           <section>
-            <h3 className="text-sm font-semibold text-[#d5e5e5] mb-2 flex items-center gap-2">
-              <CheckCircle size={16} className="text-[#5dd8d8]" />
+            <h3 className="text-sm font-semibold text-yellow-50 mb-2 flex items-center gap-2">
+              <CheckCircle size={16} className="text-yellow-400" />
               Contact Us
             </h3>
-            <p className="text-[rgba(197,213,213,0.85)] leading-relaxed ml-6">
-              If you have questions about this privacy policy or how we handle your data, 
-              please contact us through our official channels.
+            <p className="text-yellow-100/60 leading-relaxed ml-6">
+              If you have questions about this privacy policy or how we handle
+              your data, please contact us through our official channels.
             </p>
           </section>
         </div>
       </div>
 
       {/* Checkbox */}
-      <label className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 mb-3 sm:mb-4 group cursor-pointer hover:bg-[rgba(255,255,255,0.04)] rounded-xl transition-colors">
+      <label className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 mb-3 sm:mb-4 group cursor-pointer hover:bg-yellow-500/5 rounded-xl transition-colors">
         <div className="relative flex items-center pt-0.5">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             className="peer sr-only"
             checked={agreedToPolicy}
             onChange={(e) => setAgreedToPolicy(e.target.checked)}
           />
-          <div className="w-5 h-5 border-2 border-[#5da5a5] rounded transition-all peer-checked:bg-[#5dd8d8] peer-checked:border-[#5dd8d8] peer-hover:border-[#7dc5c5] bg-transparent flex items-center justify-center">
-             {agreedToPolicy && <div className="w-2.5 h-1.5 border-l-2 border-b-2 border-[#f5f5f5] rotate-[-45deg] translate-y-[-1px]" />}
+          <div className="w-5 h-5 border-2 border-yellow-600 rounded transition-all peer-checked:bg-yellow-400 peer-checked:border-yellow-400 peer-hover:border-yellow-400 bg-transparent flex items-center justify-center">
+            {/* Checkmark icon - Darkened for high contrast against the yellow background */}
+            {agreedToPolicy && (
+              <div className="w-2.5 h-1.5 border-l-2 border-b-2 border-[#1a1a0a] rotate-[-45deg] translate-y-[-1px]" />
+            )}
           </div>
         </div>
-        <span className="text-[11px] sm:text-sm text-[rgba(197,213,213,0.9)] leading-tight group-hover:text-[#d5e5e5] transition-colors select-none">
+        <span className="text-[11px] sm:text-sm text-yellow-100/70 leading-tight group-hover:text-yellow-50 transition-colors select-none">
           I have read and agree to the Privacy Policy
         </span>
       </label>
@@ -116,7 +126,7 @@ export function Step0({ onNext }: Step0Props) {
           type="button"
           onClick={onNext}
           disabled={!agreedToPolicy}
-          className="w-full bg-[rgba(35,60,60,0.6)] hover:bg-[rgba(35,60,60,0.7)] text-[#95b5b5] font-semibold py-3.5 rounded-xl transition-all duration-200 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 font-bold py-3.5 rounded-xl transition-all duration-300 text-sm disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           Accept & Continue
         </button>

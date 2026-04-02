@@ -3,13 +3,7 @@
 import { normalizeNameKey } from "@/utils/normalizeName";
 import Image from "next/image";
 import nunjucks from "nunjucks";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CsvMapping, ParsedCsv } from "./CsvUploader";
 // email editing is performed in the Template tab
 import type { AttachIndex } from "./AttachmentsUploader";
@@ -24,12 +18,15 @@ const normalizePreviewHtml = (html: string) => {
     return `<!DOCTYPE html><html><head>${PREVIEW_RESET_STYLE}</head><body></body></html>`;
   }
   if (/<head[\s>]/i.test(trimmed)) {
-    return trimmed.replace(/<head([^>]*)>/i, (_, attrs = "") => `<head${attrs}>${PREVIEW_RESET_STYLE}`);
+    return trimmed.replace(
+      /<head([^>]*)>/i,
+      (_, attrs = "") => `<head${attrs}>${PREVIEW_RESET_STYLE}`,
+    );
   }
   if (/<html[\s>]/i.test(trimmed)) {
     return trimmed.replace(
       /<html([^>]*)>/i,
-      (_, attrs = "") => `<html${attrs}><head>${PREVIEW_RESET_STYLE}</head>`
+      (_, attrs = "") => `<html${attrs}><head>${PREVIEW_RESET_STYLE}</head>`,
     );
   }
   return `<!DOCTYPE html><html><head>${PREVIEW_RESET_STYLE}</head><body>${trimmed}</body></html>`;
@@ -78,7 +75,13 @@ export default function PreviewPane({
   }>({ sent: 0, failed: 0 });
   const [sendModalTotal, setSendModalTotal] = useState<number | null>(null);
   const [sendQueue, setSendQueue] = useState<
-    Array<{ index: number; batch: number; to: string; status: QueueStatus; error?: string }>
+    Array<{
+      index: number;
+      batch: number;
+      to: string;
+      status: QueueStatus;
+      error?: string;
+    }>
   >([]);
   const [sendError, setSendError] = useState<string | null>(null);
   const [currentBatchIndex, setCurrentBatchIndex] = useState<number>(0);
@@ -114,7 +117,7 @@ export default function PreviewPane({
     };
   }, []);
 
-  // Profiles removed from UI; sender env is fixed to Arduino Day Philippines.
+  // Profiles removed from UI; sender env is fixed to ICPEP SE - PUP Manila.
 
   // Attachment handling removed from PreviewPane (now in CSV tab).
 
@@ -139,10 +142,10 @@ export default function PreviewPane({
         return nunjucks.renderString(template, ctx);
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        return `<!-- Render error: ${msg} -->\n` + template;
+        return `\n` + template;
       }
     },
-    [mapping, template, extraContext]
+    [mapping, template, extraContext],
   );
 
   const previewHtml = useMemo(() => {
@@ -173,14 +176,14 @@ export default function PreviewPane({
             const isPdf = mime.includes("pdf") || filename.endsWith(".pdf");
             return Boolean(isPdf && size >= min && size <= max);
           })
-        : false
+        : false,
     );
   }, [attachmentsByName]);
 
   const attachmentsPresent = useMemo(() => {
     if (!attachmentsByName) return false;
     return Object.values(attachmentsByName).some(
-      (arr) => Array.isArray(arr) && arr.length > 0
+      (arr) => Array.isArray(arr) && arr.length > 0,
     );
   }, [attachmentsByName]);
 
@@ -219,7 +222,8 @@ export default function PreviewPane({
   }, [csv, mapping, extraContext]);
 
   const attachmentsByRecipient = useMemo(() => {
-    if (!csv || !mapping || !attachmentsByName) return new Map<string, string[]>();
+    if (!csv || !mapping || !attachmentsByName)
+      return new Map<string, string[]>();
     const map = new Map<string, string[]>();
     for (const row of csv.rows as Array<Record<string, string>>) {
       const email = row[mapping.recipient];
@@ -253,11 +257,11 @@ export default function PreviewPane({
 
   const allUsed = useMemo(
     () => Array.from(new Set([...usedSubjectVars, ...usedBodyVars])),
-    [usedSubjectVars, usedBodyVars]
+    [usedSubjectVars, usedBodyVars],
   );
   const invalidUsed = useMemo(
     () => allUsed.filter((v) => !availableVars.includes(v)),
-    [allUsed, availableVars]
+    [allUsed, availableVars],
   );
 
   const insertSubjectVariable = useCallback(
@@ -280,10 +284,10 @@ export default function PreviewPane({
         input.setSelectionRange(caret, caret);
       });
     },
-    [onSubjectChange, subjectTemplate]
+    [onSubjectChange, subjectTemplate],
   );
 
-  const variantLabel = "Arduino Day Philippines";
+  const variantLabel = "ICPEP SE - PUP Manila";
 
   const doSendEmails = useCallback(async () => {
     if (!ready || !csv || !mapping) return;
@@ -310,7 +314,7 @@ export default function PreviewPane({
         batch: Math.floor(idx / BATCH_SIZE) + 1,
         to: String(row[mapping.recipient]),
         status: "queued",
-      }))
+      })),
     );
     try {
       setIsSending(true);
@@ -321,8 +325,8 @@ export default function PreviewPane({
           prev.map((item) =>
             item.index >= start && item.index < start + batch.length
               ? { ...item, status: "sending", error: undefined }
-              : item
-          )
+              : item,
+          ),
         );
         const body = {
           rows: batch,
@@ -361,11 +365,13 @@ export default function PreviewPane({
               prev.map((item) =>
                 item.index === queueIndex
                   ? { ...item, status: "error", error: errMsg }
-                  : item
-              )
+                  : item,
+              ),
             );
           }
-          setSendError((prev) => prev || (data?.error || "One batch failed to send."));
+          setSendError(
+            (prev) => prev || data?.error || "One batch failed to send.",
+          );
           setSendModalSummary((prev) => ({
             sent: prev.sent,
             failed: prev.failed + batch.length,
@@ -393,7 +399,7 @@ export default function PreviewPane({
                     ? typeof obj.total === "number"
                       ? obj.total
                       : null
-                    : prev
+                    : prev,
                 );
               } else if (obj.type === "item") {
                 const queueIndex =
@@ -416,13 +422,14 @@ export default function PreviewPane({
                       item.index === queueIndex
                         ? {
                             ...item,
-                            status:
-                              obj.status === "sent" ? "sent" : "error",
+                            status: obj.status === "sent" ? "sent" : "error",
                             error:
-                              obj.status === "error" ? obj.error || "Send failed" : undefined,
+                              obj.status === "error"
+                                ? obj.error || "Send failed"
+                                : undefined,
                           }
-                        : item
-                    )
+                        : item,
+                    ),
                   );
                 }
                 setSendModalSummary((prev) => ({
@@ -434,7 +441,9 @@ export default function PreviewPane({
                 // no-op; counts already tracked
               }
             } catch {
-              setSendError((prev) => prev || "Received invalid stream data while sending.");
+              setSendError(
+                (prev) => prev || "Received invalid stream data while sending.",
+              );
             }
           }
         }
@@ -464,10 +473,12 @@ export default function PreviewPane({
                           ...item,
                           status: obj.status === "sent" ? "sent" : "error",
                           error:
-                            obj.status === "error" ? obj.error || "Send failed" : undefined,
+                            obj.status === "error"
+                              ? obj.error || "Send failed"
+                              : undefined,
                         }
-                      : item
-                  )
+                      : item,
+                  ),
                 );
               }
               setSendModalSummary((prev) => ({
@@ -476,7 +487,9 @@ export default function PreviewPane({
               }));
             }
           } catch {
-            setSendError((prev) => prev || "Failed to parse final stream response.");
+            setSendError(
+              (prev) => prev || "Failed to parse final stream response.",
+            );
           }
         }
         // small pause between batches
@@ -501,48 +514,51 @@ export default function PreviewPane({
     maxBatchSize,
   ]);
 
-
   return (
     <>
-      <div className="rounded-lg border p-4 space-y-4">
+      <div className="rounded-xl border border-yellow-900/50 bg-[rgba(25,25,10,0.4)] p-5 space-y-5">
         <div
-          className="flex items-center justify-between gap-3 flex-wrap"
+          className="flex items-center justify-between gap-3 flex-wrap border-b border-yellow-900/30 pb-4"
           id="tutorial-env-controls"
         >
-          <h2 className="text-lg font-medium">3) Preview & Export</h2>
+          <h2 className="text-lg font-bold text-yellow-50">
+            3) Preview & Export
+          </h2>
           <div className="flex items-center gap-2">
             {/* Variable insertion moved to Template tab */}
             {envOk === true && (
-              <span className="px-2 py-0.5 rounded border text-xs bg-green-50 border-green-200 text-green-800">
+              <span className="px-3 py-1 rounded-lg border text-xs font-bold uppercase tracking-wider bg-emerald-500/10 border-emerald-500/30 text-emerald-400">
                 Sender env OK
               </span>
             )}
             {envOk === false && (
-              <span className="px-2 py-0.5 rounded border text-xs bg-red-50 border-red-200 text-red-800">
+              <span className="px-3 py-1 rounded-lg border text-xs font-bold uppercase tracking-wider bg-red-500/10 border-red-500/30 text-red-400">
                 Missing env: {missing.join(", ")}
               </span>
             )}
-            <div className="flex items-center gap-2 text-xs">
-              <span className="opacity-70">Sender:</span>
-              <span className="px-2 py-0.5 rounded border bg-white text-gray-900">
+            <div className="flex items-center gap-2 text-xs mr-2">
+              <span className="font-bold text-yellow-500 uppercase tracking-wider opacity-70">
+                Sender:
+              </span>
+              <span className="px-3 py-1 rounded-lg border bg-[rgba(25,25,10,0.8)] border-yellow-900/50 text-yellow-50 font-medium">
                 {variantLabel}
               </span>
               <Image
-                src="/email-template/arduinoday.jpg"
-                alt="Arduino Day Philippines"
+                src="/email-template/ICPEP-logo 1.png"
+                alt="ICPEP SE - PUP Manila"
                 width={32}
                 height={32}
-                className="h-6 w-6 rounded border"
+                className="h-7 w-7 rounded-md border border-yellow-900/50 object-cover bg-yellow-600/40"
               />
             </div>
             <button
               type="button"
               disabled={!ready}
               onClick={() => ready && onExportJson((row) => renderRow(row))}
-              className={`px-3 py-1 rounded border text-sm ${
+              className={`px-4 py-1.5 rounded-lg border text-sm font-semibold transition-all active:scale-[0.98] ${
                 ready
-                  ? "bg-gray-900 border-gray-900 text-white hover:bg-black"
-                  : "opacity-50 cursor-not-allowed"
+                  ? "bg-[rgba(25,25,10,0.6)] border-yellow-900/40 text-yellow-500 hover:bg-yellow-950/30"
+                  : "opacity-40 cursor-not-allowed border-yellow-900/30 text-yellow-700 bg-transparent"
               }`}
             >
               Export JSON
@@ -557,10 +573,10 @@ export default function PreviewPane({
                   return;
                 await doSendEmails();
               }}
-              className={`px-3 py-1 rounded border text-sm ${
+              className={`px-4 py-1.5 rounded-lg border text-sm font-bold transition-all active:scale-[0.98] ${
                 ready && envOk !== false && !isSending && cooldownSec === 0
-                  ? "bg-green-600 border-green-700 text-white hover:bg-green-700"
-                  : "opacity-50 cursor-not-allowed"
+                  ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20 shadow-[0_0_15px_rgba(250,204,21,0.15)]"
+                  : "opacity-40 cursor-not-allowed border-yellow-900/30 text-yellow-700 bg-transparent"
               } ${isSending ? "cursor-wait" : ""}`}
             >
               {isSending ? (
@@ -597,7 +613,7 @@ export default function PreviewPane({
           </div>
         </div>
         {sendError && (
-          <div className="rounded border border-red-200 bg-red-50 text-red-700 text-xs px-3 py-2">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-xs px-4 py-3 font-medium">
             Send error: {sendError}
           </div>
         )}
@@ -605,36 +621,44 @@ export default function PreviewPane({
         {/* Attachments uploader moved to CSV tab */}
 
         {!csv && (
-          <div className="text-sm opacity-80">
+          <div className="text-sm text-yellow-100/60 font-medium">
             Upload a CSV to see previews.
           </div>
         )}
         {csv && !mapping && (
-          <div className="text-sm opacity-80">
+          <div className="text-sm text-yellow-100/60 font-medium">
             Set column mapping to preview emails.
           </div>
         )}
         {csv && mapping && !template?.trim() && (
-          <div className="text-sm opacity-80">
+          <div className="text-sm text-yellow-100/60 font-medium">
             Provide an HTML template to preview.
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-          <div className="lg:col-span-1 border rounded" id="tutorial-recipient-list">
-            <div className="px-3 py-2 text-sm bg-gray-50 border-b font-medium flex items-center justify-between">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+          <div
+            className="lg:col-span-1 border border-yellow-900/50 rounded-xl overflow-hidden bg-[rgba(25,25,10,0.4)]"
+            id="tutorial-recipient-list"
+          >
+            <div className="px-4 py-3 text-[11px] bg-[rgba(35,35,15,0.4)] border-b border-yellow-900/50 font-bold text-yellow-50 uppercase tracking-wider flex items-center justify-between">
               <span>Recipients</span>
-              <span className="text-xs opacity-70">{recipients.length}</span>
+              <span className="opacity-70 text-yellow-500">
+                {recipients.length}
+              </span>
             </div>
-            <div className="max-h-80 overflow-auto text-xs">
+            <div className="max-h-80 overflow-auto text-xs custom-scrollbar">
               {recipients.length === 0 && (
-                <div className="p-3 opacity-70">
+                <div className="p-4 text-yellow-100/50 font-medium">
                   No recipients. Map a recipient column in the CSV tab.
                 </div>
               )}
-              <ul className="divide-y">
+              <ul className="divide-y divide-yellow-900/30 text-yellow-100/70">
                 {recipients.map((email, idx) => (
-                  <li key={`${email}-${idx}`} className="px-3 py-2">
+                  <li
+                    key={`${email}-${idx}`}
+                    className="px-4 py-2.5 truncate hover:bg-yellow-500/5 transition-colors"
+                  >
                     {email}
                   </li>
                 ))}
@@ -642,17 +666,19 @@ export default function PreviewPane({
             </div>
           </div>
 
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-5">
             {showSubjectEditor && (
               <div className="space-y-2" id="tutorial-subject-editor">
-                <div className="text-sm font-medium">Subject</div>
-                <div className="flex items-center gap-2">
+                <div className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+                  Subject
+                </div>
+                <div className="flex items-center gap-3">
                   <input
                     ref={subjectInputRef}
                     value={subjectTemplate}
                     onChange={(e) => onSubjectChange?.(e.target.value)}
                     placeholder="e.g. Hello {{ name }}"
-                    className="flex-1 rounded border px-3 py-2 text-sm"
+                    className="flex-1 rounded-xl border border-yellow-900/50 bg-[rgba(25,25,10,0.8)] px-4 py-2.5 text-yellow-50 text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 placeholder:text-yellow-700/50 transition-colors"
                   />
                   <VariablePicker
                     variables={availableVars}
@@ -661,15 +687,17 @@ export default function PreviewPane({
                   />
                 </div>
                 {allUsed.length > 0 && (
-                  <div className="text-xs flex flex-wrap gap-2">
-                    <span className="opacity-70">Variables used:</span>
+                  <div className="text-[11px] flex flex-wrap gap-2 items-center mt-2">
+                    <span className="font-bold text-yellow-500/70 uppercase tracking-wider mr-1">
+                      Variables used:
+                    </span>
                     {allUsed.map((v) => (
                       <span
                         key={v}
-                        className={`px-2 py-0.5 rounded border ${
+                        className={`px-2 py-1 rounded-md border font-mono ${
                           availableVars.includes(v)
-                            ? "bg-green-50 border-green-200 text-green-800"
-                            : "bg-red-50 border-red-200 text-red-800"
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                            : "bg-red-500/10 border-red-500/30 text-red-400"
                         }`}
                       >
                         {`{{ ${v} }}`}
@@ -678,7 +706,7 @@ export default function PreviewPane({
                   </div>
                 )}
                 {invalidUsed.length > 0 && (
-                  <div className="text-xs text-red-700">
+                  <div className="text-xs font-medium text-red-400 mt-1">
                     Unknown variables: {invalidUsed.join(", ")} (not found in
                     CSV headers)
                   </div>
@@ -687,33 +715,38 @@ export default function PreviewPane({
             )}
 
             <div className="space-y-2" id="tutorial-preview-frame">
-              <div className="text-sm font-medium">Preview</div>
-              <div className="flex items-center gap-2">
+              <div className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider flex items-center justify-between">
+                <span>Preview</span>
+                <span className="text-yellow-100/60 font-medium normal-case tracking-normal">
+                  Previewing row{" "}
+                  {csv && csv.rowCount > 0 ? previewRowIndex + 1 : 0} of{" "}
+                  {csv?.rowCount ?? 0}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 pb-1">
                 <button
                   onClick={() => setPreviewRowIndex((p) => Math.max(0, p - 1))}
-                  disabled={previewRowIndex === 0}
-                  className="px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
+                  disabled={previewRowIndex === 0 || !csv}
+                  className="px-4 py-1.5 rounded-lg border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-950/30 text-yellow-500 font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   Previous
                 </button>
-                <span className="text-xs text-gray-600">
-                  Previewing row {previewRowIndex + 1} of {csv?.rowCount ?? 0}
-                </span>
                 <button
                   onClick={() =>
                     setPreviewRowIndex((p) =>
-                      Math.min((csv?.rowCount ?? 1) - 1, p + 1)
+                      Math.min((csv?.rowCount ?? 1) - 1, p + 1),
                     )
                   }
                   disabled={!csv || previewRowIndex >= csv.rowCount - 1}
-                  className="px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
+                  className="px-4 py-1.5 rounded-lg border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-950/30 text-yellow-500 font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   Next
                 </button>
               </div>
+              {/* iframe remains white because most HTML emails are designed for white backgrounds */}
               <iframe
                 srcDoc={previewHtml}
-                className="w-full h-96 border rounded bg-white"
+                className="w-full h-96 border border-yellow-900/50 rounded-xl bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)]"
                 sandbox="allow-scripts"
               />
             </div>
@@ -722,17 +755,22 @@ export default function PreviewPane({
 
         {/* Batches preview (always visible when recipients exist) */}
         {batchPreview.length > 0 && (
-          <div className="border rounded p-3 bg-white space-y-2" id="tutorial-batch-preview">
-            <div className="text-sm font-medium flex items-center gap-2">
+          <div
+            className="border border-yellow-900/50 rounded-xl p-5 bg-[rgba(25,25,10,0.4)] space-y-4"
+            id="tutorial-batch-preview"
+          >
+            <div className="text-[11px] font-bold text-yellow-50 uppercase tracking-wider flex items-center gap-2">
               <span>Batches (preview)</span>
-              <span className="text-xs opacity-70">
+              <span className="opacity-70 text-yellow-500">
                 {batchPreview.length} total
               </span>
             </div>
             {/* Batch size selector */}
-            <div className="flex items-center gap-3 text-xs flex-wrap">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="opacity-70">Batch size:</span>
+            <div className="flex items-center gap-4 text-xs flex-wrap">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="font-bold text-yellow-500 uppercase tracking-wider opacity-70">
+                  Batch size:
+                </span>
                 {[1, 3, 4].map((size) => {
                   const disabled =
                     (requiresSingleBatch && size !== 1) ||
@@ -740,8 +778,10 @@ export default function PreviewPane({
                   return (
                     <label
                       key={size}
-                      className={`inline-flex items-center gap-1 cursor-pointer ${
-                        disabled ? "opacity-40 cursor-not-allowed" : ""
+                      className={`inline-flex items-center gap-1.5 cursor-pointer font-medium text-yellow-50 ${
+                        disabled
+                          ? "opacity-40 cursor-not-allowed"
+                          : "hover:text-yellow-400 transition-colors"
                       }`}
                     >
                       <input
@@ -750,7 +790,7 @@ export default function PreviewPane({
                         value={size}
                         checked={batchSize === size}
                         onChange={() => setBatchSize(size)}
-                        className="accent-gray-800"
+                        className="accent-yellow-500 w-3.5 h-3.5"
                         disabled={disabled}
                       />
                       <span>{size}</span>
@@ -758,52 +798,59 @@ export default function PreviewPane({
                   );
                 })}
               </div>
-              <div className="text-[11px] text-gray-600">
+              <div className="text-[11px] text-yellow-100/50 leading-relaxed">
                 {requiresSingleBatch ? (
-                  <span className="text-yellow-800">
-                    Large 1-2 MB PDF attachments detected. Sending is locked
-                    to 1 email per batch.
+                  <span className="inline-block text-amber-400 bg-amber-400/10 border border-amber-400/20 px-3 py-1.5 rounded-lg font-medium shadow-[0_0_10px_rgba(251,191,36,0.1)]">
+                    Large 1-2 MB PDF attachments detected. Sending is locked to
+                    1 email per batch.
                   </span>
                 ) : attachmentsPresent ? (
                   <span>
-                    <strong>Tip:</strong> Attachments detected. Sending is
-                    capped at <strong>3 per batch</strong> to reduce payload
-                    size.
+                    <strong className="text-yellow-400">Tip:</strong>{" "}
+                    Attachments detected. Sending is capped at{" "}
+                    <strong className="text-yellow-50">3 per batch</strong> to
+                    reduce payload size.
                   </span>
                 ) : (
                   <span>
-                    <strong>Tip:</strong> No attachments detected. You can use
-                    <strong> 4 per batch</strong> for faster overall sending.
+                    <strong className="text-yellow-400">Tip:</strong> No
+                    attachments detected. You can use
+                    <strong className="text-yellow-50"> 4 per batch</strong> for
+                    faster overall sending.
                   </span>
                 )}
               </div>
             </div>
-            <div className="max-h-48 overflow-auto text-xs bg-gray-50 border rounded">
-              <ul className="divide-y">
+            <div className="max-h-48 overflow-auto text-xs bg-[rgba(10,10,5,0.6)] border border-yellow-900/40 rounded-lg custom-scrollbar">
+              <ul className="divide-y divide-yellow-900/30">
                 {batchPreview.map((b) => (
-                  <li key={`batch-${b.batch}`} className="px-3 py-2 space-y-1">
-                    <div className="font-medium">Batch {b.batch}</div>
-                    <div className="text-gray-700 space-y-1">
+                  <li key={`batch-${b.batch}`} className="px-4 py-3 space-y-2">
+                    <div className="font-bold text-yellow-400">
+                      Batch {b.batch}
+                    </div>
+                    <div className="text-yellow-100/70 space-y-1.5">
                       {b.recipients.map((email) => {
-                        const attachments = attachmentsByRecipient.get(email) || [];
+                        const attachments =
+                          attachmentsByRecipient.get(email) || [];
                         return (
                           <div
                             key={`${b.batch}-${email}`}
-                            className="flex flex-wrap gap-1 items-center"
+                            className="flex flex-wrap gap-2 items-center"
                           >
                             <span className="wrap-break-word">{email}</span>
                             {attachments.length > 0 && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 border rounded bg-white">
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 border border-yellow-900/50 rounded-md bg-[rgba(35,35,15,0.8)] text-yellow-500/70 shadow-sm">
                                 📎
-                                <span>
+                                <span className="font-medium text-yellow-100/80">
                                   {attachments.length} file
                                   {attachments.length > 1 ? "s" : ""}
                                 </span>
-                                <span className="text-gray-500">
+                                <span className="text-yellow-100/40">
                                   ({attachments.slice(0, 2).join(", ")}
                                   {attachments.length > 2
                                     ? ` +${attachments.length - 2}`
-                                    : ""})
+                                    : ""}
+                                  )
                                 </span>
                               </span>
                             )}
@@ -815,7 +862,7 @@ export default function PreviewPane({
                 ))}
               </ul>
             </div>
-            <div className="text-[11px] text-gray-600">
+            <div className="text-[11px] text-yellow-100/50 leading-relaxed max-w-2xl">
               Sending is performed sequentially per batch with a jittered ~2s
               delay per email to reduce throttling and avoid serverless
               timeouts.
@@ -823,78 +870,94 @@ export default function PreviewPane({
           </div>
         )}
       </div>
-      {/* Streaming progress UI removed */}
+
+      {/* Send Modal UI */}
       {showSendModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-slate-950/80 w-full max-w-3xl rounded-xl border border-primary/20 shadow-lg">
-            <div className="px-4 py-3 border-b border-primary/15 flex items-center justify-between">
-              <div className="text-sm font-semibold text-primary">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[rgba(15,15,5,0.95)] w-full max-w-3xl rounded-2xl border border-yellow-500/30 shadow-[0_0_40px_rgba(250,204,21,0.15)] flex flex-col max-h-[90vh]">
+            <div className="px-5 py-4 border-b border-yellow-900/50 flex items-center justify-between bg-[rgba(25,25,10,0.6)] rounded-t-2xl">
+              <div className="text-sm font-bold text-yellow-400 uppercase tracking-wider">
                 {isSending ? "Sending… Live Log" : "Send Summary"}
               </div>
               <button
-                className="text-xs px-2 py-1 border border-primary/30 rounded text-primary bg-primary/5 hover:bg-primary/10"
+                className="text-xs font-bold px-3 py-1.5 border border-yellow-500/30 rounded-lg text-yellow-400 bg-yellow-500/10 hover:bg-yellow-500/20 transition-all active:scale-[0.98]"
                 onClick={() => setShowSendModal(false)}
               >
                 Close
               </button>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="p-5 space-y-5 overflow-y-auto custom-scrollbar flex-1">
               {sendError && (
-                <div className="rounded border border-red-500/30 bg-red-500/10 text-red-300 text-xs px-3 py-2">
+                <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 font-medium text-xs px-4 py-3">
                   {sendError}
                 </div>
               )}
-              <div className="text-xs flex gap-4 items-center text-secondary">
-                <span>
-                  <strong className="text-primary">Sent:</strong> {sendModalSummary.sent}
+              <div className="text-xs flex flex-wrap gap-5 items-center text-yellow-100/70">
+                <span className="bg-[rgba(25,25,10,0.8)] px-3 py-1.5 rounded-lg border border-yellow-900/50">
+                  <strong className="text-yellow-400 font-bold uppercase tracking-wider">
+                    Sent:
+                  </strong>{" "}
+                  {sendModalSummary.sent}
                 </span>
-                <span>
-                  <strong className="text-primary">Failed:</strong> {sendModalSummary.failed}
+                <span className="bg-[rgba(25,25,10,0.8)] px-3 py-1.5 rounded-lg border border-yellow-900/50">
+                  <strong className="text-yellow-400 font-bold uppercase tracking-wider">
+                    Failed:
+                  </strong>{" "}
+                  {sendModalSummary.failed}
                 </span>
                 {typeof sendModalTotal === "number" && (
-                  <span>
-                    <strong className="text-primary">Remaining:</strong>{" "}
+                  <span className="bg-[rgba(25,25,10,0.8)] px-3 py-1.5 rounded-lg border border-yellow-900/50">
+                    <strong className="text-yellow-400 font-bold uppercase tracking-wider">
+                      Remaining:
+                    </strong>{" "}
                     {Math.max(
                       0,
                       sendModalTotal -
-                        (sendModalSummary.sent + sendModalSummary.failed)
+                        (sendModalSummary.sent + sendModalSummary.failed),
                     )}
                   </span>
                 )}
                 {isSending && (
-                  <span className="opacity-70 animate-pulse">In Progress…</span>
+                  <span className="text-yellow-400 font-bold animate-pulse px-2 uppercase tracking-wider">
+                    In Progress…
+                  </span>
                 )}
               </div>
               {typeof sendModalTotal === "number" && (
-                <div className="w-full h-2 bg-primary/10 rounded">
+                <div className="w-full h-2.5 bg-yellow-900/30 rounded-full overflow-hidden">
                   <div
-                    className="h-2 bg-primary rounded"
+                    className="h-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)] transition-all duration-500"
                     style={{
                       width: `${Math.min(
                         100,
                         Math.floor(
                           ((sendModalSummary.sent + sendModalSummary.failed) /
                             (sendModalTotal || 1)) *
-                            100
-                        )
+                            100,
+                        ),
                       )}%`,
                     }}
                   />
                 </div>
               )}
+
               {/* Batch overview */}
               {batchAssignments.length > 0 && (
-                <div className="border border-primary/20 rounded p-2 bg-primary/5 text-xs">
-                  <div className="mb-1 font-semibold text-primary">Batches</div>
-                  <div className="flex flex-col gap-1 max-h-32 overflow-auto">
+                <div className="border border-yellow-900/40 rounded-xl p-4 bg-[rgba(25,25,10,0.6)] text-xs">
+                  <div className="mb-2 font-bold text-yellow-400 uppercase tracking-wider text-[11px]">
+                    Batches
+                  </div>
+                  <div className="flex flex-col gap-1.5 max-h-32 overflow-auto custom-scrollbar pr-2">
                     {batchAssignments.map((b, idx) => (
                       <div
                         key={idx}
-                        className={`flex gap-2 items-start ${
-                          idx === currentBatchIndex ? "text-emerald-400" : "text-secondary"
+                        className={`flex gap-2 items-start py-1 border-b border-yellow-900/20 last:border-b-0 ${
+                          idx === currentBatchIndex
+                            ? "text-yellow-400 font-medium"
+                            : "text-yellow-100/60"
                         }`}
                       >
-                        <span className="min-w-[60px] inline-block">
+                        <span className="min-w-[65px] inline-block font-bold">
                           Batch {b.batch}:
                         </span>
                         <span className="flex-1 wrap-break-word">
@@ -905,29 +968,34 @@ export default function PreviewPane({
                   </div>
                 </div>
               )}
+
               {/* Queue overview */}
               {sendQueue.length > 0 && (
-                <div className="border border-primary/20 rounded p-2 bg-slate-950/70 text-xs">
-                  <div className="mb-1 font-semibold text-primary">
+                <div className="border border-yellow-900/40 rounded-xl p-4 bg-[rgba(10,10,5,0.8)] text-xs">
+                  <div className="mb-2 font-bold text-yellow-400 uppercase tracking-wider text-[11px]">
                     Queue ({sendQueue.length})
                   </div>
-                  <div className="max-h-28 overflow-auto space-y-1">
+                  <div className="max-h-28 overflow-auto space-y-1.5 custom-scrollbar pr-2">
                     {sendQueue.map((item) => (
                       <div
                         key={`queue-${item.index}-${item.to}`}
-                        className="flex items-center gap-2 text-secondary"
+                        className="flex items-center gap-3 text-yellow-100/70 border-b border-yellow-900/20 last:border-b-0 pb-1.5"
                       >
-                        <span className="min-w-[58px] text-primary/80">B{item.batch}</span>
-                        <span className="flex-1 wrap-break-word">{item.to}</span>
+                        <span className="min-w-[40px] text-yellow-600 font-bold">
+                          B{item.batch}
+                        </span>
+                        <span className="flex-1 wrap-break-word">
+                          {item.to}
+                        </span>
                         <span
-                          className={`px-2 py-0.5 rounded border ${
+                          className={`px-2.5 py-0.5 rounded-md border text-[10px] font-bold uppercase tracking-wider ${
                             item.status === "sent"
-                              ? "border-emerald-400/40 text-emerald-300"
+                              ? "border-emerald-500/40 text-emerald-400 bg-emerald-500/10"
                               : item.status === "error"
-                                ? "border-rose-400/40 text-rose-300"
+                                ? "border-red-500/40 text-red-400 bg-red-500/10"
                                 : item.status === "sending"
-                                  ? "border-cyan-400/40 text-cyan-300"
-                                  : "border-primary/30 text-primary/80"
+                                  ? "border-yellow-400/40 text-yellow-300 bg-yellow-400/10 animate-pulse"
+                                  : "border-yellow-900/50 text-yellow-100/50 bg-transparent"
                           }`}
                         >
                           {item.status}
@@ -937,59 +1005,63 @@ export default function PreviewPane({
                   </div>
                 </div>
               )}
-              {isSending && (
-                <div className="text-xs text-secondary bg-primary/10 border border-primary/20 rounded p-2">
-                  Sending is paced with a ~2 second delay per email to reduce
-                  the risk of provider throttling, rate limits, or spam
-                  detection. This helps keep delivery reliable when sending to
-                  many recipients.
-                </div>
-              )}
-              <div className="max-h-72 overflow-auto border border-primary/20 rounded text-xs font-mono bg-slate-950/70">
+
+              <div className="max-h-72 overflow-auto border border-yellow-900/50 rounded-xl text-xs font-mono bg-[rgba(10,10,5,0.8)] shadow-inner custom-scrollbar">
                 <table className="min-w-full text-xs">
-                  <thead className="sticky top-0 bg-primary/10">
+                  <thead className="sticky top-0 bg-yellow-900/20 backdrop-blur-sm shadow-sm z-10">
                     <tr>
-                      <th className="text-left px-2 py-1 border border-primary/20 text-primary">Recipient</th>
-                      <th className="text-left px-2 py-1 border border-primary/20 text-primary">Status</th>
-                      <th className="text-left px-2 py-1 border border-primary/20 text-primary">Time</th>
-                      <th className="text-left px-2 py-1 border border-primary/20 text-primary">Subject</th>
-                      <th className="text-left px-2 py-1 border border-primary/20 text-primary">
+                      <th className="text-left px-3 py-2 border-b border-yellow-900/50 text-yellow-400 font-bold uppercase tracking-wider text-[10px]">
+                        Recipient
+                      </th>
+                      <th className="text-left px-3 py-2 border-b border-yellow-900/50 text-yellow-400 font-bold uppercase tracking-wider text-[10px]">
+                        Status
+                      </th>
+                      <th className="text-left px-3 py-2 border-b border-yellow-900/50 text-yellow-400 font-bold uppercase tracking-wider text-[10px]">
+                        Time
+                      </th>
+                      <th className="text-left px-3 py-2 border-b border-yellow-900/50 text-yellow-400 font-bold uppercase tracking-wider text-[10px]">
+                        Subject
+                      </th>
+                      <th className="text-left px-3 py-2 border-b border-yellow-900/50 text-yellow-400 font-bold uppercase tracking-wider text-[10px]">
                         Attachments
                       </th>
-                      <th className="text-left px-2 py-1 border border-primary/20 text-primary">
+                      <th className="text-left px-3 py-2 border-b border-yellow-900/50 text-yellow-400 font-bold uppercase tracking-wider text-[10px]">
                         Message / Error
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {sendModalLogs.map((l, i) => (
-                      <tr key={i} className="odd:bg-slate-950/70 even:bg-primary/5">
-                        <td className="px-2 py-1 border border-primary/20 whitespace-pre-wrap wrap-break-word text-secondary">
+                      <tr
+                        key={i}
+                        className="odd:bg-[rgba(15,15,5,0.8)] even:bg-[rgba(25,25,10,0.8)] hover:bg-yellow-500/10 transition-colors border-b border-yellow-900/30 last:border-b-0 text-yellow-50"
+                      >
+                        <td className="px-3 py-2 whitespace-pre-wrap wrap-break-word">
                           {l.to}
                         </td>
                         <td
-                          className={`px-2 py-1 border border-primary/20 ${
+                          className={`px-3 py-2 font-bold ${
                             l.status === "sent"
                               ? "text-emerald-400"
-                              : "text-rose-400"
+                              : "text-red-400"
                           }`}
                         >
                           {l.status}
                         </td>
-                        <td className="px-2 py-1 border border-primary/20 whitespace-pre-wrap wrap-break-word text-secondary">
+                        <td className="px-3 py-2 whitespace-pre-wrap wrap-break-word text-yellow-100/60">
                           {l.timestamp
                             ? new Date(l.timestamp).toLocaleTimeString()
                             : ""}
                         </td>
-                        <td className="px-2 py-1 border border-primary/20 whitespace-pre-wrap wrap-break-word text-secondary">
+                        <td className="px-3 py-2 whitespace-pre-wrap wrap-break-word">
                           {l.subject || ""}
                         </td>
-                        <td className="px-2 py-1 border border-primary/20 text-secondary">
+                        <td className="px-3 py-2 text-yellow-100/60 font-semibold">
                           {typeof l.attachments === "number"
                             ? l.attachments
                             : ""}
                         </td>
-                        <td className="px-2 py-1 border border-primary/20 whitespace-pre-wrap wrap-break-word text-secondary">
+                        <td className="px-3 py-2 whitespace-pre-wrap wrap-break-word text-yellow-100/80">
                           {l.error || l.messageId || ""}
                         </td>
                       </tr>
@@ -998,9 +1070,9 @@ export default function PreviewPane({
                       <tr>
                         <td
                           colSpan={6}
-                          className="px-2 py-4 text-center text-secondary"
+                          className="px-3 py-6 text-center text-yellow-500/70 font-medium italic"
                         >
-                          Starting…
+                          Starting engine...
                         </td>
                       </tr>
                     )}

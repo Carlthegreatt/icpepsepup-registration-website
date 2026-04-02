@@ -5,35 +5,36 @@ import ForgotPasswordForm from "@/components/users/ForgotPasswordForm";
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 bg-[#0a0a05]">
       <AdminLoginBackground />
 
       <div className="relative z-10 w-full max-w-[420px]">
         <div className="text-center mb-10 space-y-3">
-          <div className="inline-block mb-4">
+          <div className="inline-block mb-4 max-h-[60px]">
             <Image
-              src="/images/logos/adph-logo.png"
-              alt="Arduino Day Philippines"
+              src="/images/logos/ICPEP-logo 1.png"
+              alt="ICPEP SE - PUP Manila"
               width={96}
-              height={96}
-              className="opacity-95"
+              height={90}
+              className="opacity-95 brightness-110"
+              style={{ objectFit: "cover", objectPosition: "center" }}
             />
           </div>
           <h1 className="text-[36px] sm:text-[44px] md:text-[48px] font-bold text-[#f5f5f5] tracking-tight leading-none">
             Forgot Password
           </h1>
-          <p className="text-[#5dd8d8] text-[11px] tracking-[0.3em] uppercase font-semibold">
+          <p className="text-yellow-500 text-[11px] tracking-[0.3em] uppercase font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]">
             Recover your account access
           </p>
         </div>
 
         <ForgotPasswordForm />
 
-        <p className="mt-4 text-center text-[11px] text-[rgba(200,230,230,0.75)]">
+        <p className="mt-6 text-center text-[11px] text-yellow-100/50">
           Remembered your password?{" "}
           <Link
             href="/"
-            className="text-[#6dd8d8] hover:text-[#8de5e5] underline-offset-4 hover:underline font-medium"
+            className="text-yellow-400 hover:text-yellow-200 underline-offset-4 hover:underline font-semibold transition-colors"
           >
             Back to Sign In
           </Link>

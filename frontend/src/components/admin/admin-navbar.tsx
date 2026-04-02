@@ -59,13 +59,13 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
 
   return (
     <>
-      <nav className="h-16 px-6 md:px-10 lg:px-16 flex items-center justify-between z-40 fixed top-0 left-0 right-0 backdrop-blur-md bg-black/20 border-b border-white/5 shadow-lg shadow-black/20">
+      <nav className="h-16 px-6 md:px-10 lg:px-16 flex items-center justify-between z-40 fixed top-0 left-0 right-0 backdrop-blur-md bg-black/40 border-b border-yellow-900/20 shadow-lg shadow-black/40">
         {/* Left Side - Logo (Compact) */}
         <div className="flex items-center gap-8 md:gap-12">
           {/* Burger Menu Button (Mobile) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 -ml-2 rounded-md text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+            className="lg:hidden p-2 -ml-2 rounded-md text-yellow-100/50 hover:text-yellow-400 hover:bg-yellow-500/5 transition-colors"
           >
             {mobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -76,21 +76,21 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
 
           {/* Logo - Simplified */}
           <div className="flex items-center gap-2.5">
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/15 to-cyan-500/15 p-1.5 border border-cyan-500/20 flex-shrink-0">
+            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500/20 to-amber-600/20 p-1.5 border border-yellow-500/30 flex-shrink-0 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
               <Image
-                src="/images/logos/adph-logo.png"
-                alt="ADPH"
+                src="/images/logos/ICPEP-logo 1.png" // Update this path to your ICPEP SE logo when ready
+                alt="ICPEP SE"
                 fill
                 sizes="32px"
                 className="object-contain"
               />
             </div>
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:inline font-urbanist">
-              ADPH Admin
+            <span className="text-[11px] font-bold text-yellow-500 uppercase tracking-[0.15em] hidden sm:inline font-urbanist">
+              ICPEP SE Admin
             </span>
           </div>
 
-          {/* Navigation Menu (Desktop) - Now more prominent */}
+          {/* Navigation Menu (Desktop) */}
           <div className="hidden lg:flex items-center gap-1.5">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -100,14 +100,14 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
                 <button
                   key={item.id}
                   onClick={() => handleTabChange(item.path)}
-                  className={`flex items-center gap-2 px-4 py-1.5 rounded-md transition-all duration-200 font-urbanist ${
+                  className={`flex items-center gap-2 px-4 py-1.5 rounded-md transition-all duration-300 font-urbanist uppercase tracking-wider text-[11px] font-bold ${
                     isActive
-                      ? "bg-cyan-500/10 text-cyan-400 shadow-sm shadow-cyan-500/10"
-                      : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                      ? "bg-yellow-500/10 text-yellow-400 shadow-sm shadow-yellow-500/10 border border-yellow-500/20"
+                      : "text-yellow-100/40 hover:text-yellow-50 hover:bg-yellow-500/5"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{item.label}</span>
                 </button>
               );
             })}
@@ -116,24 +116,26 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
 
         {/* Right Side - Actions */}
         <div className="flex items-center gap-3">
-          {/* Create Event Button - Elegant Premium */}
+          {/* Create Event Button - Premium Gold Theme */}
           <button
             onClick={handleCreateEvent}
-            className="hidden md:flex items-center gap-2.5 px-6 py-2.5 rounded-xl bg-gradient-to-br from-[#21935B] via-[#1a7549] to-[#145a39] hover:from-[#28a968] hover:via-[#21935B] hover:to-[#1a7549] text-white font-urbanist shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all duration-300 border border-[#21935B]/30 hover:border-[#21935B]/50 group"
+            className="hidden md:flex items-center gap-2.5 px-6 py-2.5 rounded-xl bg-gradient-to-br from-yellow-500 via-amber-600 to-yellow-700 hover:from-yellow-400 hover:via-yellow-500 hover:to-amber-600 text-[#0a0a05] font-black font-urbanist shadow-[0_4px_15px_rgba(250,204,21,0.2),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_6px_25px_rgba(250,204,21,0.4),inset_0_1px_0_rgba(255,255,255,0.4)] transition-all duration-300 border border-yellow-400/30 group active:scale-95"
           >
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90 duration-300" />
-            <span className="text-sm font-medium tracking-wide">
+            <span className="text-xs font-bold tracking-widest uppercase">
               Create Event
             </span>
           </button>
 
-          {/* Logout Button - Muted */}
+          {/* Logout Button - Muted Amber */}
           <button
             onClick={() => setIsLogoutModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 hover:border-white/20 text-gray-400 hover:text-gray-300 hover:bg-white/5 transition-all duration-200 font-urbanist"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-yellow-900/30 hover:border-yellow-500/50 text-yellow-100/40 hover:text-yellow-400 hover:bg-yellow-500/5 transition-all duration-300 font-urbanist"
           >
             <LogOut className="w-4 h-4" />
-            <span className="text-sm font-medium hidden sm:inline">Logout</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider hidden sm:inline">
+              Logout
+            </span>
           </button>
         </div>
       </nav>
@@ -141,15 +143,13 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <>
-          {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-30 lg:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Mobile Menu Panel */}
-          <div className="fixed top-16 left-0 right-0 z-40 lg:hidden backdrop-blur-md bg-black/40 border-b border-white/5 shadow-xl">
-            <div className="px-4 py-4 space-y-1">
+          <div className="fixed top-16 left-0 right-0 z-40 lg:hidden backdrop-blur-xl bg-[#0a0a05]/90 border-b border-yellow-900/30 shadow-2xl animate-in slide-in-from-top-2">
+            <div className="px-4 py-6 space-y-2">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -158,27 +158,24 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
                   <button
                     key={item.id}
                     onClick={() => handleTabChange(item.path)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 font-urbanist ${
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-urbanist uppercase tracking-widest text-xs font-bold ${
                       isActive
-                        ? "bg-cyan-500/10 text-cyan-400 shadow-sm"
-                        : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                        ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                        : "text-yellow-100/40 hover:text-yellow-50 hover:bg-yellow-500/5"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{item.label}</span>
+                    <span>{item.label}</span>
                   </button>
                 );
               })}
 
-              {/* Create New Event in Mobile Menu */}
               <button
                 onClick={handleCreateEvent}
-                className="w-full flex items-center gap-3 px-5 py-3.5 rounded-xl bg-gradient-to-br from-[#21935B] via-[#1a7549] to-[#145a39] hover:from-[#28a968] hover:via-[#21935B] hover:to-[#1a7549] text-white font-urbanist shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 border border-[#21935B]/30 hover:border-[#21935B]/50 mt-3"
+                className="w-full flex items-center justify-center gap-3 px-5 py-4 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-700 text-[#0a0a05] font-black font-urbanist shadow-lg transition-all active:scale-[0.98] mt-4 uppercase tracking-widest text-xs"
               >
                 <Plus className="w-4 h-4" />
-                <span className="text-sm font-medium tracking-wide">
-                  Create Event
-                </span>
+                <span>Create Event</span>
               </button>
             </div>
           </div>
