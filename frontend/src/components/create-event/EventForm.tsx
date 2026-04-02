@@ -157,7 +157,7 @@ export default function EventForm({
                       <ImageIcon className="w-8 h-8 text-yellow-400" />
                     </div>
                     <p className="text-lg font-bold text-white mb-1 uppercase tracking-widest">
-                      Upload Artwork
+                      Upload Photo
                     </p>
                     <p className="text-[10px] text-yellow-100/40 uppercase tracking-[0.2em] font-medium">
                       1080x1080 High-Res Recommended
