@@ -544,7 +544,7 @@ export default function PreviewPane({
                 {variantLabel}
               </span>
               <Image
-                src="/email-template/ICPEP-logo 1.png"
+                src="/email-template/ICPEP-logo-1.png"
                 alt="ICPEP SE - PUP Manila"
                 width={32}
                 height={32}

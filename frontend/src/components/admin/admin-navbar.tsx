@@ -78,7 +78,7 @@ export function AdminNavbar({ activeTab }: AdminNavbarProps) {
           <div className="flex items-center gap-2.5">
             <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500/20 to-amber-600/20 p-1.5 border border-yellow-500/30 flex-shrink-0 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
               <Image
-                src="/images/logos/ICPEP-logo 1.png" // Update this path to your ICPEP SE logo when ready
+                src="/images/logos/ICPEP-logo-1.png" // Update this path to your ICPEP SE logo when ready
                 alt="ICPEP SE"
                 fill
                 sizes="32px"

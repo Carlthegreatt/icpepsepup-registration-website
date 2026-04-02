@@ -39,8 +39,8 @@ export default async function Home({ searchParams }: PageProps) {
         <div className="text-center mb-10 space-y-3">
           <div className="inline-block mb-4 max-h-[60px]">
             <Image
-              src="/images/logos/ICPEP-logo 1.png"
-              alt="Arduino Day Philippines"
+              src="/images/logos/ICPEP-logo-1.png"
+              alt="ICPEP SE - PUP Manila"
               width={96}
               height={90}
               className="opacity-95 brightness-110"
