@@ -234,7 +234,7 @@ export function GuestListSection({
               if (!isQueueUpdating) setShowStatusQueueModal(false);
             }}
           />
-          <div className="relative z-[230] w-full max-w-2xl overflow-hidden rounded-2xl bg-[#0a1520] border border-white/10 shadow-2xl p-5 font-urbanist">
+          <div className="relative z-[230] w-full max-w-2xl overflow-hidden rounded-2xl bg-[#1a140a] border border-amber-700/30 shadow-2xl p-5 font-urbanist">
             <div className="flex items-center justify-between gap-3 mb-3">
               <h2 className="text-white text-lg font-semibold">
                 {isQueueUpdating
@@ -285,9 +285,9 @@ export function GuestListSection({
               </span>
             </div>
 
-            <div className="max-h-72 overflow-auto border border-white/10 rounded-xl">
+            <div className="max-h-72 overflow-auto border border-amber-700/30 rounded-xl">
               <table className="w-full text-xs">
-                <thead className="sticky top-0 bg-[#12222f] text-white/70">
+                <thead className="sticky top-0 bg-[#2a210f] text-white/70">
                   <tr>
                     <th className="text-left px-3 py-2">Guest</th>
                     <th className="text-left px-3 py-2">Status</th>
@@ -353,9 +353,9 @@ export function GuestListSection({
         />
       )}
 
-      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 overflow-hidden">
+      <div className="bg-gradient-to-br from-[#2a210f]/50 via-[#1a140a]/45 to-[#241b0d]/50 backdrop-blur-md rounded-xl border border-amber-700/30 overflow-hidden">
         {/* Header */}
-        <div className="p-4 md:p-6 border-b border-white/10 space-y-4">
+        <div className="p-4 md:p-6 border-b border-amber-700/30 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h4 className="font-semibold text-white">Attendee Guest List</h4>
@@ -395,28 +395,28 @@ export function GuestListSection({
                   )
                 }
                 disabled={isBusy}
-                className="font-urbanist px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 disabled:opacity-50 cursor-pointer"
+                className="font-urbanist px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50 cursor-pointer"
               >
                 <option
                   value="registered"
-                  className="bg-[#0a1520] text-green-400"
+                  className="bg-[#1a140a] text-green-400"
                 >
                   Set as Registered
                 </option>
                 <option
                   value="pending"
-                  className="bg-[#0a1520] text-yellow-400"
+                  className="bg-[#1a140a] text-yellow-400"
                 >
                   Set as Pending
                 </option>
-                <option value="not-going" className="bg-[#0a1520] text-red-400">
+                <option value="not-going" className="bg-[#1a140a] text-red-400">
                   Set as Not Going
                 </option>
               </select>
               <button
                 onClick={() => setShowBulkConfirm(true)}
                 disabled={isBusy}
-                className="font-urbanist px-4 py-1.5 bg-cyan-600/80 hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white text-sm font-medium transition-colors"
+                className="font-urbanist px-4 py-1.5 bg-amber-600/80 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white text-sm font-medium transition-colors"
               >
                 Apply
               </button>

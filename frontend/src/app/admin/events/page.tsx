@@ -52,7 +52,7 @@ export default function EventsPage() {
     }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-[family-name:var(--font-urbanist)]">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-hidden font-[family-name:var(--font-urbanist)]">
       <BokehBackground />
       <Squares direction="diagonal" speed={0.3} />
 
@@ -69,7 +69,7 @@ export default function EventsPage() {
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#06b6d4] mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
                   <p className="text-gray-400">Loading events...</p>
                 </div>
               </div>

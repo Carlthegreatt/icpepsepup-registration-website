@@ -37,7 +37,7 @@ export function GuestStatistics({
           Attendance
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-white/10 shrink-0">
                 <Users className="w-4 h-4 text-white/70" />
@@ -52,7 +52,7 @@ export function GuestStatistics({
             <p className="text-xs text-white/40 mt-1">All RSVPs</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-green-500/20 shrink-0">
                 <CheckCircle className="w-4 h-4 text-green-400" />
@@ -67,7 +67,7 @@ export function GuestStatistics({
             <p className="text-xs text-white/40 mt-1">Approved guests</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-amber-500/20 shrink-0">
                 <Clock className="w-4 h-4 text-amber-400" />
@@ -82,7 +82,7 @@ export function GuestStatistics({
             <p className="text-xs text-white/40 mt-1">Pending approval</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-emerald-500/20 shrink-0">
                 <UserCheck className="w-4 h-4 text-emerald-400" />
@@ -97,7 +97,7 @@ export function GuestStatistics({
             <p className="text-xs text-white/40 mt-1">Approved & attending</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-blue-500/20 shrink-0">
                 <CheckCircle className="w-4 h-4 text-blue-400" />
@@ -112,7 +112,7 @@ export function GuestStatistics({
             <p className="text-xs text-white/40 mt-1">At event</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-red-500/20 shrink-0">
                 <XCircle className="w-4 h-4 text-red-400" />
@@ -138,7 +138,7 @@ export function GuestStatistics({
           Tickets
         </p>
         <div className="grid grid-cols-2 gap-3 md:gap-4">
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-cyan-500/20 shrink-0">
                 <Ticket className="w-4 h-4 text-cyan-400" />
@@ -153,7 +153,7 @@ export function GuestStatistics({
             <p className="text-xs text-white/40 mt-1">QR code generated</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/10 min-h-[100px] flex flex-col">
+          <div className="bg-gradient-to-br from-[#2a210f]/45 via-[#1a140a]/40 to-[#241b0d]/45 backdrop-blur-md rounded-xl p-4 md:p-5 border border-amber-700/30 min-h-[100px] flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <span className="p-1.5 rounded-lg bg-amber-500/20 shrink-0">
                 <AlertCircle className="w-4 h-4 text-amber-400" />

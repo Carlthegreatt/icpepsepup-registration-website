@@ -73,7 +73,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const dataPoint = payload[0].payload;
     return (
-      <div className="bg-[#0B1F23]/95 border border-[#06b6d4]/40 rounded-lg p-3 shadow-xl backdrop-blur-sm">
+      <div className="bg-[#1a140a]/95 border border-amber-500/40 rounded-lg p-3 shadow-xl backdrop-blur-sm">
         <p
           className="text-white font-semibold mb-2 text-xs"
           style={{ fontFamily: "Urbanist, sans-serif" }}
@@ -151,16 +151,16 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
           Analytics Overview
         </h2>
         <div
-          className="text-sm text-gray-400 bg-[#0B1F23]/40 px-4 py-2 rounded-lg border border-[#06b6d4]/30"
+          className="text-sm text-gray-400 bg-[#2a210f]/40 px-4 py-2 rounded-lg border border-amber-500/30"
           style={{ fontFamily: "Urbanist, sans-serif" }}
         >
-          <span className="text-[#06b6d4] font-semibold">Timeline:</span>{" "}
+          <span className="text-amber-300 font-semibold">Timeline:</span>{" "}
           {timelineLabel}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
+        <div className="bg-gradient-to-br from-[#2a210f]/60 via-[#1a140a]/50 to-[#241b0d]/60 backdrop-blur-sm rounded-xl p-6 border border-amber-700/30 hover:border-amber-400/60 shadow-lg shadow-black/20 hover:shadow-amber-500/25 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="w-5 h-5 text-[#60a5fa]" />
             <h3
@@ -243,7 +243,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#06b6d4]/20">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-amber-500/20">
             <span
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
@@ -263,7 +263,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
+        <div className="bg-gradient-to-br from-[#2a210f]/60 via-[#1a140a]/50 to-[#241b0d]/60 backdrop-blur-sm rounded-xl p-6 border border-amber-700/30 hover:border-amber-400/60 shadow-lg shadow-black/20 hover:shadow-amber-500/25 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <Users className="w-5 h-5 text-[#c084fc]" />
             <h3
@@ -354,7 +354,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#06b6d4]/20">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-amber-500/20">
             <span
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
@@ -370,7 +370,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
+        <div className="bg-gradient-to-br from-[#2a210f]/60 via-[#1a140a]/50 to-[#241b0d]/60 backdrop-blur-sm rounded-xl p-6 border border-amber-700/30 hover:border-amber-400/60 shadow-lg shadow-black/20 hover:shadow-amber-500/25 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="w-5 h-5 text-[#34d399]" />
             <h3
@@ -472,7 +472,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#06b6d4]/20">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-amber-500/20">
             <span
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}
@@ -488,7 +488,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300">
+        <div className="bg-gradient-to-br from-[#2a210f]/60 via-[#1a140a]/50 to-[#241b0d]/60 backdrop-blur-sm rounded-xl p-6 border border-amber-700/30 hover:border-amber-400/60 shadow-lg shadow-black/20 hover:shadow-amber-500/25 transition-all duration-300">
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="w-5 h-5 text-[#22c55e]" />
             <h3
@@ -577,7 +577,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#06b6d4]/20">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-amber-500/20">
             <span
               className="text-sm text-gray-400"
               style={{ fontFamily: "Urbanist, sans-serif" }}

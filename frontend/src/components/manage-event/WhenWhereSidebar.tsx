@@ -34,13 +34,13 @@ export function WhenWhereSidebar({ event }: WhenWhereSidebarProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/10">
+      <div className="bg-gradient-to-br from-[#2a210f]/50 via-[#1a140a]/45 to-[#241b0d]/50 backdrop-blur-md rounded-xl p-4 md:p-6 border border-amber-700/30">
         <h3 className="font-urbanist text-base md:text-lg font-bold text-white mb-4">
           When & Where
         </h3>
         <div className="space-y-4">
           <div className="flex gap-3">
-            <div className="text-center bg-white/5 rounded-lg p-3 min-w-[60px]">
+            <div className="text-center bg-[#241b0d]/40 rounded-lg p-3 min-w-[60px] border border-amber-700/20">
               <div className="text-xs text-white/60 uppercase">{month}</div>
               <div className="text-2xl font-bold text-white">{day}</div>
             </div>
@@ -53,8 +53,8 @@ export function WhenWhereSidebar({ event }: WhenWhereSidebarProps) {
           </div>
 
           {event.location ? (
-            <div className="flex gap-3 items-start p-4 bg-white/5 border border-white/10 rounded-lg">
-              <MapPin size={20} className="text-cyan-500 flex-shrink-0 mt-0.5" />
+            <div className="flex gap-3 items-start p-4 bg-[#241b0d]/35 border border-amber-700/25 rounded-lg">
+              <MapPin size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-white font-medium text-sm mb-1">Location</p>
                 <p className="text-white/60 text-xs">
@@ -63,8 +63,8 @@ export function WhenWhereSidebar({ event }: WhenWhereSidebarProps) {
               </div>
             </div>
           ) : (
-            <div className="flex gap-3 items-start p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
-              <AlertTriangle size={20} className="text-cyan-500 flex-shrink-0 mt-0.5" />
+            <div className="flex gap-3 items-start p-4 bg-amber-500/10 border border-amber-500/25 rounded-lg">
+              <AlertTriangle size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-white font-medium text-sm mb-1">Location Missing</p>
                 <p className="text-white/60 text-xs">

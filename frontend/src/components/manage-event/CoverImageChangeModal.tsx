@@ -83,7 +83,7 @@ export function CoverImageChangeModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-gradient-to-br from-[#0a1f14] to-[#120c08] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl relative">
+      <div className="bg-gradient-to-br from-[#2a210f]/90 via-[#1a140a]/90 to-[#241b0d]/90 border border-amber-700/30 rounded-2xl w-full max-w-2xl shadow-2xl relative">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <h2 className="font-urbanist text-xl md:text-2xl font-bold text-white">
@@ -102,7 +102,7 @@ export function CoverImageChangeModal({
         <div className="p-6">
           <div
             onClick={handleClick}
-            className="aspect-[16/9] w-full rounded-xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-cyan-500/50 transition-all"
+            className="aspect-[16/9] w-full rounded-xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:border-amber-400/50 transition-all"
           >
             <input
               ref={fileInputRef}
@@ -141,7 +141,7 @@ export function CoverImageChangeModal({
             ) : (
               <div className="text-center p-8 relative z-10">
                 <div className="bg-white/5 p-4 rounded-full mb-4 mx-auto w-fit group-hover:scale-110 transition-transform">
-                  <ImageIcon className="w-8 h-8 text-white/50 group-hover:text-cyan-500 transition-colors" />
+                  <ImageIcon className="w-8 h-8 text-white/50 group-hover:text-amber-400 transition-colors" />
                 </div>
                 <p className="text-lg font-bold text-white mb-2">
                   Upload Cover Image
@@ -175,7 +175,7 @@ export function CoverImageChangeModal({
           <button
             onClick={handleSave}
             disabled={isPending || !selectedImage}
-            className="font-urbanist px-6 py-2.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-cyan-600/50 disabled:cursor-not-allowed rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            className="font-urbanist px-6 py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-amber-600/50 disabled:cursor-not-allowed rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isPending ? (
               <>
