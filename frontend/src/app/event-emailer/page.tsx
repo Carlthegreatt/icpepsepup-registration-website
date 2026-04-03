@@ -17,6 +17,8 @@ import AttachmentsUploader, {
 } from "@/components/ui/AttachmentsUploader";
 import Tabs from "@/components/ui/Tabs";
 import Docs from "@/components/sections/Docs";
+import BokehBackground from "@/components/create-event/bokeh-background";
+import Squares from "@/components/create-event/squares-background";
 
 type RenderedEmail = {
   to: string;
@@ -126,7 +128,7 @@ const TAB_TUTORIALS: Record<TabId, StepConfig[]> = {
       selector: "#tutorial-env-controls",
       title: "Sender Environment",
       description:
-        "Sender uses the Arduino Day Philippines account configured in the app env.",
+        "Sender uses the ICPEP SE - PUP Manila account configured in the app env.",
       side: "bottom",
       align: "start",
     },
@@ -199,7 +201,7 @@ const buildSteps = (configs: StepConfig[]): DriveStep[] =>
       });
       return acc;
     },
-    []
+    [],
   );
 
 function PageInner() {
@@ -209,7 +211,7 @@ function PageInner() {
   const [csv, setCsv] = useState<ParsedCsv | null>(null);
   const [mapping, setMapping] = useState<CsvMapping | null>(null);
   const [template, setTemplate] = useState<string>(
-    "<html>\n  <body>\n    <p>Hello {{ name }},</p>\n    <p>This is a sample template. Replace me!</p>\n  </body>\n</html>"
+    "<html>\n  <body>\n    <p>Hello {{ name }},</p>\n    <p>This is a sample template. Replace me!</p>\n  </body>\n</html>",
   );
   const [subjectTemplate, setSubjectTemplate] =
     useState<string>("{{ subject }}");
@@ -224,7 +226,7 @@ function PageInner() {
     const configs = TAB_TUTORIALS[tabId];
     if (!configs || configs.length === 0) return;
     const tabButton = document.querySelector<HTMLButtonElement>(
-      tabSelector(tabId)
+      tabSelector(tabId),
     );
     if (tabButton && tabButton.getAttribute("aria-selected") !== "true") {
       tabButton.click();
@@ -243,7 +245,7 @@ function PageInner() {
   }, []);
 
   const onExportJson = async (
-    htmlRender: (row: Record<string, string>) => string
+    htmlRender: (row: Record<string, string>) => string,
   ) => {
     if (!csv || !mapping) return;
     const nunjucks = await import("nunjucks");
@@ -259,8 +261,8 @@ function PageInner() {
               recipient: r[mapping.recipient],
             })
           : mapping.subject
-          ? String(r[mapping.subject])
-          : undefined,
+            ? String(r[mapping.subject])
+            : undefined,
         html: htmlRender(r),
       }));
 
@@ -276,16 +278,20 @@ function PageInner() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#1a1405] via-[#0a0a05] to-[#141005] text-white relative overflow-x-hidden font-urbanist">
+      {/* Note: Check your BokehBackground and Squares components to ensure they also accept/use yellow hues if applicable */}
+      <BokehBackground />
+      <Squares direction="diagonal" speed={0.3} />
+
       <main className="mx-auto max-w-6xl p-6 space-y-6">
         <header className="space-y-1">
-          <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-primary font-urbanist">
+          <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-yellow-400 font-urbanist drop-shadow-[0_0_10px_rgba(250,204,21,0.2)]">
             BatchMail{" "}
-            <span className="keep-light-pill text-[12px] font-semibold px-2.5 py-1 rounded bg-white-100 text-slate-900 border border-slate-300 tracking-widest uppercase font-montserrat">
-              ADPH
+            <span className="keep-light-pill text-[12px] font-bold px-2.5 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 tracking-widest uppercase font-montserrat">
+              ICPEP SE
             </span>
           </h1>
-          <p className="text-sm text-secondary">
+          <p className="text-sm text-yellow-100/60">
             Upload CSV, edit/upload Jinja-style HTML template, preview, and
             export. {totalCount ? `(${totalCount} rows)` : ""}
           </p>
@@ -293,7 +299,7 @@ function PageInner() {
 
         <div
           id="tutorial-tabs"
-          className="rounded-xl border border-primary/20 bg-white p-4 shadow-sm"
+          className="rounded-xl border border-yellow-900/50 bg-[rgba(25,25,10,0.6)] backdrop-blur-md p-4 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
         >
           <Tabs
             items={[
@@ -306,7 +312,7 @@ function PageInner() {
                       <button
                         type="button"
                         onClick={() => startTabTutorial("csv")}
-                        className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
+                        className="text-xs font-semibold rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-yellow-400 hover:bg-yellow-500/20 transition-colors"
                       >
                         CSV Tutorial
                       </button>
@@ -353,7 +359,7 @@ function PageInner() {
                       <button
                         type="button"
                         onClick={() => startTabTutorial("template")}
-                        className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
+                        className="text-xs font-semibold rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-yellow-400 hover:bg-yellow-500/20 transition-colors"
                       >
                         Template Tutorial
                       </button>
@@ -386,7 +392,7 @@ function PageInner() {
                       <button
                         type="button"
                         onClick={() => startTabTutorial("preview")}
-                        className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
+                        className="text-xs font-semibold rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-yellow-400 hover:bg-yellow-500/20 transition-colors"
                       >
                         Preview Tutorial
                       </button>
@@ -412,7 +418,7 @@ function PageInner() {
                       <button
                         type="button"
                         onClick={() => startTabTutorial("docs")}
-                        className="text-xs font-semibold rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-primary hover:bg-primary/10"
+                        className="text-xs font-semibold rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-yellow-400 hover:bg-yellow-500/20 transition-colors"
                       >
                         Docs Tutorial
                       </button>
@@ -444,7 +450,7 @@ function PageInner() {
             }}
             onChange={(id) => {
               const usp = new URLSearchParams(
-                Array.from(searchParams.entries())
+                Array.from(searchParams.entries()),
               );
               usp.set("tab", id);
               router.replace(`${pathname}?${usp.toString()}`);
@@ -458,7 +464,7 @@ function PageInner() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div className="p-6">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-yellow-400">Loading...</div>}>
       <PageInner />
     </Suspense>
   );

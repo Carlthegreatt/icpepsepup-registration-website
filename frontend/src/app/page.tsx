@@ -28,28 +28,30 @@ export default async function Home({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 bg-[#0a0a05]">
       {/* Background Layers */}
+      {/* NOTE: Ensure AdminLoginBackground uses yellow/gold glows instead of emerald */}
       <AdminLoginBackground />
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-[420px]">
         {/* Logo and Title */}
         <div className="text-center mb-10 space-y-3">
-          <div className="inline-block mb-4">
+          <div className="inline-block mb-4 max-h-[60px]">
             <Image
-              src="/images/logos/adph-logo.png"
-              alt="Arduino Day Philippines"
+              src="/images/logos/ICPEP-logo-1.png"
+              alt="ICPEP SE - PUP Manila"
               width={96}
-              height={96}
-              className="opacity-95"
+              height={90}
+              className="opacity-95 brightness-110"
+              style={{ objectFit: "cover", objectPosition: "center" }}
             />
           </div>
           <h1 className="text-[40px] sm:text-[48px] md:text-[56px] font-bold text-[#f5f5f5] tracking-tight leading-none">
             Sign In
           </h1>
-          <p className="text-[#5dd8d8] text-[11px] tracking-[0.3em] uppercase font-semibold">
-            Arduino Day Philippines 2026
+          <p className="text-yellow-500 text-[11px] tracking-[0.3em] uppercase font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]">
+            ICPEP SE - PUP Manila
           </p>
         </div>
 
@@ -57,19 +59,19 @@ export default async function Home({ searchParams }: PageProps) {
         <UserLoginForm showRegisteredMessage={registered === "1"} />
 
         {/* Sign up link */}
-        <p className="mt-4 text-center text-[11px] text-[rgba(200,230,230,0.75)]">
+        <p className="mt-6 text-center text-[11px] text-yellow-100/50">
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="text-[#6dd8d8] hover:text-[#8de5e5] underline-offset-4 hover:underline font-medium"
+            className="text-yellow-400 hover:text-yellow-200 underline-offset-4 hover:underline font-semibold transition-colors"
           >
             Sign Up
           </Link>
         </p>
 
         {/* Bottom Text */}
-        <p className="text-[rgba(255,255,255,0.25)] text-[10px] text-center mt-5 font-medium">
-          Powered by Arduino Community Philippines
+        <p className="text-yellow-100/40 text-[10px] text-center mt-6 font-medium tracking-wide">
+          Powered by ICPEP SE - PUP Manila &copy; 2026
         </p>
       </div>
     </div>
