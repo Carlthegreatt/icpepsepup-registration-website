@@ -73,9 +73,9 @@ export function RsvpModal({
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-gradient-to-b from-[#0f0f0f] to-[#0a0a0a] border border-white/10 rounded-3xl shadow-[0_0_60px_rgba(0,128,128,0.4)] max-h-[85vh] overflow-hidden flex flex-col animate-modal-enter">
+      <div className="relative w-full max-w-2xl bg-gradient-to-b from-[#0f0f0f] to-[#0a0a0a] border border-white/10 rounded-3xl shadow-[0_0_60px_rgba(245,158,11,0.35)] max-h-[85vh] overflow-hidden flex flex-col animate-modal-enter">
         {/* Glow Effect */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-50 pointer-events-none" />
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-amber-500/10 via-transparent to-orange-500/10 opacity-50 pointer-events-none" />
         
         {/* Header */}
         <div className="relative flex items-start justify-between p-6 md:p-8 border-b border-white/10">
@@ -98,8 +98,8 @@ export function RsvpModal({
             // Success State
             <div className="p-8 md:p-12 text-center">
               <div className="relative w-20 h-20 mx-auto mb-6">
-                <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/80 border-2 border-primary flex items-center justify-center shadow-[0_0_30px_rgba(0,128,128,0.5)]">
+                <div className="absolute inset-0 rounded-full bg-amber-500/20 animate-ping" />
+                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 border-2 border-amber-400 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.45)]">
                   <CheckCircle size={40} className="text-white" />
                 </div>
               </div>
@@ -129,7 +129,7 @@ export function RsvpModal({
 
               {hasQuestions ? (
                 <div className="space-y-6">
-                  <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                  <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4">
                     <p className="text-white/90 text-sm leading-relaxed">
                       Please answer the following questions to complete your registration:
                     </p>
@@ -140,7 +140,7 @@ export function RsvpModal({
                       <div key={question.id} className="group">
                         <label className="block mb-3">
                           <div className="flex items-start gap-3 mb-3">
-                            <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-primary/80 border border-primary/30 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_15px_rgba(0,128,128,0.3)]">
+                            <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 border border-amber-400/40 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_15px_rgba(245,158,11,0.35)]">
                               {index + 1}
                             </span>
                             <span className="text-white font-semibold text-base flex-1 pt-0.5">
@@ -156,7 +156,7 @@ export function RsvpModal({
                           onChange={(e) => handleInputChange(question.id, e.target.value)}
                           required={question.required}
                           rows={3}
-                          className="w-full px-4 py-3 bg-black/60 border border-white/10 rounded-xl text-white text-sm placeholder-white/30 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-black/80 transition-all resize-none hover:border-white/20"
+                          className="w-full px-4 py-3 bg-black/60 border border-white/10 rounded-xl text-white text-sm placeholder-white/30 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 focus:bg-black/80 transition-all resize-none hover:border-white/20"
                           placeholder="Type your answer here..."
                         />
                       </div>
@@ -165,8 +165,8 @@ export function RsvpModal({
                 </div>
               ) : (
                 <div className="py-8 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <CheckCircle size={32} className="text-primary" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <CheckCircle size={32} className="text-amber-400" />
                   </div>
                   <p className="text-white/90 text-base font-medium">
                     Confirm your registration for this event?
@@ -186,7 +186,7 @@ export function RsvpModal({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="sm:flex-1 text-base font-bold py-3.5 shadow-[0_0_30px_rgba(0,128,128,0.4)] hover:shadow-[0_0_40px_rgba(0,128,128,0.6)] disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
+                  className="sm:flex-1 text-base font-bold py-3.5 shadow-[0_0_30px_rgba(245,158,11,0.35)] hover:shadow-[0_0_40px_rgba(245,158,11,0.55)] disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">

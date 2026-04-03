@@ -235,7 +235,7 @@ export function EventRegistrationCard({
 
               {/* Center QR Code */}
               <div className="flex justify-center py-6 flex-1 items-center">
-                <div className="bg-white border-4 border-primary rounded-lg p-3">
+                <div className="bg-white border-4 border-amber-500 rounded-lg p-3">
                   <img
                     src={qrCodeUrl}
                     alt="QR Ticket"
@@ -248,7 +248,7 @@ export function EventRegistrationCard({
 
               {/* Event title centered */}
               <div className="text-center pb-3 border-b border-gray-200">
-                <p className="text-sm font-bold text-primary mb-1">
+                <p className="text-sm font-bold text-amber-600 mb-1">
                   {eventTitle}
                 </p>
                 <p className="text-xs text-gray-500 uppercase tracking-widest">
@@ -256,8 +256,8 @@ export function EventRegistrationCard({
                 </p>
               </div>
 
-              {/* Bottom teal bar - Attendee only */}
-              <div className="bg-primary text-white px-6 py-4">
+              {/* Bottom bar - Attendee only */}
+              <div className="bg-amber-600 text-white px-6 py-4">
                 <div className="text-center">
                   <p className="text-xs opacity-75 uppercase tracking-wider mb-1">
                     Attendee
@@ -275,7 +275,7 @@ export function EventRegistrationCard({
             <button
               onClick={handleDownloadTicket}
               disabled={downloadingTicket}
-              className="w-full inline-flex items-center justify-center gap-2 text-sm font-bold px-4 py-3 rounded-lg bg-blue-600 text-white hover:shadow-lg transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 text-sm font-bold px-4 py-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white hover:shadow-lg transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {downloadingTicket ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -289,7 +289,7 @@ export function EventRegistrationCard({
       )}
 
       {isUserRegistered && isApproved && !isGoing && (
-        <div className="mb-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+        <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
           Registration approved. Click GOING to view your QR code.
         </div>
       )}
@@ -300,8 +300,8 @@ export function EventRegistrationCard({
             onClick={onGoingClick}
             className={`flex-1 inline-flex items-center justify-center gap-2 text-sm font-bold px-4 py-3 rounded-lg border transition-all ${
               isGoing === true
-                ? "bg-emerald-500 text-white border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
-                : "bg-emerald-500/10 text-emerald-200 border-emerald-500/40 hover:bg-emerald-500/20"
+                ? "bg-amber-500 text-white border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+                : "bg-amber-500/10 text-amber-200 border-amber-500/40 hover:bg-amber-500/20"
             }`}
           >
             <CheckCircle2 size={16} />
@@ -326,7 +326,7 @@ export function EventRegistrationCard({
       isGoing === true &&
       generatingQRCode &&
       !qrCodeUrl ? (
-        <div className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-200 inline-flex items-center gap-2">
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 inline-flex items-center gap-2">
           <Loader2 size={16} className="animate-spin" />
           Generating your QR code...
         </div>
@@ -349,9 +349,9 @@ export function EventRegistrationCard({
           className={`text-sm font-bold tracking-wide ${
             isUserRegistered
               ? isApproved
-                ? "bg-green-600/80 hover:bg-green-600/80 cursor-default shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+                ? "bg-amber-600/80 hover:bg-amber-600/80 cursor-default shadow-[0_0_15px_rgba(245,158,11,0.3)]"
                 : "bg-yellow-600/80 hover:bg-yellow-600/80 cursor-default shadow-[0_0_15px_rgba(234,179,8,0.3)]"
-              : "shadow-[0_0_30px_rgba(0,128,128,0.4)] hover:shadow-[0_0_40px_rgba(0,128,128,0.6)]"
+              : "shadow-[0_0_30px_rgba(245,158,11,0.35)] hover:shadow-[0_0_40px_rgba(245,158,11,0.5)]"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {!registrationOpen && !isUserRegistered
@@ -370,7 +370,7 @@ export function EventRegistrationCard({
         <div className="mt-3 text-center">
           <Link
             href={forgotPasswordHref}
-            className="text-[11px] text-[#80d7d7] hover:text-[#a2e6e6] underline-offset-4 hover:underline"
+            className="text-[11px] text-amber-300/80 hover:text-amber-200 underline-offset-4 hover:underline"
           >
             Forgot Password?
           </Link>

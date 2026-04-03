@@ -282,7 +282,7 @@ export default function EventPage() {
             >
               <Link
                 href={breadcrumbParent.href}
-                className="text-cyan-300/80 hover:text-cyan-200 transition-colors"
+                className="text-amber-300/80 hover:text-amber-200 transition-colors"
               >
                 {breadcrumbParent.label}
               </Link>

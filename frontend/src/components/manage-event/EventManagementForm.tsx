@@ -99,17 +99,17 @@ export function EventManagementForm({
     <div className="space-y-6">
       {successMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-[#1a140a] border border-emerald-400/40 rounded-2xl px-6 py-5 max-w-sm w-[90%] text-center shadow-xl shadow-emerald-500/30">
-            <h3 className="font-urbanist text-lg font-bold text-emerald-300 mb-2">
+          <div className="bg-[#1a140a] border border-amber-400/40 rounded-2xl px-6 py-5 max-w-sm w-[90%] text-center shadow-xl shadow-amber-500/25">
+            <h3 className="font-urbanist text-lg font-bold text-amber-300 mb-2">
               Success
             </h3>
-            <p className="font-urbanist text-sm text-emerald-100 mb-4">
+            <p className="font-urbanist text-sm text-amber-100 mb-4">
               {successMessage}
             </p>
             <button
               type="button"
               onClick={() => setSuccessMessage(null)}
-              className="font-montserrat px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-white text-sm font-medium transition-colors"
+              className="font-montserrat px-5 py-2.5 bg-amber-500 hover:bg-amber-600 rounded-lg text-white text-sm font-medium transition-colors"
             >
               Close
             </button>

@@ -14,18 +14,18 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     
     const styles = {
       primary: {
-        container: "md:hover:border-primary focus-within:border-primary focus-within:shadow-[0_0_15px_rgba(0,128,128,0.25)] md:focus-within:shadow-[0_0_25px_rgba(0,128,128,0.45)]",
-        iconWrapper: "group-focus-within:bg-primary/10",
-        iconActive: "text-primary",
-        iconInactive: "text-white/50 group-focus-within:text-primary",
-        label: "group-focus-within:text-primary"
+        container: "md:hover:border-yellow-500/50 focus-within:border-yellow-400 focus-within:shadow-[0_0_15px_rgba(250,204,21,0.2)] md:focus-within:shadow-[0_0_25px_rgba(250,204,21,0.35)]",
+        iconWrapper: "group-focus-within:bg-yellow-500/10",
+        iconActive: "text-yellow-400",
+        iconInactive: "text-white/50 group-focus-within:text-yellow-400",
+        label: "group-focus-within:text-yellow-400"
       },
       secondary: {
-        container: "md:hover:border-secondary focus-within:border-secondary focus-within:shadow-[0_0_15px_rgba(238,116,2,0.25)] md:focus-within:shadow-[0_0_25px_rgba(238,116,2,0.45)]",
-        iconWrapper: "group-focus-within:bg-secondary/10",
-        iconActive: "text-secondary",
-        iconInactive: "text-white/50 group-focus-within:text-secondary",
-        label: "group-focus-within:text-secondary"
+        container: "md:hover:border-amber-500/50 focus-within:border-amber-400 focus-within:shadow-[0_0_15px_rgba(245,158,11,0.2)] md:focus-within:shadow-[0_0_25px_rgba(245,158,11,0.35)]",
+        iconWrapper: "group-focus-within:bg-amber-500/10",
+        iconActive: "text-amber-400",
+        iconInactive: "text-white/50 group-focus-within:text-amber-400",
+        label: "group-focus-within:text-amber-400"
       }
     };
 
@@ -33,7 +33,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className={cn(
-        "bg-[rgba(13,27,42,0.5)] backdrop-blur-xl border border-white/10 rounded-xl p-2.5 flex items-start gap-2.5 transition-all group shadow-lg",
+        "bg-[#1a1405]/60 backdrop-blur-xl border border-yellow-900/20 rounded-xl p-2.5 flex items-start gap-2.5 transition-all group shadow-lg",
         currentStyle.container,
         className
       )}>
