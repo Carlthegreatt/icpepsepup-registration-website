@@ -41,25 +41,27 @@ export function LastStep({ eventSlug, onSubmit }: LastStepProps) {
         </h2>
 
         <div className="max-w-md mx-auto">
-          <p className="text-[rgba(197,213,213,0.9)] text-sm sm:text-base leading-relaxed">
-            You're almost done! Click the button below to complete your registration.
+          <p className="text-yellow-100/60 text-sm sm:text-base leading-relaxed">
+            {
+              "You're almost done! Click the button below to complete your registration."
+            }
           </p>
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-6 pt-4 border-t border-[rgba(139,197,197,0.15)] space-y-3">
+      <div className="mt-4 sm:mt-6 pt-4 border-t border-yellow-900/20 space-y-3">
         <button
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full bg-[rgba(35,60,60,0.6)] hover:bg-[rgba(35,60,60,0.7)] text-[#95b5b5] font-semibold py-3.5 rounded-xl transition-all duration-200 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 font-bold py-3.5 rounded-xl transition-all duration-300 text-sm disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {isSubmitting ? "Submitting..." : "Submit Registration"}
         </button>
         <button
           type="button"
           onClick={handleReturn}
-          className="w-full text-[rgba(200,230,230,0.75)] hover:text-[#8de5e5] text-[11px] sm:text-sm transition-colors"
+          className="w-full text-yellow-100/50 hover:text-yellow-400 text-[11px] sm:text-sm font-semibold transition-colors underline-offset-4 hover:underline"
         >
           Back to Event Page
         </button>

@@ -45,6 +45,15 @@ export function GuestListSection({
     error?: string;
   };
 
+  type ExportColumnOption = {
+    key: string;
+    label: string;
+    category: "base" | "question";
+  };
+
+  type NameOrderOption = "first-name-first" | "last-name-first";
+  type MiddleNameOption = "full" | "initial" | "none";
+
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [showAnswersModal, setShowAnswersModal] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -58,6 +67,16 @@ export function GuestListSection({
   );
   const [statusQueueError, setStatusQueueError] = useState<string | null>(null);
   const [isQueueUpdating, setIsQueueUpdating] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportColumns, setExportColumns] = useState<ExportColumnOption[]>([]);
+  const [selectedExportColumns, setSelectedExportColumns] = useState<string[]>(
+    [],
+  );
+  const [nameOrder, setNameOrder] =
+    useState<NameOrderOption>("first-name-first");
+  const [middleNameOption, setMiddleNameOption] =
+    useState<MiddleNameOption>("full");
+  const [includeSuffixInName, setIncludeSuffixInName] = useState(true);
 
   const { showSuccess, showError } = useNotification();
 
@@ -212,6 +231,71 @@ export function GuestListSection({
     clearSelection();
   };
 
+  const openExportModal = () => {
+    if (filteredGuests.length === 0) {
+      showError("No guests to export");
+      return;
+    }
+
+    const baseColumns: ExportColumnOption[] = [
+      { key: "name", label: "Name", category: "base" },
+      { key: "email", label: "Email", category: "base" },
+      { key: "status", label: "Status", category: "base" },
+      { key: "going", label: "Going", category: "base" },
+      { key: "registeredAt", label: "Registered At", category: "base" },
+      { key: "checkedIn", label: "Checked In", category: "base" },
+      { key: "termsAccepted", label: "Terms Accepted", category: "base" },
+    ];
+
+    const questionKeys = Array.from(
+      new Set(
+        filteredGuests.flatMap((guest) =>
+          guest.form_answers ? Object.keys(guest.form_answers) : [],
+        ),
+      ),
+    );
+
+    const questionColumns: ExportColumnOption[] = questionKeys.map(
+      (question) => ({
+        key: `question:${question}`,
+        label: question,
+        category: "question",
+      }),
+    );
+
+    const nextColumns = [...baseColumns, ...questionColumns];
+    setExportColumns(nextColumns);
+    setSelectedExportColumns(nextColumns.map((column) => column.key));
+    setNameOrder("first-name-first");
+    setMiddleNameOption("full");
+    setIncludeSuffixInName(true);
+    setShowExportModal(true);
+  };
+
+  const toggleExportColumn = (columnKey: string) => {
+    setSelectedExportColumns((prev) =>
+      prev.includes(columnKey)
+        ? prev.filter((key) => key !== columnKey)
+        : [...prev, columnKey],
+    );
+  };
+
+  const handleConfirmExport = () => {
+    if (selectedExportColumns.length === 0) {
+      showError("Please select at least one column");
+      return;
+    }
+
+    handleExport(filteredGuests, selectedExportColumns, {
+      order: nameOrder,
+      middleName: middleNameOption,
+      includeSuffix: includeSuffixInName,
+    });
+    setShowExportModal(false);
+  };
+
+  const isNameColumnSelected = selectedExportColumns.includes("name");
+
   return (
     <>
       <BulkActionConfirmModal
@@ -226,6 +310,170 @@ export function GuestListSection({
         }}
         onClose={() => !isBusy && setShowBulkConfirm(false)}
       />
+      {showExportModal && (
+        <div className="fixed inset-0 z-[220] flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowExportModal(false)}
+          />
+          <div className="relative z-[230] w-full max-w-2xl overflow-hidden rounded-2xl bg-[#1a140a] border border-amber-700/30 shadow-2xl p-5 font-urbanist">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h2 className="text-white text-lg font-semibold">
+                Export CSV Columns
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-3 py-1.5 rounded-lg text-xs border border-white/15 text-white/80 hover:text-white hover:bg-white/5"
+              >
+                Close
+              </button>
+            </div>
+
+            <p className="text-xs text-white/70 mb-3">
+              Select the columns you want to include in the CSV export.
+            </p>
+
+            <div className="mb-3 rounded-xl border border-amber-700/30 bg-white/[0.02] p-3">
+              <p className="text-xs text-yellow-300/90 uppercase tracking-wider font-semibold mb-2">
+                Name Format
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-white/60 mb-1">
+                    Order
+                  </label>
+                  <select
+                    value={nameOrder}
+                    onChange={(e) =>
+                      setNameOrder(e.target.value as NameOrderOption)
+                    }
+                    disabled={!isNameColumnSelected}
+                    className="w-full rounded-lg border border-white/15 bg-[#1a140a] px-2.5 py-2 text-xs text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="first-name-first">First Name First</option>
+                    <option value="last-name-first">Last Name First</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-white/60 mb-1">
+                    Middle Name
+                  </label>
+                  <select
+                    value={middleNameOption}
+                    onChange={(e) =>
+                      setMiddleNameOption(e.target.value as MiddleNameOption)
+                    }
+                    disabled={!isNameColumnSelected}
+                    className="w-full rounded-lg border border-white/15 bg-[#1a140a] px-2.5 py-2 text-xs text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="full">Full Middle Name</option>
+                    <option value="initial">Middle Initial Only</option>
+                    <option value="none">No Middle Name</option>
+                  </select>
+                </div>
+
+                <div className="flex items-end">
+                  <label className="inline-flex items-center gap-2 px-2.5 py-2 rounded-lg border border-white/15 w-full text-xs text-white/80">
+                    <input
+                      type="checkbox"
+                      checked={includeSuffixInName}
+                      onChange={(e) => setIncludeSuffixInName(e.target.checked)}
+                      disabled={!isNameColumnSelected}
+                      className="h-4 w-4 rounded border-white/20 bg-transparent text-amber-500 focus:ring-amber-500/50 disabled:opacity-50"
+                    />
+                    Include Suffix
+                  </label>
+                </div>
+              </div>
+
+              {!isNameColumnSelected && (
+                <p className="text-[10px] text-white/50 mt-2">
+                  Enable the Name column to apply name formatting options.
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedExportColumns(
+                      exportColumns.map((column) => column.key),
+                    )
+                  }
+                  className="px-2.5 py-1 rounded-md text-xs border border-amber-500/30 text-amber-300 hover:bg-amber-500/10"
+                >
+                  Select all
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedExportColumns([])}
+                  className="px-2.5 py-1 rounded-md text-xs border border-white/15 text-white/70 hover:bg-white/5"
+                >
+                  Clear all
+                </button>
+              </div>
+              <span className="text-xs text-white/60">
+                {selectedExportColumns.length} / {exportColumns.length} selected
+              </span>
+            </div>
+
+            <div className="max-h-72 overflow-auto border border-amber-700/30 rounded-xl p-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {exportColumns.map((column) => {
+                  const isChecked = selectedExportColumns.includes(column.key);
+                  return (
+                    <label
+                      key={column.key}
+                      className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs cursor-pointer transition-colors ${
+                        isChecked
+                          ? "border-amber-500/40 bg-amber-500/10"
+                          : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleExportColumn(column.key)}
+                          className="h-4 w-4 rounded border-white/20 bg-transparent text-amber-500 focus:ring-amber-500/50"
+                        />
+                        <span className="text-white/90 truncate">{column.label}</span>
+                      </div>
+                      {column.category === "question" && (
+                        <span className="text-[10px] uppercase tracking-wider text-yellow-200/60">
+                          Custom
+                        </span>
+                      )}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 rounded-lg text-xs border border-white/15 text-white/80 hover:text-white hover:bg-white/5"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmExport}
+                disabled={selectedExportColumns.length === 0}
+                className="px-4 py-2 rounded-lg text-xs bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium"
+              >
+                Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {showStatusQueueModal && (
         <div className="fixed inset-0 z-[220] flex items-center justify-center p-4">
           <div
@@ -234,7 +482,7 @@ export function GuestListSection({
               if (!isQueueUpdating) setShowStatusQueueModal(false);
             }}
           />
-          <div className="relative z-[230] w-full max-w-2xl overflow-hidden rounded-2xl bg-[#0a1520] border border-white/10 shadow-2xl p-5 font-urbanist">
+          <div className="relative z-[230] w-full max-w-2xl overflow-hidden rounded-2xl bg-[#1a140a] border border-amber-700/30 shadow-2xl p-5 font-urbanist">
             <div className="flex items-center justify-between gap-3 mb-3">
               <h2 className="text-white text-lg font-semibold">
                 {isQueueUpdating
@@ -285,9 +533,9 @@ export function GuestListSection({
               </span>
             </div>
 
-            <div className="max-h-72 overflow-auto border border-white/10 rounded-xl">
+            <div className="max-h-72 overflow-auto border border-amber-700/30 rounded-xl">
               <table className="w-full text-xs">
-                <thead className="sticky top-0 bg-[#12222f] text-white/70">
+                <thead className="sticky top-0 bg-[#2a210f] text-white/70">
                   <tr>
                     <th className="text-left px-3 py-2">Guest</th>
                     <th className="text-left px-3 py-2">Status</th>
@@ -353,9 +601,9 @@ export function GuestListSection({
         />
       )}
 
-      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 overflow-hidden">
+      <div className="bg-gradient-to-br from-[#2a210f]/50 via-[#1a140a]/45 to-[#241b0d]/50 backdrop-blur-md rounded-xl border border-amber-700/30 overflow-hidden">
         {/* Header */}
-        <div className="p-4 md:p-6 border-b border-white/10 space-y-4">
+        <div className="p-4 md:p-6 border-b border-amber-700/30 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h4 className="font-semibold text-white">Attendee Guest List</h4>
@@ -365,7 +613,7 @@ export function GuestListSection({
             </div>
             <GuestListHeader
               guestCount={filteredGuests.length}
-              onExport={() => handleExport(filteredGuests)}
+              onExport={openExportModal}
               onCheckIn={() => setIsScannerOpen(true)}
             />
           </div>
@@ -395,28 +643,28 @@ export function GuestListSection({
                   )
                 }
                 disabled={isBusy}
-                className="font-urbanist px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 disabled:opacity-50 cursor-pointer"
+                className="font-urbanist px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50 cursor-pointer"
               >
                 <option
                   value="registered"
-                  className="bg-[#0a1520] text-green-400"
+                  className="bg-[#1a140a] text-green-400"
                 >
                   Set as Registered
                 </option>
                 <option
                   value="pending"
-                  className="bg-[#0a1520] text-yellow-400"
+                  className="bg-[#1a140a] text-yellow-400"
                 >
                   Set as Pending
                 </option>
-                <option value="not-going" className="bg-[#0a1520] text-red-400">
+                <option value="not-going" className="bg-[#1a140a] text-red-400">
                   Set as Not Going
                 </option>
               </select>
               <button
                 onClick={() => setShowBulkConfirm(true)}
                 disabled={isBusy}
-                className="font-urbanist px-4 py-1.5 bg-cyan-600/80 hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white text-sm font-medium transition-colors"
+                className="font-urbanist px-4 py-1.5 bg-amber-600/80 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white text-sm font-medium transition-colors"
               >
                 Apply
               </button>

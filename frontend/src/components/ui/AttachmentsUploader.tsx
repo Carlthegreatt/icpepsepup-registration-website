@@ -19,10 +19,15 @@ type Props = {
   onChange: (next: AttachIndex) => void;
 };
 
-export default function AttachmentsUploader({ csv, mapping, value, onChange }: Props) {
+export default function AttachmentsUploader({
+  csv,
+  mapping,
+  value,
+  onChange,
+}: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const fileBaseName = useCallback((name: string) => {
-    const idx = name.lastIndexOf('.');
+    const idx = name.lastIndexOf(".");
     return idx > 0 ? name.slice(0, idx) : name;
   }, []);
 
@@ -30,18 +35,28 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
     if (!csv || !mapping) return new Set<string>();
     const s = new Set<string>();
     (csv.rows as Array<Record<string, string>>).forEach((r) =>
-      s.add(normalizeNameKey(String(r[mapping.name] || "")))
+      s.add(normalizeNameKey(String(r[mapping.name] || ""))),
     );
     return s;
   }, [csv, mapping]);
 
   const computed = useMemo(() => {
-    const files = Object.values(value).reduce((acc, arr) => acc + arr.length, 0);
-    let matched = 0; const unmatched: string[] = [];
+    const files = Object.values(value).reduce(
+      (acc, arr) => acc + arr.length,
+      0,
+    );
+    let matched = 0;
+    const unmatched: string[] = [];
     for (const [key, arr] of Object.entries(value)) {
-      if (rowsNameSet.has(key)) matched += arr.length; else unmatched.push(...arr.map(a => a.filename));
+      if (rowsNameSet.has(key)) matched += arr.length;
+      else unmatched.push(...arr.map((a) => a.filename));
     }
-    return { files, matched, unmatched: files - matched, unmatchedFiles: unmatched };
+    return {
+      files,
+      matched,
+      unmatched: files - matched,
+      unmatchedFiles: unmatched,
+    };
   }, [value, rowsNameSet]);
 
   const largePdfDetected = useMemo(() => {
@@ -57,22 +72,26 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
             const isPdf = mime.includes("pdf") || filename.endsWith(".pdf");
             return Boolean(isPdf && size >= min && size <= max);
           })
-        : false
+        : false,
     );
   }, [value]);
 
-  const fileToBase64 = (file: File) => new Promise<string>((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => {
-      const res = String(fr.result || '');
-      const idx = res.indexOf('base64,');
-      resolve(idx >= 0 ? res.slice(idx + 7) : res);
-    };
-    fr.onerror = () => reject(fr.error || new Error('read error'));
-    fr.readAsDataURL(file);
-  });
+  const fileToBase64 = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        const res = String(fr.result || "");
+        const idx = res.indexOf("base64,");
+        resolve(idx >= 0 ? res.slice(idx + 7) : res);
+      };
+      fr.onerror = () => reject(fr.error || new Error("read error"));
+      fr.readAsDataURL(file);
+    });
 
-  const onUpload = async (files: FileList | null, source?: HTMLInputElement | null) => {
+  const onUpload = async (
+    files: FileList | null,
+    source?: HTMLInputElement | null,
+  ) => {
     if (!files || files.length === 0) return;
     const next: AttachIndex = { ...value };
     for (const f of Array.from(files)) {
@@ -100,14 +119,20 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
   };
 
   return (
-    <div className="rounded-lg border p-4 space-y-3">
+    <div className="rounded-xl border border-yellow-900/50 bg-[rgba(25,25,10,0.4)] p-5 space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-medium">2) Upload Attachments (optional)</h2>
-          <p className="text-xs opacity-80">File base name must match the CSV <strong>Name</strong> column (case-insensitive). Multiple files per name are allowed.</p>
+          <h2 className="text-lg font-bold text-yellow-50">
+            2) Upload Attachments (optional)
+          </h2>
+          <p className="text-xs text-yellow-100/60 mt-1">
+            File base name must match the CSV{" "}
+            <strong className="text-yellow-400">Name</strong> column
+            (case-insensitive). Multiple files per name are allowed.
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <label className="px-3 py-1 rounded border text-sm bg-white text-gray-900 hover:bg-gray-50 cursor-pointer">
+          <label className="inline-flex items-center gap-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-2 text-sm font-bold text-yellow-400 shadow-sm cursor-pointer hover:bg-yellow-500/20 transition-all active:scale-[0.98]">
             <input
               ref={inputRef}
               type="file"
@@ -117,30 +142,56 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
             />
             Choose files…
           </label>
-          <button type="button" onClick={clearAll} disabled={computed.files === 0} className="px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50 disabled:opacity-50">Clear</button>
+          <button
+            type="button"
+            onClick={clearAll}
+            disabled={computed.files === 0}
+            className="rounded-xl border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] px-4 py-2 text-sm font-semibold text-yellow-700 shadow-sm hover:text-yellow-500 hover:bg-yellow-950/30 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Clear
+          </button>
         </div>
       </div>
 
-      <div className="text-xs flex flex-wrap gap-3">
-        <span className="opacity-70">Summary:</span>
-  <span><strong>Total:</strong> {computed.files}</span>
-  <span className="text-green-700"><strong>Matched:</strong> {computed.matched}</span>
-  <span className="text-red-700"><strong>Unmatched:</strong> {computed.unmatched}</span>
+      <div className="text-xs flex flex-wrap gap-4 pt-3 border-t border-yellow-900/30">
+        <span className="text-[11px] font-bold text-yellow-500 uppercase tracking-wider opacity-70">
+          Summary:
+        </span>
+        <span className="text-yellow-50">
+          <strong className="text-yellow-400">Total:</strong> {computed.files}
+        </span>
+        <span className="text-emerald-400">
+          <strong className="text-emerald-500">Matched:</strong>{" "}
+          {computed.matched}
+        </span>
+        <span className="text-red-400">
+          <strong className="text-red-500">Unmatched:</strong>{" "}
+          {computed.unmatched}
+        </span>
       </div>
 
       {computed.unmatchedFiles.length > 0 && (
-        <details className="text-xs">
-          <summary className="cursor-pointer">View unmatched files</summary>
-          <ul className="list-disc pl-5 mt-1">
-            {computed.unmatchedFiles.slice(0, 30).map((f, i) => (<li key={i}>{f}</li>))}
-            {computed.unmatchedFiles.length > 30 && <li>…and {computed.unmatchedFiles.length - 30} more</li>}
+        <details className="text-xs group">
+          <summary className="cursor-pointer text-yellow-400 hover:text-yellow-300 transition-colors font-medium select-none">
+            View unmatched files
+          </summary>
+          <ul className="list-disc pl-5 mt-2 space-y-1 text-yellow-100/70">
+            {computed.unmatchedFiles.slice(0, 30).map((f, i) => (
+              <li key={i}>{f}</li>
+            ))}
+            {computed.unmatchedFiles.length > 30 && (
+              <li className="text-yellow-500/50 italic">
+                …and {computed.unmatchedFiles.length - 30} more
+              </li>
+            )}
           </ul>
         </details>
       )}
 
       {largePdfDetected && (
-        <div className="text-xs text-yellow-800 bg-yellow-50 border border-yellow-200 rounded px-3 py-2">
-          Large 1-2 MB PDF attachments detected. Batch sending will be limited to 1 email per send to stay under attachment limits.
+        <div className="text-xs font-medium text-amber-400 bg-amber-400/10 border border-amber-400/20 rounded-lg px-4 py-3 shadow-[0_0_15px_rgba(251,191,36,0.1)] leading-relaxed">
+          Large 1-2 MB PDF attachments detected. Batch sending will be limited
+          to 1 email per send to stay under attachment limits.
         </div>
       )}
     </div>

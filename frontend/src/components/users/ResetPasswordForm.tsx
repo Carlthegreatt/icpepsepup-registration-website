@@ -25,10 +25,13 @@ export default function ResetPasswordForm() {
     let cancelled = false;
 
     const bootstrap = async () => {
-      const hashParams = new URLSearchParams(window.location.hash.replace("#", ""));
+      const hashParams = new URLSearchParams(
+        window.location.hash.replace("#", ""),
+      );
       const searchParams = new URLSearchParams(window.location.search);
       const isRecoveryFlow =
-        hashParams.get("type") === "recovery" || searchParams.get("type") === "recovery";
+        hashParams.get("type") === "recovery" ||
+        searchParams.get("type") === "recovery";
 
       const {
         data: { session },
@@ -91,21 +94,22 @@ export default function ResetPasswordForm() {
       relative overflow-hidden
       bg-[rgba(255,255,255,0.03)]
       backdrop-blur-md
-      border border-[rgba(255,255,255,0.15)]
+      border border-[rgba(255,255,100,0.15)]
       rounded-[24px]
       p-8
       shadow-[0_8px_32px_rgba(0,0,0,0.4)]
     "
     >
       {isCheckingSession ? (
-        <div className="py-10 text-center text-[#a5c5c5] text-sm flex items-center justify-center gap-2">
+        <div className="py-10 text-center text-yellow-500/80 text-sm flex items-center justify-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin" />
           Validating reset link...
         </div>
       ) : !canReset ? (
         <div className="bg-red-500/10 border border-red-400/30 rounded-xl px-4 py-3">
           <p className="text-red-200 text-xs text-center">
-            This reset link is invalid or has expired. Request a new password reset link.
+            This reset link is invalid or has expired. Request a new password
+            reset link.
           </p>
         </div>
       ) : (
@@ -117,13 +121,13 @@ export default function ResetPasswordForm() {
           )}
 
           {success && (
-            <div className="bg-emerald-500/10 border border-emerald-400/30 rounded-xl px-4 py-3 mb-4">
-              <p className="text-emerald-200 text-xs text-center">{success}</p>
+            <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-xl px-4 py-3 mb-4">
+              <p className="text-yellow-200 text-xs text-center">{success}</p>
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-[#9dd5d5] text-[11px] font-medium block">
+            <label className="text-yellow-400 text-[11px] font-medium block uppercase tracking-wider">
               New Password
             </label>
             <div className="relative">
@@ -137,19 +141,19 @@ export default function ResetPasswordForm() {
                 disabled={isSubmitting}
                 className={`
                   w-full
-                  !bg-[rgba(15,30,30,0.9)]
+                  !bg-[rgba(25,25,10,0.8)]
                   border ${
                     focusedField === "password"
-                      ? "!border-[#7dc5c5]"
-                      : "!border-[#5da5a5]"
+                      ? "!border-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.2)]"
+                      : "!border-yellow-900/50"
                   }
                   rounded-xl
                   px-4 py-3 pr-12
-                  !text-[#d5e5e5] text-sm
-                  !placeholder:text-[rgba(197,213,213,0.5)]
+                  !text-yellow-50 text-sm
+                  !placeholder:text-yellow-700/50
                   outline-none
                   transition-all duration-200
-                  focus:!border-[#7dc5c5]
+                  focus:!border-yellow-400
                   disabled:opacity-50 disabled:cursor-not-allowed
                 `}
               />
@@ -157,7 +161,7 @@ export default function ResetPasswordForm() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isSubmitting}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7dc5c5] hover:text-[#9dd5d5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -166,7 +170,7 @@ export default function ResetPasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[#9dd5d5] text-[11px] font-medium block">
+            <label className="text-yellow-400 text-[11px] font-medium block uppercase tracking-wider">
               Confirm Password
             </label>
             <div className="relative">
@@ -180,19 +184,19 @@ export default function ResetPasswordForm() {
                 disabled={isSubmitting}
                 className={`
                   w-full
-                  !bg-[rgba(15,30,30,0.9)]
+                  !bg-[rgba(25,25,10,0.8)]
                   border ${
                     focusedField === "confirmPassword"
-                      ? "!border-[#7dc5c5]"
-                      : "!border-[#5da5a5]"
+                      ? "!border-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.2)]"
+                      : "!border-yellow-900/50"
                   }
                   rounded-xl
                   px-4 py-3 pr-12
-                  !text-[#d5e5e5] text-sm
-                  !placeholder:text-[rgba(197,213,213,0.5)]
+                  !text-yellow-50 text-sm
+                  !placeholder:text-yellow-700/50
                   outline-none
                   transition-all duration-200
-                  focus:!border-[#7dc5c5]
+                  focus:!border-yellow-400
                   disabled:opacity-50 disabled:cursor-not-allowed
                 `}
               />
@@ -200,8 +204,12 @@ export default function ResetPasswordForm() {
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 disabled={isSubmitting}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7dc5c5] hover:text-[#9dd5d5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label={showConfirmPassword ? "Hide confirmation password" : "Show confirmation password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirmation password"
+                    : "Show confirmation password"
+                }
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -213,17 +221,20 @@ export default function ResetPasswordForm() {
             disabled={isSubmitting || !!success}
             className="
               w-full
-              bg-[rgba(35,60,60,0.6)]
-              hover:bg-[rgba(35,60,60,0.7)]
-              text-[#95b5b5]
-              font-semibold
+              bg-yellow-500/10
+              hover:bg-yellow-500/20
+              border border-yellow-500/30
+              hover:border-yellow-500/50
+              text-yellow-400
+              font-bold
               py-3.5
               rounded-xl
-              transition-all duration-200
+              transition-all duration-300
               text-sm
               mt-4
-              disabled:opacity-60
+              disabled:opacity-40
               disabled:cursor-not-allowed
+              active:scale-[0.98]
             "
           >
             {isSubmitting ? (
@@ -238,8 +249,8 @@ export default function ResetPasswordForm() {
         </form>
       )}
 
-      <div className="mt-7 pt-6 border-t border-[rgba(139,197,197,0.15)]">
-        <p className="text-[rgba(165,197,197,0.6)] text-[10px] text-center font-medium">
+      <div className="mt-7 pt-6 border-t border-yellow-900/20">
+        <p className="text-yellow-600/60 text-[10px] text-center font-medium tracking-wide">
           Your reset link is secure, single-use, and time-limited.
         </p>
       </div>

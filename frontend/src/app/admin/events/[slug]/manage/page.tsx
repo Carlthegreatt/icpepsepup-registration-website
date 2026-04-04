@@ -71,13 +71,13 @@ export default function ManageEventPage() {
 
   if (loading || roleLoading) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-urbanist">
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-hidden font-urbanist">
         <BokehBackground />
         <Squares direction="diagonal" speed={0.3} />
         <div className="relative z-10 flex items-center justify-center min-h-screen">
           <LoadingScreen
             message="LOADING EVENT MANAGEMENT..."
-            colorTheme="orange"
+            colorTheme="amber"
           />
         </div>
       </div>
@@ -96,11 +96,11 @@ export default function ManageEventPage() {
 
   if (!canManage) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-urbanist">
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-hidden font-urbanist">
         <BokehBackground />
         <Squares direction="diagonal" speed={0.3} />
         <div className="relative z-10 flex items-center justify-center min-h-screen">
-          <LoadingScreen message="REDIRECTING..." colorTheme="orange" />
+          <LoadingScreen message="REDIRECTING..." colorTheme="amber" />
         </div>
       </div>
     );
@@ -119,7 +119,7 @@ export default function ManageEventPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-x-hidden font-urbanist">
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-x-hidden font-urbanist">
       <BokehBackground />
 
       <Squares direction="diagonal" speed={0.3} />

@@ -33,7 +33,7 @@ export function LocationMapPreview({
         href={mapsUrl}
         target="_blank"
         rel="noreferrer"
-        className="mt-2 inline-flex items-center gap-2 text-sm text-cyan-300/80 hover:text-cyan-200 transition-colors"
+        className="mt-2 inline-flex items-center gap-2 text-sm text-amber-300/80 hover:text-amber-200 transition-colors"
       >
         <MapPin className="w-4 h-4" />
         Open in Google Maps

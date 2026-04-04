@@ -33,7 +33,10 @@ export default function UserLoginForm({
     (async () => {
       const res = await getUserRoleAction();
       if (cancelled) return;
-      const data = (res.data ?? {}) as { role?: string | null; userId?: string | null };
+      const data = (res.data ?? {}) as {
+        role?: string | null;
+        userId?: string | null;
+      };
 
       // Update global store
       const userRole =
@@ -71,23 +74,23 @@ export default function UserLoginForm({
       relative overflow-hidden
       bg-[rgba(255,255,255,0.03)]
       backdrop-blur-md
-      border border-[rgba(255,255,255,0.15)]
+      border border-[rgba(255,255,100,0.15)]
       rounded-[24px]
       p-8
       shadow-[0_8px_32px_rgba(0,0,0,0.4)]
     "
     >
       {showRegisteredMessage && (
-        <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-400/30 px-4 py-3 text-center">
-          <p className="text-emerald-200 text-xs">
+        <div className="mb-4 rounded-xl bg-yellow-500/10 border border-yellow-400/30 px-4 py-3 text-center">
+          <p className="text-yellow-200 text-xs">
             Account created. Sign in to continue.
           </p>
         </div>
       )}
 
       {state?.success && (
-        <div className="mb-4 rounded-xl bg-emerald-500/10 border border-emerald-400/30 px-4 py-3 text-center">
-          <p className="text-emerald-200 text-xs">
+        <div className="mb-4 rounded-xl bg-yellow-500/10 border border-yellow-400/30 px-4 py-3 text-center">
+          <p className="text-yellow-200 text-xs">
             Sign in successful. Please wait...
           </p>
         </div>
@@ -102,8 +105,8 @@ export default function UserLoginForm({
 
         {/* email input */}
         <div className="space-y-2">
-          <label className="text-[#9dd5d5] text-[11px] font-medium block">
-            Email
+          <label className="text-yellow-400 text-[11px] font-medium block uppercase tracking-wider">
+            Email Address
           </label>
           <input
             name="email"
@@ -116,19 +119,18 @@ export default function UserLoginForm({
             disabled={isPending}
             className={`
               w-full
-              !bg-[rgba(15,30,30,0.9)]
+              !bg-[rgba(25,25,10,0.8)]
               border ${
                 focusedField === "email"
-                  ? "!border-[#7dc5c5]"
-                  : "!border-[#5da5a5]"
+                  ? "!border-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.2)]"
+                  : "!border-yellow-900/50"
               }
               rounded-xl
               px-4 py-3
-              !text-[#d5e5e5] text-sm
-              !placeholder:text-[rgba(197,213,213,0.5)]
+              !text-yellow-50 text-sm
+              !placeholder:text-yellow-700/50
               outline-none
               transition-all duration-200
-              focus:!border-[#7dc5c5]
               disabled:opacity-50 disabled:cursor-not-allowed
             `}
           />
@@ -136,7 +138,7 @@ export default function UserLoginForm({
 
         {/* password input */}
         <div className="space-y-2">
-          <label className="text-[#9dd5d5] text-[11px] font-medium block">
+          <label className="text-yellow-400 text-[11px] font-medium block uppercase tracking-wider">
             Password
           </label>
           <div className="relative">
@@ -151,19 +153,18 @@ export default function UserLoginForm({
               disabled={isPending}
               className={`
                 w-full
-                !bg-[rgba(15,30,30,0.9)]
+                !bg-[rgba(25,25,10,0.8)]
                 border ${
                   focusedField === "password"
-                    ? "!border-[#7dc5c5]"
-                    : "!border-[#5da5a5]"
+                    ? "!border-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.2)]"
+                    : "!border-yellow-900/50"
                 }
                 rounded-xl
                 px-4 py-3 pr-12
-                !text-[#d5e5e5] text-sm
-                !placeholder:text-[rgba(197,213,213,0.5)]
+                !text-yellow-50 text-sm
+                !placeholder:text-yellow-700/50
                 outline-none
                 transition-all duration-200
-                focus:!border-[#7dc5c5]
                 disabled:opacity-50 disabled:cursor-not-allowed
               `}
             />
@@ -173,7 +174,7 @@ export default function UserLoginForm({
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               disabled={isPending}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7dc5c5] hover:text-[#9dd5d5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -182,7 +183,7 @@ export default function UserLoginForm({
           <div className="text-right pt-1">
             <Link
               href="/forgot-password"
-              className="text-[11px] text-[#80d7d7] hover:text-[#a2e6e6] underline-offset-4 hover:underline"
+              className="text-[11px] text-yellow-500/80 hover:text-yellow-400 underline-offset-4 hover:underline transition-colors"
             >
               Forgot Password?
             </Link>
@@ -195,17 +196,20 @@ export default function UserLoginForm({
           disabled={isPending || !!state?.success}
           className="
             w-full
-            bg-[rgba(35,60,60,0.6)]
-            hover:bg-[rgba(35,60,60,0.7)]
-            text-[#95b5b5]
-            font-semibold
+            bg-yellow-500/10
+            hover:bg-yellow-500/20
+            border border-yellow-500/30
+            hover:border-yellow-500/50
+            text-yellow-400
+            font-bold
             py-3.5
             rounded-xl
-            transition-all duration-200
+            transition-all duration-300
             text-sm
             mt-4
-            disabled:opacity-60
+            disabled:opacity-40
             disabled:cursor-not-allowed
+            active:scale-[0.98]
           "
         >
           {isPending ? (
@@ -219,15 +223,15 @@ export default function UserLoginForm({
               Redirecting...
             </span>
           ) : (
-            "Sign In"
+            "SIGN IN"
           )}
         </button>
       </form>
 
       {/* Footer Text inside card */}
-      <div className="mt-7 pt-6 border-t border-[rgba(139,197,197,0.15)]">
-        <p className="text-[rgba(165,197,197,0.6)] text-[10px] text-center font-medium">
-          Welcome back · Arduino Day Philippines
+      <div className="mt-7 pt-6 border-t border-yellow-900/20">
+        <p className="text-yellow-600/60 text-[10px] text-center font-medium tracking-widest uppercase">
+          Welcome back · ICPEP SE - PUP Manila
         </p>
       </div>
     </div>

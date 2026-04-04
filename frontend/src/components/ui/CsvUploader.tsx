@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import Papa from "papaparse";
 import { useRef, useState, useCallback } from "react";
@@ -21,75 +22,98 @@ type Props = {
 };
 
 const guessRecipient = (headers: string[]) =>
-  headers.find((h) => /^(email|e-mail|recipient|to|address)$/i.test(h)) || headers[0] || "";
+  headers.find((h) => /^(email|e-mail|recipient|to|address)$/i.test(h)) ||
+  headers[0] ||
+  "";
 
 const guessName = (headers: string[]) =>
-  headers.find((h) => /^(name|full[_\s-]?name|first[_\s-]?name)$/i.test(h)) || headers[0] || "";
+  headers.find((h) => /^(name|full[_\s-]?name|first[_\s-]?name)$/i.test(h)) ||
+  headers[0] ||
+  "";
 
 const guessSubject = (headers: string[]) =>
   headers.find((h) => /^(subject|title|headline|topic)$/i.test(h)) || null;
 
 export default function CsvUploader({ onParsed, currentMapping }: Props) {
   const [csv, setCsv] = useState<ParsedCsv | null>(null);
-  const [mapping, setMapping] = useState<CsvMapping | null>(currentMapping ?? null);
+  const [mapping, setMapping] = useState<CsvMapping | null>(
+    currentMapping ?? null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [dragActive, setDragActive] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFile = useCallback((file: File) => {
-    setError(null);
-    setFileName(file.name);
-    Papa.parse<Record<string, string>>(file, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (h: string) => h.trim(),
-      complete: (results: Papa.ParseResult<Record<string, string>>) => {
-        const rows = (results.data || []).filter(Boolean) as Array<Record<string, string>>;
-        const headers = (results.meta.fields || []).map((h) => String(h));
-        if (headers.length === 0) {
-          setError("No headers found. Ensure the first row contains column names.");
-          return;
-        }
-        const parsed: ParsedCsv = { headers, rows, rowCount: rows.length };
-        setCsv(parsed);
-        const nextMapping: CsvMapping = {
-          recipient: mapping?.recipient || guessRecipient(headers),
-          name: mapping?.name || guessName(headers),
-          subject: mapping?.subject ?? guessSubject(headers),
-        };
-        setMapping(nextMapping);
-        onParsed({ csv: parsed, mapping: nextMapping });
-      },
-      error: (err: unknown) => {
-        const msg = (typeof err === "object" && err && "message" in err)
-          ? String((err as { message?: string }).message || "Failed to parse CSV")
-          : "Failed to parse CSV";
-        setError(msg);
-      },
-    });
-  }, [mapping, onParsed]);
+  const handleFile = useCallback(
+    (file: File) => {
+      setError(null);
+      setFileName(file.name);
+      Papa.parse<Record<string, string>>(file, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: (h: string) => h.trim(),
+        complete: (results: Papa.ParseResult<Record<string, string>>) => {
+          const rows = (results.data || []).filter(Boolean) as Array<
+            Record<string, string>
+          >;
+          const headers = (results.meta.fields || []).map((h) => String(h));
+          if (headers.length === 0) {
+            setError(
+              "No headers found. Ensure the first row contains column names.",
+            );
+            return;
+          }
+          const parsed: ParsedCsv = { headers, rows, rowCount: rows.length };
+          setCsv(parsed);
+          const nextMapping: CsvMapping = {
+            recipient: mapping?.recipient || guessRecipient(headers),
+            name: mapping?.name || guessName(headers),
+            subject: mapping?.subject ?? guessSubject(headers),
+          };
+          setMapping(nextMapping);
+          onParsed({ csv: parsed, mapping: nextMapping });
+        },
+        error: (err: unknown) => {
+          const msg =
+            typeof err === "object" && err && "message" in err
+              ? String(
+                  (err as { message?: string }).message ||
+                    "Failed to parse CSV",
+                )
+              : "Failed to parse CSV";
+          setError(msg);
+        },
+      });
+    },
+    [mapping, onParsed],
+  );
 
   const onChangeSelect = (key: keyof CsvMapping, value: string) => {
     if (!csv) return;
-    const next = { ...(mapping || { recipient: "", name: "", subject: null }), [key]: value || null } as CsvMapping;
+    const next = {
+      ...(mapping || { recipient: "", name: "", subject: null }),
+      [key]: value || null,
+    } as CsvMapping;
     setMapping(next);
     onParsed({ csv, mapping: next });
   };
 
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      if (file.type.includes("csv") || file.name.endsWith(".csv")) {
-        handleFile(file);
-      } else {
-        setError("Only .csv files are supported.");
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        if (file.type.includes("csv") || file.name.endsWith(".csv")) {
+          handleFile(file);
+        } else {
+          setError("Only .csv files are supported.");
+        }
       }
-    }
-  }, [handleFile]);
+    },
+    [handleFile],
+  );
 
   const onDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -99,12 +123,14 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
   }, []);
 
   return (
-    <div className="rounded-lg border p-4 space-y-4">
+    <div className="rounded-xl border border-yellow-900/50 bg-[rgba(25,25,10,0.4)] p-5 space-y-5">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">1) Upload CSV</h2>
-            <p className="text-sm opacity-80">Provide a CSV with a header row. Drag & drop or use the button.</p>
+            <h2 className="text-lg font-bold text-yellow-50">1) Upload CSV</h2>
+            <p className="text-sm text-yellow-100/60">
+              Provide a CSV with a header row. Drag & drop or use the button.
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <input
@@ -120,7 +146,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
             />
             <label
               htmlFor="csv-file-input"
-              className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium shadow-sm cursor-pointer hover:bg-gray-50 focus-within:ring-2 focus-within:ring-green-600"
+              className="inline-flex items-center gap-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-2 text-sm font-bold text-yellow-400 shadow-sm cursor-pointer hover:bg-yellow-500/20 transition-all active:scale-[0.98] focus-within:ring-2 focus-within:ring-yellow-400 focus-within:ring-offset-2 focus-within:ring-offset-[#1a1405]"
             >
               <span className="inline-block">{fileName || "Choose CSV"}</span>
             </label>
@@ -134,7 +160,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                   setError(null);
                   setFileName("");
                 }}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50"
+                className="rounded-xl border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] px-4 py-2 text-sm font-semibold text-yellow-700 shadow-sm hover:text-yellow-500 hover:bg-yellow-950/30 transition-all active:scale-[0.98]"
               >
                 Reset
               </button>
@@ -146,57 +172,87 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
           onDragOver={onDrag}
           onDragLeave={onDrag}
           onDrop={onDrop}
-          className={`group relative rounded-md border border-dashed p-6 text-center transition-colors ${dragActive ? "border-green-500 bg-green-50" : "border-gray-300"}`}
+          className={`group relative rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 ${
+            dragActive
+              ? "border-yellow-400 bg-yellow-400/10 shadow-[0_0_20px_rgba(250,204,21,0.15)]"
+              : "border-yellow-900/40 hover:border-yellow-700/50 hover:bg-yellow-950/10"
+          }`}
         >
-          <p className="text-sm">{dragActive ? "Release to upload CSV" : "Drag & drop CSV here or use the button above."}</p>
+          <p
+            className={`text-sm font-medium ${dragActive ? "text-yellow-400" : "text-yellow-100/50"}`}
+          >
+            {dragActive
+              ? "Release to upload CSV"
+              : "Drag & drop CSV here or use the button above."}
+          </p>
         </div>
       </div>
 
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {error && (
+        <div className="text-sm font-medium text-red-400 bg-red-400/10 border border-red-400/20 p-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {csv && (
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Map Columns</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <label className="text-sm flex flex-col gap-1">
-              <span className="text-xs font-medium opacity-80">Recipient column</span>
+        <div className="space-y-4 pt-2 border-t border-yellow-900/30">
+          <h3 className="text-sm font-bold text-yellow-50 uppercase tracking-wider">
+            Map Columns
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <label className="text-sm flex flex-col gap-1.5">
+              <span className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+                Recipient column
+              </span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full rounded-xl border px-3 py-2 text-sm bg-[rgba(25,25,10,0.8)] border-yellow-900/50 text-yellow-50 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors cursor-pointer"
                 value={mapping?.recipient || ""}
                 onChange={(e) => onChangeSelect("recipient", e.target.value)}
               >
                 {csv.headers.map((h) => (
-                  <option value={h} key={h}>{h}</option>
+                  <option value={h} key={h}>
+                    {h}
+                  </option>
                 ))}
               </select>
             </label>
-            <label className="text-sm flex flex-col gap-1">
-              <span className="text-xs font-medium opacity-80">Name column</span>
+            <label className="text-sm flex flex-col gap-1.5">
+              <span className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+                Name column
+              </span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full rounded-xl border px-3 py-2 text-sm bg-[rgba(25,25,10,0.8)] border-yellow-900/50 text-yellow-50 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors cursor-pointer"
                 value={mapping?.name || ""}
                 onChange={(e) => onChangeSelect("name", e.target.value)}
               >
                 {csv.headers.map((h) => (
-                  <option value={h} key={h}>{h}</option>
+                  <option value={h} key={h}>
+                    {h}
+                  </option>
                 ))}
               </select>
             </label>
-            <label className="text-sm flex flex-col gap-1">
-              <span className="text-xs font-medium opacity-80">Subject column (optional)</span>
+            <label className="text-sm flex flex-col gap-1.5">
+              <span className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+                Subject column (optional)
+              </span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full rounded-xl border px-3 py-2 text-sm bg-[rgba(25,25,10,0.8)] border-yellow-900/50 text-yellow-50 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors cursor-pointer"
                 value={mapping?.subject || ""}
                 onChange={(e) => onChangeSelect("subject", e.target.value)}
               >
                 <option value="">— None —</option>
                 {csv.headers.map((h) => (
-                  <option value={h} key={h}>{h}</option>
+                  <option value={h} key={h}>
+                    {h}
+                  </option>
                 ))}
               </select>
             </label>
           </div>
-          <div className="text-xs opacity-80">Rows parsed: {csv.rowCount}</div>
+          <div className="text-xs font-medium text-yellow-100/40">
+            Rows parsed: {csv.rowCount}
+          </div>
         </div>
       )}
     </div>

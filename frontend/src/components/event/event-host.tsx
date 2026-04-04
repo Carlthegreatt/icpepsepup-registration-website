@@ -17,7 +17,7 @@ export function EventHost({ hostName, hostEmail, className = "" }: EventHostProp
         Hosted By
       </h3>
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-base font-bold">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-base font-bold">
           {initial}
         </div>
         <div>

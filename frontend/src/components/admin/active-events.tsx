@@ -80,35 +80,35 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
           className="text-2xl font-semibold flex items-center gap-2 !text-white"
           style={{ color: "#ffffff", fontFamily: "Urbanist, sans-serif" }}
         >
-          <Calendar className="w-6 h-6 text-[#06b6d4]" />
+          <Calendar className="w-6 h-6 text-amber-400" />
           Events
         </h2>
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-[#06b6d4] flex-shrink-0" />
+            <SlidersHorizontal className="w-4 h-4 text-amber-400 flex-shrink-0" />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 bg-gradient-to-r from-[#0B1F23]/80 to-[#0E1924]/80 border border-[#06b6d4]/30 rounded-lg !text-white text-sm focus:outline-none focus:border-[#06b6d4]/60 transition-all cursor-pointer [&>option]:bg-[#0B1F23] [&>option]:text-white [&>option]:py-2"
+              className="w-full sm:w-auto px-3 py-2 bg-gradient-to-r from-[#2a210f]/80 to-[#1a140a]/80 border border-amber-500/30 rounded-lg !text-white text-sm focus:outline-none focus:border-amber-400/70 transition-all cursor-pointer [&>option]:bg-[#1a140a] [&>option]:text-white [&>option]:py-2"
               style={{ color: "#ffffff", fontFamily: "Urbanist, sans-serif" }}
             >
               <option
                 value="all"
-                style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+                style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
               >
                 All Events
               </option>
               <option
                 value="active"
-                style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+                style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
               >
                 Active Events
               </option>
               <option
                 value="completed"
-                style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+                style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
               >
                 Finished Events
               </option>
@@ -117,30 +117,30 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
           <select
             value={filterCapacity}
             onChange={(e) => setFilterCapacity(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 bg-gradient-to-r from-[#0B1F23]/80 to-[#0E1924]/80 border border-[#06b6d4]/30 rounded-lg !text-white text-sm focus:outline-none focus:border-[#06b6d4]/60 transition-all cursor-pointer [&>option]:bg-[#0B1F23] [&>option]:text-white [&>option]:py-2"
+            className="w-full sm:w-auto px-3 py-2 bg-gradient-to-r from-[#2a210f]/80 to-[#1a140a]/80 border border-amber-500/30 rounded-lg !text-white text-sm focus:outline-none focus:border-amber-400/70 transition-all cursor-pointer [&>option]:bg-[#1a140a] [&>option]:text-white [&>option]:py-2"
             style={{ color: "#ffffff", fontFamily: "Urbanist, sans-serif" }}
           >
             <option
               value="all"
-              style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+              style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
             >
               All Capacity
             </option>
             <option
               value="low"
-              style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+              style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
             >
               Low (&lt;70%)
             </option>
             <option
               value="medium"
-              style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+              style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
             >
               Medium (70-89%)
             </option>
             <option
               value="high"
-              style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+              style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
             >
               High (≥90%)
             </option>
@@ -149,18 +149,18 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 bg-gradient-to-r from-[#0B1F23]/80 to-[#0E1924]/80 border border-[#06b6d4]/30 rounded-lg !text-white text-sm focus:outline-none focus:border-[#06b6d4]/60 transition-all cursor-pointer [&>option]:bg-[#0B1F23] [&>option]:text-white [&>option]:py-2"
+            className="w-full sm:w-auto px-3 py-2 bg-gradient-to-r from-[#2a210f]/80 to-[#1a140a]/80 border border-amber-500/30 rounded-lg !text-white text-sm focus:outline-none focus:border-amber-400/70 transition-all cursor-pointer [&>option]:bg-[#1a140a] [&>option]:text-white [&>option]:py-2"
             style={{ color: "#ffffff", fontFamily: "Urbanist, sans-serif" }}
           >
             <option
               value="date"
-              style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+              style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
             >
               Sort by Date
             </option>
             <option
               value="capacity"
-              style={{ backgroundColor: "#0B1F23", color: "#ffffff" }}
+              style={{ backgroundColor: "#1a140a", color: "#ffffff" }}
             >
               Sort by Capacity
             </option>
@@ -178,10 +178,10 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
             <div
               key={event.id}
               onClick={() => router.push(`/event/${event.id}`)}
-              className="group bg-gradient-to-br from-[#0B1F23]/80 via-[#0E1924]/70 to-[#0B1F23]/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-xl shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              className="group bg-gradient-to-br from-[#2a210f]/80 via-[#1a140a]/70 to-[#241b0d]/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-amber-700/30 hover:border-amber-400/60 shadow-xl shadow-black/20 hover:shadow-amber-500/25 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
             >
               {/* Cover Image */}
-              <div className="relative w-full h-48 bg-gradient-to-br from-[#38311E]/60 via-[#373531]/50 to-[#35351C]/40 overflow-hidden">
+              <div className="relative w-full h-48 bg-gradient-to-br from-[#3a2d14]/60 via-[#2f2818]/50 to-[#2f250f]/40 overflow-hidden">
                 {event.coverImage ? (
                   <>
                     <Image
@@ -190,14 +190,14 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F23]/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#241b0d]/60 to-transparent" />
                   </>
                 ) : (
                   <>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F23]/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#241b0d]/60 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="p-4 bg-[#0B1F23]/40 backdrop-blur-sm rounded-2xl border border-[#06b6d4]/30 group-hover:scale-110 transition-transform duration-300">
-                        <Calendar className="w-14 h-14 text-[#06b6d4]" />
+                      <div className="p-4 bg-[#241b0d]/40 backdrop-blur-sm rounded-2xl border border-amber-500/30 group-hover:scale-110 transition-transform duration-300">
+                        <Calendar className="w-14 h-14 text-amber-400" />
                       </div>
                     </div>
                   </>
@@ -212,7 +212,7 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
               <div className="p-6">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <h3
-                    className="font-bold text-xl !text-white flex-1 group-hover:text-[#06b6d4] transition-colors"
+                    className="font-bold text-xl !text-white flex-1 group-hover:text-amber-300 transition-colors"
                     style={{
                       color: "#ffffff",
                       fontFamily: "Urbanist, sans-serif",
@@ -222,13 +222,13 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
                   </h3>
                 </div>
                 <p
-                  className="text-sm !text-white mb-4 flex items-center gap-2 bg-[#0B1F23]/40 px-3 py-2 rounded-lg w-fit"
+                  className="text-sm !text-white mb-4 flex items-center gap-2 bg-[#241b0d]/40 px-3 py-2 rounded-lg w-fit"
                   style={{
                     color: "#ffffff",
                     fontFamily: "Urbanist, sans-serif",
                   }}
                 >
-                  <Clock className="w-4 h-4 text-[#06b6d4]" />
+                  <Clock className="w-4 h-4 text-amber-400" />
                   {new Date(event.date).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -257,14 +257,14 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
                     </span>
                   </div>
                   <div className="relative">
-                    <div className="w-full bg-gradient-to-r from-[#0E1924] to-[#0B1F23] rounded-full h-3 overflow-hidden border border-[#06b6d4]/20">
+                    <div className="w-full bg-gradient-to-r from-[#2a210f] to-[#1a140a] rounded-full h-3 overflow-hidden border border-amber-500/20">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           (rawPercentage ?? 0) >= 90
                             ? "bg-gradient-to-r from-red-500 via-orange-500 to-red-600"
                             : (rawPercentage ?? 0) >= 70
                             ? "bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600"
-                            : "bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600"
+                            : "bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500"
                         } shadow-lg`}
                         style={{ width: `${fillPercentage}%` }}
                       >
@@ -279,7 +279,7 @@ export const ActiveEvents: React.FC<ActiveEventsProps> = ({ events }) => {
                           ? "text-red-400"
                           : (rawPercentage ?? 0) >= 70
                           ? "text-amber-400"
-                          : "text-emerald-400"
+                          : "text-amber-300"
                       }`}
                       style={{ fontFamily: "Urbanist, sans-serif" }}
                     >

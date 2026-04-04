@@ -27,7 +27,7 @@ export function EventSurveyCard({
       <div className="flex gap-2">
         <Link
           href={`/event/${eventSlug}/survey`}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#008080] hover:scale-105 transition-transform duration-200 text-white text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 hover:scale-105 transition-transform duration-200 text-white text-sm font-medium transition-colors"
         >
           Go to Survey
           <ArrowRight size={16} />

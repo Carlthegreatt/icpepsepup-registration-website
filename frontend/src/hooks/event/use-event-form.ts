@@ -9,6 +9,44 @@ interface UseEventFormReturn {
   updateQuestion: (id: number | string, field: keyof Question, value: QuestionFieldValue) => void;
 }
 
+const LOCKED_QUESTION_IDS = {
+  firstName: "system-first-name",
+  middleName: "system-middle-name",
+  lastName: "system-last-name",
+  suffix: "system-suffix",
+} as const;
+
+const DEFAULT_LOCKED_QUESTIONS: Question[] = [
+  {
+    id: LOCKED_QUESTION_IDS.firstName,
+    text: "First Name",
+    required: true,
+    type: "text",
+    locked: true,
+  },
+  {
+    id: LOCKED_QUESTION_IDS.middleName,
+    text: "Middle Name",
+    required: false,
+    type: "text",
+    locked: true,
+  },
+  {
+    id: LOCKED_QUESTION_IDS.lastName,
+    text: "Last Name",
+    required: true,
+    type: "text",
+    locked: true,
+  },
+  {
+    id: LOCKED_QUESTION_IDS.suffix,
+    text: "Suffix",
+    required: false,
+    type: "text",
+    locked: true,
+  },
+];
+
 const initialFormData: EventFormData = {
   title: '',
   startDate: '',
@@ -22,7 +60,7 @@ const initialFormData: EventFormData = {
   ticketPrice: 'Free',
   capacity: '',
   requireApproval: false,
-  questions: [],
+  questions: DEFAULT_LOCKED_QUESTIONS.map((question) => ({ ...question })),
 };
 
 export function useEventForm(): UseEventFormReturn {
@@ -49,10 +87,17 @@ export function useEventForm(): UseEventFormReturn {
   }, []);
 
   const removeQuestion = useCallback((id: number | string) => {
-    setFormData(prev => ({
-      ...prev,
-      questions: prev.questions.filter(q => q.id !== id),
-    }));
+    setFormData(prev => {
+      const targetQuestion = prev.questions.find(q => q.id === id);
+      if (targetQuestion?.locked) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        questions: prev.questions.filter(q => q.id !== id),
+      };
+    });
   }, []);
 
   const updateQuestion = useCallback((
@@ -63,7 +108,9 @@ export function useEventForm(): UseEventFormReturn {
     setFormData(prev => ({
       ...prev,
       questions: prev.questions.map(q =>
-        q.id === id ? { ...q, [field]: value } : q
+        q.id === id
+          ? { ...q, [field]: value }
+          : q
       ),
     }));
   }, []);

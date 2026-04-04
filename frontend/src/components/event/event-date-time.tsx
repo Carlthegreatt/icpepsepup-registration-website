@@ -28,8 +28,8 @@ export function EventDateTime({ startDate, startTime, endTime }: EventDateTimePr
   return (
     <div className="flex items-start gap-3 mb-4">
       <div className="flex-shrink-0 text-center">
-        <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/20 flex flex-col items-center justify-center">
-          <span className="text-[10px] text-primary font-bold uppercase tracking-wide">
+        <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex flex-col items-center justify-center">
+          <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wide">
             {month}
           </span>
           <span className="text-base font-bold text-white">

@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import SurveyForm from "@/components/survey/SurveyForm";
 import BokehBackground from "@/components/create-event/bokeh-background";
@@ -7,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { SurveyConfig } from "@/types/survey";
 import { SurveyAuthModal } from "@/components/survey/SurveyAuthModal";
+import { createClient } from "@/lib/supabase/server"; // Added missing import for context
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -72,7 +72,7 @@ export default async function SurveyPage({ params }: PageProps) {
 
   if (!surveyConfig?.isEnabled) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a1520] text-white">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a05] text-white">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold font-urbanist">
             Survey Not Available
@@ -82,7 +82,7 @@ export default async function SurveyPage({ params }: PageProps) {
           </p>
           <Link
             href={`/event/${slug}`}
-            className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors font-urbanist"
+            className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors font-urbanist font-bold"
           >
             <ArrowLeft size={16} /> Back to Event
           </Link>
@@ -101,7 +101,7 @@ export default async function SurveyPage({ params }: PageProps) {
     : "";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-x-hidden">
       {!user && <SurveyAuthModal eventSlug={slug} />}
       <BokehBackground />
       <Squares direction="diagonal" speed={0.3} />
@@ -111,7 +111,7 @@ export default async function SurveyPage({ params }: PageProps) {
         <div className="text-left mb-12 space-y-4 animate-in fade-in slide-in-from-top-4 duration-700">
           <Link
             href={`/event/${slug}`}
-            className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors mb-4 text-sm font-urbanist tracking-wide uppercase"
+            className="inline-flex items-center gap-2 text-white/40 hover:text-yellow-400 transition-colors mb-4 text-sm font-urbanist tracking-widest uppercase font-bold"
           >
             <ArrowLeft size={14} /> Back to Event
           </Link>
@@ -120,13 +120,13 @@ export default async function SurveyPage({ params }: PageProps) {
             {event.event_name}
           </h1>
 
-          <div className="flex items-center justify-start gap-4 text-cyan-400 font-urbanist font-medium tracking-wide">
-            <span>Post-Event Survey</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/50" />
-            <span className="text-white/60">{eventDate}</span>
+          <div className="flex items-center justify-start gap-4 text-yellow-400 font-urbanist font-bold tracking-wide">
+            <span>POST-EVENT SURVEY</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500/50" />
+            <span className="text-white/60 font-medium">{eventDate}</span>
           </div>
 
-          <p className="max-w-2xl text-white/60 text-lg leading-relaxed font-urbanist">
+          <p className="max-w-2xl text-yellow-100/60 text-lg leading-relaxed font-urbanist">
             We hope you enjoyed the event! Please verify your attendance and
             share your feedback below.
           </p>
@@ -142,8 +142,8 @@ export default async function SurveyPage({ params }: PageProps) {
       </main>
 
       {/* Footer / Copyright */}
-      <footer className="relative z-10 text-center py-8 text-white/20 text-sm font-urbanist">
-        &copy; {new Date().getFullYear()} Arduino Day Philippines
+      <footer className="relative z-10 text-center py-8 text-yellow-900/30 text-[10px] font-bold tracking-widest uppercase font-urbanist">
+        &copy; {new Date().getFullYear()} ICPEP SE - PUP Manila
       </footer>
     </div>
   );

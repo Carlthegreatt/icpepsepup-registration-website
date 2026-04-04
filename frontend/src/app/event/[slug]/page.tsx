@@ -210,11 +210,11 @@ export default function EventPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-hidden font-montserrat">
+      <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-hidden font-montserrat">
         <BokehBackground />
         <Squares direction="diagonal" speed={0.3} />
         <div className="relative z-10 flex items-center justify-center min-h-screen">
-          <LoadingScreen message="LOADING EVENT..." colorTheme="orange" />
+          <LoadingScreen message="LOADING EVENT..." colorTheme="amber" />
         </div>
       </div>
     );
@@ -231,7 +231,7 @@ export default function EventPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#0a1f14] via-[#0a1520] to-[#120c08] text-white relative overflow-x-hidden font-montserrat">
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#0a0a05] via-[#1a1405] to-[#0a0a05] text-white relative overflow-x-hidden font-montserrat">
       <BokehBackground />
       <Squares direction="diagonal" speed={0.3} />
 
@@ -282,7 +282,7 @@ export default function EventPage() {
             >
               <Link
                 href={breadcrumbParent.href}
-                className="text-cyan-300/80 hover:text-cyan-200 transition-colors"
+                className="text-amber-300/80 hover:text-amber-200 transition-colors"
               >
                 {breadcrumbParent.label}
               </Link>

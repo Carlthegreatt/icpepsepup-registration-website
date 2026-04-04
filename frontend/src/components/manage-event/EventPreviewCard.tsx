@@ -18,7 +18,7 @@ export function EventPreviewCard({
   onChangePhoto,
 }: EventPreviewCardProps) {
   return (
-    <div className="bg-gradient-to-br from-teal-900/40 to-cyan-800/40 backdrop-blur-md rounded-xl border border-teal-500/20 overflow-hidden">
+    <div className="bg-gradient-to-br from-[#2a210f]/55 via-[#1a140a]/50 to-[#241b0d]/55 backdrop-blur-md rounded-xl border border-amber-700/30 overflow-hidden">
       <div className="p-4 md:p-6">
         <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-6">
           {/* Cover Image */}
@@ -70,7 +70,7 @@ export function EventPreviewCard({
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-cyan-500 flex items-center justify-center text-xs font-bold">
+              <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-xs font-bold">
                 C
               </div>
               <span className="text-sm text-white/70">Host</span>

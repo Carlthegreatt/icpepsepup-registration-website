@@ -11,7 +11,7 @@ interface StatCardProps {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, trend, trendUp, color }) => (
-  <div className="bg-gradient-to-br from-[#0B1F23]/60 via-[#0E1924]/50 to-[#0B1F23]/60 backdrop-blur-sm rounded-xl p-6 border border-gray-800/50 hover:border-[#22d3ee]/60 shadow-lg shadow-black/20 hover:shadow-[#22d3ee]/30 transition-all duration-300 group">
+  <div className="bg-gradient-to-br from-[#2a210f]/60 via-[#1a140a]/50 to-[#241b0d]/60 backdrop-blur-sm rounded-xl p-6 border border-amber-700/30 hover:border-amber-400/60 shadow-lg shadow-black/20 hover:shadow-amber-500/25 transition-all duration-300 group">
     <div className="flex items-start justify-between">
       <div className="flex-1">
         <p className="!text-white text-sm font-medium mb-2" style={{ color: '#ffffff', fontFamily: 'Urbanist, sans-serif' }}>{title}</p>

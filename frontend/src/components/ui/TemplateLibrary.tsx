@@ -52,10 +52,10 @@ export default function TemplateLibrary({
     { id: uuid(), name: "Untitled", html: initialHtml || "", updatedAt: 0 },
   ];
   const [templates, setTemplates] = useState<SavedTemplate[]>(() =>
-    loadTemplates(seed)
+    loadTemplates(seed),
   );
   const [activeId, setActiveId] = useState<string>(
-    () => loadTemplates(seed)[0]?.id
+    () => loadTemplates(seed)[0]?.id,
   );
   const [serverTemplates, setServerTemplates] = useState<string[]>([]);
   const active = templates.find((t) => t.id === activeId) || templates[0];
@@ -100,14 +100,14 @@ export default function TemplateLibrary({
 
   const available = useMemo(
     () => Array.from(new Set(availableVars)),
-    [availableVars]
+    [availableVars],
   );
 
   const updateActive = (patch: Partial<SavedTemplate>) => {
     setTemplates((prev) =>
       prev.map((t) =>
-        t.id === active.id ? { ...t, ...patch, updatedAt: Date.now() } : t
-      )
+        t.id === active.id ? { ...t, ...patch, updatedAt: Date.now() } : t,
+      ),
     );
   };
 
@@ -154,32 +154,34 @@ export default function TemplateLibrary({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
       {/* Sidebar */}
-      <div className="lg:col-span-1 border rounded h-full">
-        <div className="px-3 py-2 border-b flex items-center justify-between">
-          <div className="text-sm font-medium">Templates</div>
+      <div className="lg:col-span-1 border border-yellow-900/50 rounded-xl h-full bg-[rgba(25,25,10,0.4)] flex flex-col overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+        <div className="px-4 py-3 border-b border-yellow-900/50 flex items-center justify-between bg-[rgba(35,35,15,0.4)]">
+          <div className="text-sm font-bold text-yellow-50 uppercase tracking-wider">
+            Templates
+          </div>
           <button
-            className="w-6 h-6 rounded border text-sm leading-5"
+            className="w-7 h-7 rounded-lg border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 text-lg flex items-center justify-center transition-colors active:scale-95"
             onClick={addTemplate}
           >
             +
           </button>
         </div>
-        <div className="max-h-96 overflow-auto text-sm">
+        <div className="max-h-96 overflow-auto text-sm custom-scrollbar">
           {serverTemplates.map((filename) => (
             <div
               key={filename}
-              className={`group flex items-center justify-between gap-2 px-3 py-2 border-b hover:bg-gray-50`}
+              className={`group flex items-center justify-between gap-2 px-4 py-3 border-b border-yellow-900/30 hover:bg-yellow-500/10 transition-colors`}
             >
               <button
                 onClick={() => onSelectTemplate(filename)}
                 className="flex-1 text-left"
               >
-                <div className="font-medium truncate">
+                <div className="font-bold text-yellow-50 truncate">
                   {filename.replace(/\.html$/, "")}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
+                <div className="text-[11px] text-yellow-100/50 truncate mt-0.5 uppercase tracking-wide">
                   HTML template
                 </div>
               </button>
@@ -188,18 +190,20 @@ export default function TemplateLibrary({
           {templates.map((t) => (
             <div
               key={t.id}
-              className={`group flex items-center justify-between gap-2 px-3 py-2 border-b ${
-                t.id === active.id ? "bg-gray-50" : "hover:bg-gray-50"
+              className={`group flex items-center justify-between gap-2 px-4 py-3 border-b border-yellow-900/30 transition-colors ${
+                t.id === active.id
+                  ? "bg-yellow-500/20 border-l-2 border-l-yellow-400"
+                  : "hover:bg-yellow-500/10"
               }`}
             >
               <button
                 onClick={() => setActiveId(t.id)}
                 className="flex-1 text-left"
               >
-                <div className="font-medium truncate">
+                <div className="font-bold text-yellow-50 truncate">
                   {t.name || "Untitled"}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
+                <div className="text-[11px] text-yellow-100/50 truncate mt-0.5 uppercase tracking-wide">
                   HTML template
                 </div>
               </button>
@@ -208,7 +212,7 @@ export default function TemplateLibrary({
                   type="button"
                   aria-label="Delete template"
                   onClick={() => deleteTemplate(t.id)}
-                  className="opacity-60 group-hover:opacity-100 text-xs px-2 py-1 rounded border bg-white hover:bg-red-50 hover:text-red-700"
+                  className="opacity-0 group-hover:opacity-100 text-[10px] font-bold px-2.5 py-1 rounded border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all"
                 >
                   Delete
                 </button>
@@ -219,18 +223,19 @@ export default function TemplateLibrary({
       </div>
 
       {/* Editor */}
-      <div className="lg:col-span-2 space-y-4">
+      <div className="lg:col-span-2 space-y-5">
         {applied && (
-          <div className="rounded-md border border-green-200 bg-green-50 text-green-800 px-3 py-2 text-sm flex items-center justify-between">
+          <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 px-4 py-3 text-sm flex items-center justify-between shadow-[0_0_15px_rgba(250,204,21,0.1)]">
             <span>
               Template applied. You can head to the{" "}
-              <strong>Preview &amp; Export</strong> tab to review and send.
+              <strong className="text-yellow-50">Preview &amp; Export</strong>{" "}
+              tab to review and send.
             </span>
             <button
-              className="px-2 py-1 text-xs rounded border border-green-300 bg-white hover:bg-green-100"
+              className="px-3 py-1.5 text-xs font-bold rounded-lg border border-yellow-500/40 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-500/20 text-yellow-400 transition-colors"
               onClick={() => {
                 const usp = new URLSearchParams(
-                  Array.from(searchParams.entries())
+                  Array.from(searchParams.entries()),
                 );
                 usp.set("tab", "preview");
                 router.replace(`/?${usp.toString()}`);
@@ -241,14 +246,18 @@ export default function TemplateLibrary({
           </div>
         )}
         <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <div className="text-lg font-medium">Template Editor</div>
-            <div className="text-xs text-gray-600">Autosave enabled</div>
+          <div className="space-y-1">
+            <div className="text-lg font-bold text-yellow-50">
+              Template Editor
+            </div>
+            <div className="text-xs font-medium text-yellow-100/50 uppercase tracking-wide">
+              Autosave enabled
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50"
+              className="px-3 py-1.5 rounded-lg border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] text-yellow-500 hover:bg-yellow-950/30 text-sm font-semibold transition-all active:scale-[0.98]"
               onClick={() =>
                 setRawMode((v) => {
                   const next = !v;
@@ -269,13 +278,13 @@ export default function TemplateLibrary({
             </button>
             <button
               onClick={saveAsNew}
-              className="px-3 py-1 border rounded text-sm bg-white hover:bg-gray-50"
+              className="px-3 py-1.5 rounded-lg border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] text-yellow-500 hover:bg-yellow-950/30 text-sm font-semibold transition-all active:scale-[0.98]"
             >
               Save as new Template
             </button>
             <button
               type="button"
-              className="px-3 py-1 rounded border text-sm bg-green-600 text-white hover:bg-green-700"
+              className="px-4 py-1.5 rounded-lg border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 text-sm font-bold transition-all active:scale-[0.98]"
               onClick={() => {
                 onUseTemplate({ html: active.html });
                 setApplied(true);
@@ -288,19 +297,23 @@ export default function TemplateLibrary({
         </div>
 
         <div className="space-y-2">
-          <div className="text-sm font-medium">Template Name</div>
+          <div className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+            Template Name
+          </div>
           <input
             value={active.name}
             onChange={(e) => updateActive({ name: e.target.value })}
-            className="w-full rounded border px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-yellow-900/50 bg-[rgba(25,25,10,0.8)] px-4 py-2.5 text-yellow-50 text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 placeholder:text-yellow-700/50 transition-colors"
             placeholder="Enter a name"
           />
         </div>
 
         {/* Upload HTML file */}
         <div className="space-y-2" id="tutorial-upload-html">
-          <div className="text-sm font-medium">Upload HTML Template</div>
-          <label className="inline-flex items-center gap-2 px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50 cursor-pointer w-fit">
+          <div className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+            Upload HTML Template
+          </div>
+          <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-yellow-900/40 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-950/30 text-yellow-500 font-semibold text-sm transition-all cursor-pointer w-fit active:scale-[0.98]">
             <input
               type="file"
               accept=".html,.htm,.txt"
@@ -316,9 +329,11 @@ export default function TemplateLibrary({
           </label>
         </div>
 
-        <div className="space-y-2" id="tutorial-email-message">
-          <div className="text-sm font-medium flex items-center justify-between">
-            <span>Email Message</span>
+        <div className="space-y-3" id="tutorial-email-message">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-yellow-400 uppercase tracking-wider">
+              Email Message
+            </span>
             <div id="tutorial-insert-variable">
               <VariablePicker
                 variables={available}
@@ -331,31 +346,35 @@ export default function TemplateLibrary({
             </div>
           </div>
           {!rawMode ? (
-            <EmailEditor
-              ref={editorRef}
-              value={active.html}
-              onChange={(html) => updateActive({ html })}
-            />
+            <div className="rounded-xl overflow-hidden border border-yellow-900/50 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+              <EmailEditor
+                ref={editorRef}
+                value={active.html}
+                onChange={(html) => updateActive({ html })}
+              />
+            </div>
           ) : (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <span className="opacity-60">Zoom</span>
-                <div className="inline-flex items-center gap-1">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-xs text-yellow-100/60">
+                <span className="font-semibold uppercase tracking-wider">
+                  Zoom
+                </span>
+                <div className="inline-flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => adjustRawZoom(-0.1, setRawZoom)}
-                    className="px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800"
+                    className="px-2.5 py-1 rounded-lg border border-yellow-900/50 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-500/20 text-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={rawZoom <= RAW_ZOOM_MIN}
                   >
                     -
                   </button>
-                  <span className="w-16 text-center">
+                  <span className="w-16 text-center font-bold text-yellow-50">
                     {(rawZoom * 100).toFixed(0)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => adjustRawZoom(0.1, setRawZoom)}
-                    className="px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800"
+                    className="px-2.5 py-1 rounded-lg border border-yellow-900/50 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-500/20 text-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={rawZoom >= RAW_ZOOM_MAX}
                   >
                     +
@@ -363,7 +382,7 @@ export default function TemplateLibrary({
                   <button
                     type="button"
                     onClick={() => setRawZoom(1)}
-                    className="ml-1 px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800"
+                    className="ml-2 px-3 py-1 rounded-lg border border-yellow-900/50 bg-[rgba(25,25,10,0.6)] hover:bg-yellow-500/20 text-yellow-500 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={Math.abs(rawZoom - 1) < 0.05}
                   >
                     Reset
@@ -371,26 +390,27 @@ export default function TemplateLibrary({
                 </div>
               </div>
               <div className="relative">
-              <textarea
-                ref={rawTextareaRef}
-                value={active.html}
-                onChange={(e) => updateActive({ html: e.target.value })}
-                onKeyDown={(e) => handleRawKeyDown(e, active.html, updateActive)}
-                rows={22}
-                spellCheck={false}
-                  className="w-full min-h-[26rem] rounded-lg border border-slate-800 bg-slate-950 text-slate-100 font-mono shadow-inner focus:outline-none focus:ring-2 focus:ring-green-500 px-4 py-4"
+                <textarea
+                  ref={rawTextareaRef}
+                  value={active.html}
+                  onChange={(e) => updateActive({ html: e.target.value })}
+                  onKeyDown={(e) =>
+                    handleRawKeyDown(e, active.html, updateActive)
+                  }
+                  rows={22}
+                  spellCheck={false}
+                  className="w-full min-h-[26rem] rounded-xl border border-yellow-900/50 bg-[rgba(10,10,5,0.9)] text-yellow-50 font-mono shadow-inner focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 px-5 py-5 transition-colors custom-scrollbar"
                   style={{
                     fontSize: `${(rawZoom * BASE_RAW_FONT_SIZE).toFixed(2)}px`,
                     lineHeight: `${(rawZoom * BASE_RAW_LINE_HEIGHT).toFixed(2)}px`,
                   }}
-              />
-              <div className="pointer-events-none absolute top-2 right-3 text-[11px] uppercase tracking-wide text-slate-500">
-                HTML
-              </div>
+                />
+                <div className="pointer-events-none absolute top-3 right-4 text-[10px] font-bold uppercase tracking-widest text-yellow-700/50">
+                  HTML
+                </div>
               </div>
             </div>
           )}
-          {/* Actions moved to header for visibility */}
         </div>
       </div>
     </div>
@@ -459,7 +479,7 @@ function formatHtml(input: string) {
 function handleRawKeyDown(
   e: KeyboardEvent<HTMLTextAreaElement>,
   currentValue: string,
-  update: (patch: Partial<SavedTemplate>) => void
+  update: (patch: Partial<SavedTemplate>) => void,
 ) {
   if (e.key !== "Tab") return;
   e.preventDefault();
@@ -473,13 +493,11 @@ function handleRawKeyDown(
     const before = currentValue.slice(0, start);
     if (before.endsWith(insert)) {
       const newStart = start - insert.length;
-      nextValue =
-        currentValue.slice(0, newStart) + currentValue.slice(end);
+      nextValue = currentValue.slice(0, newStart) + currentValue.slice(end);
       caret = newStart;
     }
   } else {
-    nextValue =
-      currentValue.slice(0, start) + insert + currentValue.slice(end);
+    nextValue = currentValue.slice(0, start) + insert + currentValue.slice(end);
     caret = start + insert.length;
   }
   if (nextValue === currentValue) return;
@@ -492,12 +510,12 @@ function handleRawKeyDown(
 
 function adjustRawZoom(
   delta: number,
-  setZoom: Dispatch<SetStateAction<number>>
+  setZoom: Dispatch<SetStateAction<number>>,
 ) {
   setZoom((prev) => {
     const next = Math.min(
       RAW_ZOOM_MAX,
-      Math.max(RAW_ZOOM_MIN, parseFloat((prev + delta).toFixed(2)))
+      Math.max(RAW_ZOOM_MIN, parseFloat((prev + delta).toFixed(2))),
     );
     return next;
   });

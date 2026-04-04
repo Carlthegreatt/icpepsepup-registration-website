@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { RegistrationLayout } from './RegistrationLayout';
-import { Step0 } from './Step0';
-import { StepContinueWithEmail } from './StepContinueWithEmail';
-import { LastStep } from './LastStep';
-import { StepDynamic } from './StepDynamic';
-import { INITIAL_DATA, RegistrationFormData } from './types';
-import { Question } from '@/types/event';
-import { createClient } from '@/lib/supabase/client';
-import { createRegistrantAction } from '@/actions/registrantActions';
-import { checkUserRegistrationAction } from '@/actions/registrantActions';
-import { uploadRegistrationFile } from '@/lib/storage/file-upload';
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { RegistrationLayout } from "./RegistrationLayout";
+import { Step0 } from "./Step0";
+import { StepContinueWithEmail } from "./StepContinueWithEmail";
+import { LastStep } from "./LastStep";
+import { StepDynamic } from "./StepDynamic";
+import { INITIAL_DATA, RegistrationFormData } from "./types";
+import { Question } from "@/types/event";
+import { createClient } from "@/lib/supabase/client";
+import { createRegistrantAction } from "@/actions/registrantActions";
+import { checkUserRegistrationAction } from "@/actions/registrantActions";
+import { uploadRegistrationFile } from "@/lib/storage/file-upload";
 
 export interface RegistrationFlowProps {
   eventSlug?: string;
@@ -21,7 +21,7 @@ export interface RegistrationFlowProps {
 
 export function RegistrationFlow({
   eventSlug,
-  formQuestions = []
+  formQuestions = [],
 }: RegistrationFlowProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
@@ -42,14 +42,18 @@ export function RegistrationFlow({
     };
 
     const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       syncUser(user);
       setIsLoading(false);
     };
 
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       syncUser(session?.user ?? null);
     });
 
@@ -58,7 +62,9 @@ export function RegistrationFlow({
 
   const handleEmailAuthSuccess = async () => {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (user) setUserId(user.id);
   };
 
@@ -103,38 +109,44 @@ export function RegistrationFlow({
   const maxStepIndex = totalSteps - 1;
 
   const updateData = (data: Partial<RegistrationFormData>) => {
-    setFormData(prev => ({ ...prev, ...data }));
+    setFormData((prev) => ({ ...prev, ...data }));
   };
 
   const nextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, maxStepIndex));
+    setCurrentStep((prev) => Math.min(prev + 1, maxStepIndex));
   };
-  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
 
   const handleSubmit = async () => {
     if (!userId) {
-      alert('You must be logged in to register');
+      alert("You must be logged in to register");
       return;
     }
 
     const formAnswers: Record<string, string> = {};
     const supabase = createClient();
-    
+
     if (formQuestions.length > 0) {
       // Upload files and build form answers
       for (let index = 0; index < formQuestions.length; index++) {
         const question = formQuestions[index];
         const answer = formData.dynamicAnswers[question.id.toString()];
-        
+
         if (answer) {
           // If it's a File object, upload it first
           if (answer instanceof File) {
             try {
-              const fileUrl = await uploadRegistrationFile(supabase, answer, eventSlug || '');
+              const fileUrl = await uploadRegistrationFile(
+                supabase,
+                answer,
+                eventSlug || "",
+              );
               formAnswers[question.text] = fileUrl;
             } catch (error) {
-              console.error('File upload error:', error);
-              alert(`Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              console.error("File upload error:", error);
+              alert(
+                `Failed to upload file: ${error instanceof Error ? error.message : "Unknown error"}`,
+              );
               throw error;
             }
           } else {
@@ -165,20 +177,20 @@ export function RegistrationFlow({
       setIsSuccess(true);
     } catch (error) {
       console.error("Registration error:", error);
-      const errorMessage = error instanceof Error ? error.message : "An error occurred during registration. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred during registration. Please try again.";
       alert(errorMessage);
-      throw error; 
+      throw error;
     }
   };
 
   if (isLoading) {
     return (
-      <RegistrationLayout 
-        currentStep={0}
-        totalSteps={totalSteps}
-      >
+      <RegistrationLayout currentStep={0} totalSteps={totalSteps}>
         <div className="flex items-center justify-center h-full">
-          <p className="text-[rgba(197,213,213,0.8)] text-sm">Loading...</p>
+          <p className="text-yellow-500/80 text-sm">Loading...</p>
         </div>
       </RegistrationLayout>
     );
@@ -187,13 +199,10 @@ export function RegistrationFlow({
   // Only show "Continue with email" when user is not logged in; if already logged in, userId is set and we skip this
   if (!userId) {
     return (
-      <RegistrationLayout 
-        currentStep={0}
-        totalSteps={totalSteps}
-      >
-        <StepContinueWithEmail 
-          eventSlug={eventSlug ?? ''} 
-          onSuccess={handleEmailAuthSuccess} 
+      <RegistrationLayout currentStep={0} totalSteps={totalSteps}>
+        <StepContinueWithEmail
+          eventSlug={eventSlug ?? ""}
+          onSuccess={handleEmailAuthSuccess}
         />
       </RegistrationLayout>
     );
@@ -201,12 +210,9 @@ export function RegistrationFlow({
 
   if (isCheckingExistingRegistration) {
     return (
-      <RegistrationLayout
-        currentStep={0}
-        totalSteps={totalSteps}
-      >
+      <RegistrationLayout currentStep={0} totalSteps={totalSteps}>
         <div className="flex items-center justify-center h-full">
-          <p className="text-[rgba(197,213,213,0.8)] text-sm">
+          <p className="text-yellow-500/80 text-sm">
             Checking your registration...
           </p>
         </div>
@@ -216,24 +222,23 @@ export function RegistrationFlow({
 
   if (isAlreadyRegistered) {
     return (
-      <RegistrationLayout
-        currentStep={0}
-        totalSteps={totalSteps}
-      >
+      <RegistrationLayout currentStep={0} totalSteps={totalSteps}>
         <div className="flex flex-col items-center justify-center h-full text-center animate-in zoom-in-95 duration-500">
           <h2 className="text-2xl sm:text-3xl font-bold text-[#f5f5f5] tracking-tight mb-2">
             You are already registered
           </h2>
-          <p className="text-[rgba(197,213,213,0.9)] max-w-sm mb-6 text-sm">
+          <p className="text-yellow-100/60 max-w-sm mb-6 text-sm">
             Your account already has a registration for this event.
           </p>
           <button
             type="button"
             onClick={() => {
               router.refresh();
-              router.push(eventSlug ? `/event/${eventSlug}?refresh=${Date.now()}` : "/");
+              router.push(
+                eventSlug ? `/event/${eventSlug}?refresh=${Date.now()}` : "/",
+              );
             }}
-            className="px-6 py-3 bg-[rgba(35,60,60,0.6)] hover:bg-[rgba(35,60,60,0.7)] text-[#95b5b5] font-semibold rounded-xl transition-all duration-200 text-sm"
+            className="px-6 py-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 font-bold rounded-xl transition-all duration-300 text-sm active:scale-[0.98]"
           >
             Go Back to Event Page
           </button>
@@ -243,71 +248,74 @@ export function RegistrationFlow({
   }
 
   if (isSuccess) {
-     return (
-        <RegistrationLayout 
-            currentStep={maxStepIndex}
-            totalSteps={totalSteps}
-        >
-            <div className="flex flex-col items-center justify-center h-full text-center animate-in zoom-in-95 duration-500">
-                <div className="w-24 h-24 bg-[rgba(93,216,216,0.15)] rounded-full flex items-center justify-center mb-6 border border-[#5da5a5]">
-                    <div className="w-16 h-16 bg-[#5dd8d8] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(93,216,216,0.5)]">
-                         <svg className="w-8 h-8 text-[#f5f5f5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#f5f5f5] tracking-tight mb-2">Registration successful!</h2>
-                <p className="text-[rgba(197,213,213,0.9)] max-w-sm mb-6 text-sm">
-                    Your spot has been secured.
-                </p>
-                <button
-                    type="button"
-                    onClick={() => { 
-                      router.refresh();
-                      router.push(eventSlug ? `/event/${eventSlug}?refresh=${Date.now()}` : "/");
-                    }}
-                    className="px-6 py-3 bg-[rgba(35,60,60,0.6)] hover:bg-[rgba(35,60,60,0.7)] text-[#95b5b5] font-semibold rounded-xl transition-all duration-200 text-sm"
-                >
-                    {eventSlug ? "Go Back to Event Page" : "Go to Home"}
-                </button>
+    return (
+      <RegistrationLayout currentStep={maxStepIndex} totalSteps={totalSteps}>
+        <div className="flex flex-col items-center justify-center h-full text-center animate-in zoom-in-95 duration-500">
+          <div className="w-24 h-24 bg-yellow-500/10 rounded-full flex items-center justify-center mb-6 border border-yellow-500/30">
+            <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(250,204,21,0.5)]">
+              <svg
+                className="w-8 h-8 text-[#1a1405]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
-        </RegistrationLayout>
-     )
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#f5f5f5] tracking-tight mb-2">
+            Registration successful!
+          </h2>
+          <p className="text-yellow-100/60 max-w-sm mb-6 text-sm">
+            Your spot has been secured.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              router.refresh();
+              router.push(
+                eventSlug ? `/event/${eventSlug}?refresh=${Date.now()}` : "/",
+              );
+            }}
+            className="px-6 py-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 font-bold rounded-xl transition-all duration-300 text-sm active:scale-[0.98]"
+          >
+            {eventSlug ? "Go Back to Event Page" : "Go to Home"}
+          </button>
+        </div>
+      </RegistrationLayout>
+    );
   }
 
   return (
-    <RegistrationLayout 
-        currentStep={currentStep}
-        totalSteps={totalSteps}
-    >
-      {currentStep === 0 && (
-        <Step0 
-            onNext={nextStep} 
-        />
-      )}
-      
+    <RegistrationLayout currentStep={currentStep} totalSteps={totalSteps}>
+      {currentStep === 0 && <Step0 onNext={nextStep} />}
+
       {/* Dynamic question steps */}
       {questionSteps.map((questions, index) => {
         const stepIndex = 1 + index;
-        return currentStep === stepIndex && (
-          <StepDynamic
-            key={stepIndex}
-            questions={questions}
-            formData={formData}
-            updateData={updateData}
-            onNext={nextStep}
-            onBack={prevStep}
-            eventSlug={eventSlug || ''}
-          />
+        return (
+          currentStep === stepIndex && (
+            <StepDynamic
+              key={stepIndex}
+              questions={questions}
+              formData={formData}
+              updateData={updateData}
+              onNext={nextStep}
+              onBack={prevStep}
+              eventSlug={eventSlug || ""}
+            />
+          )
         );
       })}
-      
+
       {/* Final confirmation step */}
       {currentStep === maxStepIndex && (
-        <LastStep 
-            eventSlug={eventSlug}
-            onSubmit={handleSubmit}
-        />
+        <LastStep eventSlug={eventSlug} onSubmit={handleSubmit} />
       )}
     </RegistrationLayout>
   );
