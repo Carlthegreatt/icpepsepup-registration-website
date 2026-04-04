@@ -9,6 +9,9 @@ import {
 import { downloadCSV } from "@/utils/fileDownload";
 import { useNotification } from "@/hooks/use-notification";
 
+type NameOrderOption = "first-name-first" | "last-name-first";
+type MiddleNameOption = "full" | "initial" | "none";
+
 /**
  * Hook for handling guest actions
  * Coordinates between UI, actions, and services
@@ -115,11 +118,25 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
   );
 
   const handleExport = useCallback(
-    (guestsToExport: Guest[]) => {
+    (
+      guestsToExport: Guest[],
+      selectedColumns?: string[],
+      nameFormatOptions?: {
+        order?: NameOrderOption;
+        middleName?: MiddleNameOption;
+        includeSuffix?: boolean;
+      },
+    ) => {
       if (guestsToExport.length === 0) {
         showError("No guests to export");
         return;
       }
+
+      const effectiveNameFormat = {
+        order: nameFormatOptions?.order ?? "first-name-first",
+        middleName: nameFormatOptions?.middleName ?? "full",
+        includeSuffix: nameFormatOptions?.includeSuffix ?? true,
+      };
 
       const allQuestionKeys = Array.from(
         new Set(
@@ -142,17 +159,6 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
         return "-";
       };
 
-      const headers = [
-        "Name",
-        "Email",
-        "Status",
-        "Going",
-        "Registered At",
-        "Checked In",
-        "Terms Accepted",
-        ...allQuestionKeys,
-      ];
-
       const formatRegisteredAt = (value?: string | null) => {
         if (!value) return "";
         const parsed = new Date(value);
@@ -171,23 +177,148 @@ export function useGuestActions(slug: string, onRefresh: () => void) {
       const escapeCell = (value: unknown) =>
         `"${String(value ?? "").replace(/"/g, '""')}"`;
 
-      const rows = guestsToExport.map((guest) => {
-        const baseRow = [
-          `${guest.users?.first_name || ""} ${guest.users?.last_name || ""}`.trim(),
-          guest.users?.email || "",
-          getStatusLabel(guest),
-          getGoingLabel(guest),
-          formatRegisteredAt(guest.created_at),
-          guest.check_in ? "Yes" : "No",
-          guest.terms_approval ? "Yes" : "No",
-        ];
+      const normalizeKey = (value: string) =>
+        value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-        const answerCols = allQuestionKeys.map(
-          (question) => guest.form_answers?.[question] ?? "",
+      const getFormAnswerValue = (guest: Guest, candidateKeys: string[]) => {
+        const normalizedCandidates = candidateKeys.map(normalizeKey);
+        const formEntries = Object.entries(guest.form_answers || {});
+        const matched = formEntries.find(([key]) =>
+          normalizedCandidates.includes(normalizeKey(key)),
         );
+        return typeof matched?.[1] === "string" ? matched[1].trim() : "";
+      };
 
-        return [...baseRow, ...answerCols];
-      });
+      const formatMiddleName = (middleName: string) => {
+        if (!middleName) return "";
+        if (effectiveNameFormat.middleName === "none") return "";
+        if (effectiveNameFormat.middleName === "initial") {
+          const initial = middleName.trim().charAt(0).toUpperCase();
+          return initial ? `${initial}.` : "";
+        }
+        return middleName.trim();
+      };
+
+      const formatGuestName = (guest: Guest) => {
+        const firstName =
+          getFormAnswerValue(guest, [
+            "First Name",
+            "FirstName",
+            "Given Name",
+            "GivenName",
+          ]) || guest.users?.first_name || "";
+        const middleNameRaw = getFormAnswerValue(guest, [
+          "Middle Name",
+          "MiddleName",
+          "Middle Initial",
+          "MiddleInitial",
+          "MI",
+          "M.I.",
+        ]);
+        const lastName =
+          getFormAnswerValue(guest, [
+            "Last Name",
+            "LastName",
+            "Surname",
+            "Family Name",
+            "FamilyName",
+          ]) || guest.users?.last_name || "";
+        const suffixRaw = getFormAnswerValue(guest, [
+          "Suffix",
+          "Name Suffix",
+          "NameSuffix",
+        ]);
+
+        const middleName = formatMiddleName(middleNameRaw);
+        const suffix = effectiveNameFormat.includeSuffix ? suffixRaw : "";
+
+        if (effectiveNameFormat.order === "last-name-first") {
+          const trailing = [firstName, middleName, suffix]
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .join(" ");
+
+          if (lastName && trailing) {
+            return `${lastName}, ${trailing}`;
+          }
+
+          const fallbackLastFirst = [lastName, firstName, middleName, suffix]
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .join(" ");
+          return fallbackLastFirst || guest.users?.email || guest.registrant_id;
+        }
+
+        const fallbackFirstLast = [firstName, middleName, lastName, suffix]
+          .map((value) => value.trim())
+          .filter(Boolean)
+          .join(" ");
+        return fallbackFirstLast || guest.users?.email || guest.registrant_id;
+      };
+
+      const baseColumnDefs = [
+        {
+          key: "name",
+          header: "Name",
+          getValue: (guest: Guest) => formatGuestName(guest),
+        },
+        {
+          key: "email",
+          header: "Email",
+          getValue: (guest: Guest) => guest.users?.email || "",
+        },
+        {
+          key: "status",
+          header: "Status",
+          getValue: (guest: Guest) => getStatusLabel(guest),
+        },
+        {
+          key: "going",
+          header: "Going",
+          getValue: (guest: Guest) => getGoingLabel(guest),
+        },
+        {
+          key: "registeredAt",
+          header: "Registered At",
+          getValue: (guest: Guest) => formatRegisteredAt(guest.created_at),
+        },
+        {
+          key: "checkedIn",
+          header: "Checked In",
+          getValue: (guest: Guest) => (guest.check_in ? "Yes" : "No"),
+        },
+        {
+          key: "termsAccepted",
+          header: "Terms Accepted",
+          getValue: (guest: Guest) => (guest.terms_approval ? "Yes" : "No"),
+        },
+      ];
+
+      const questionColumnDefs = allQuestionKeys.map((question) => ({
+        key: `question:${question}`,
+        header: question,
+        getValue: (guest: Guest) => guest.form_answers?.[question] ?? "",
+      }));
+
+      const allColumnDefs = [...baseColumnDefs, ...questionColumnDefs];
+      const selectedKeySet = new Set(
+        selectedColumns && selectedColumns.length > 0
+          ? selectedColumns
+          : allColumnDefs.map((column) => column.key),
+      );
+      const activeColumnDefs = allColumnDefs.filter((column) =>
+        selectedKeySet.has(column.key),
+      );
+
+      if (activeColumnDefs.length === 0) {
+        showError("Please select at least one column to export");
+        return;
+      }
+
+      const headers = activeColumnDefs.map((column) => column.header);
+      const rows = guestsToExport.map((guest) =>
+        activeColumnDefs.map((column) => column.getValue(guest)),
+      );
 
       const csvData = [
         headers.join(","),

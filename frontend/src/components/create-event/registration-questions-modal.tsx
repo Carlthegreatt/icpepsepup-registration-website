@@ -201,6 +201,10 @@ export function RegistrationQuestionsModal({
               <>
                 <div className="space-y-6">
                   {questions.map((question, index) => (
+                    (() => {
+                      const isLocked = Boolean(question.locked);
+
+                      return (
                     <div
                       key={question.id}
                       className="bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-3xl p-6 md:p-8 hover:bg-white/[0.05] hover:border-yellow-500/20 transition-all duration-500 group relative"
@@ -227,13 +231,19 @@ export function RegistrationQuestionsModal({
                               }
                               className="bg-transparent border-none outline-none text-lg font-bold focus:ring-0 flex-1 p-0 placeholder-yellow-900/20 text-white uppercase tracking-wider"
                             />
-                            <button
-                              type="button"
-                              onClick={() => removeQuestion(question.id)}
-                              className="flex-shrink-0 p-2.5 hover:bg-red-500/10 rounded-xl transition-all group/trash border border-transparent hover:border-red-500/20"
-                            >
-                              <Trash2 className="w-5 h-5 text-white/10 group-hover/trash:text-red-400" />
-                            </button>
+                            {isLocked ? (
+                              <span className="flex-shrink-0 px-3 py-1 rounded-lg border border-yellow-500/30 bg-yellow-500/10 text-[10px] text-yellow-300 uppercase tracking-widest font-black">
+                                System Field
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => removeQuestion(question.id)}
+                                className="flex-shrink-0 p-2.5 hover:bg-red-500/10 rounded-xl transition-all group/trash border border-transparent hover:border-red-500/20"
+                              >
+                                <Trash2 className="w-5 h-5 text-white/10 group-hover/trash:text-red-400" />
+                              </button>
+                            )}
                           </div>
 
                           <div className="flex flex-wrap gap-4">
@@ -264,7 +274,7 @@ export function RegistrationQuestionsModal({
                                     );
                                   }
                                 }}
-                                className="bg-[#1a1405]/60 backdrop-blur-md border border-yellow-900/50 rounded-xl pl-4 pr-12 py-2.5 text-xs font-black text-yellow-400 uppercase tracking-widest focus:border-yellow-400 focus:outline-none focus:ring-0 appearance-none cursor-pointer group-hover/select:border-yellow-500 transition-colors"
+                                className="bg-[#1a1405]/60 backdrop-blur-md border border-yellow-900/50 rounded-xl pl-4 pr-12 py-2.5 text-xs font-black text-yellow-400 uppercase tracking-widest focus:border-yellow-400 focus:outline-none focus:ring-0 appearance-none group-hover/select:border-yellow-500 transition-colors cursor-pointer"
                               >
                                 {questionTypes.map((type) => (
                                   <option key={type.value} value={type.value}>
@@ -287,7 +297,7 @@ export function RegistrationQuestionsModal({
                                     e.target.checked,
                                   )
                                 }
-                                className="w-5 h-5 rounded bg-black/40 border-yellow-900 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 cursor-pointer transition-transform group-hover/check:scale-110"
+                                className="w-5 h-5 rounded bg-black/40 border-yellow-900 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 transition-transform group-hover/check:scale-110 cursor-pointer"
                               />
                               <label
                                 htmlFor={`required-${question.id}`}
@@ -419,6 +429,8 @@ export function RegistrationQuestionsModal({
                         )}
                       </div>
                     </div>
+                      );
+                    })()
                   ))}
                 </div>
 

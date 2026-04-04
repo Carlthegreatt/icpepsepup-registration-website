@@ -26,6 +26,7 @@ export interface Question {
   text: string;
   required: boolean;
   type: QuestionType;
+  locked?: boolean;
   options?: string[];
   allowedFileTypes?: string[];
   validationPattern?: string;
