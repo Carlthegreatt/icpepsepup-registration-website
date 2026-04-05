@@ -1,32 +1,26 @@
 import CryptoJS from "crypto-js";
 
+// Minimal payload stored in QR — no PII
 export type RegistrantQrPayload = {
   token: string;
   issued_at: string;
   registrant: {
     id: string;
     user_id: string;
-    name: string | null;
-    email: string | null;
   };
   event: {
     id: string;
     slug: string | null;
-    name: string | null;
   };
 };
 
 export async function generateQRCodeDataUrl(qrData: string): Promise<string> {
   const qrcode = await import("qrcode");
-
   return qrcode.toDataURL(qrData, {
     errorCorrectionLevel: "L",
     width: 400,
     margin: 2,
-    color: {
-      dark: "#000000",
-      light: "#FFFFFF",
-    },
+    color: { dark: "#000000", light: "#FFFFFF" },
   });
 }
 
@@ -42,7 +36,6 @@ export function createRegistrantQrToken(input: {
     Date.now().toString(),
     Math.random().toString(36),
   ].join(":");
-
   return CryptoJS.SHA256(seed).toString(CryptoJS.enc.Hex);
 }
 
@@ -50,11 +43,9 @@ export function createRegistrantQrData(input: {
   token: string;
   registrantId: string;
   userId: string;
-  attendeeName?: string | null;
-  attendeeEmail?: string | null;
   eventId: string;
   eventSlug?: string | null;
-  eventName?: string | null;
+  // name/email intentionally removed — looked up server-side during check-in
 }): string {
   const payload: RegistrantQrPayload = {
     token: input.token,
@@ -62,16 +53,12 @@ export function createRegistrantQrData(input: {
     registrant: {
       id: input.registrantId,
       user_id: input.userId,
-      name: input.attendeeName ?? null,
-      email: input.attendeeEmail ?? null,
     },
     event: {
       id: input.eventId,
       slug: input.eventSlug ?? null,
-      name: input.eventName ?? null,
     },
   };
-
   return JSON.stringify(payload);
 }
 
@@ -104,19 +91,10 @@ export function parseRegistrantQrData(
           typeof parsed.registrant.user_id === "string"
             ? parsed.registrant.user_id
             : "",
-        name:
-          typeof parsed.registrant.name === "string"
-            ? parsed.registrant.name
-            : null,
-        email:
-          typeof parsed.registrant.email === "string"
-            ? parsed.registrant.email
-            : null,
       },
       event: {
         id: parsed.event.id,
         slug: typeof parsed.event.slug === "string" ? parsed.event.slug : null,
-        name: typeof parsed.event.name === "string" ? parsed.event.name : null,
       },
     };
   } catch {

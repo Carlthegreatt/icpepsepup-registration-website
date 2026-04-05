@@ -86,19 +86,12 @@ export async function registerForEvent({
       eventId: data.event_id,
       userId: data.users_id,
     });
-    const attendeeName =
-      [authUser.user_metadata?.first_name, authUser.user_metadata?.last_name]
-        .filter(Boolean)
-        .join(" ") || null;
     const qrData = createRegistrantQrData({
       token,
       registrantId: data.registrant_id,
       userId: data.users_id,
-      attendeeName,
-      attendeeEmail: authUser.email ?? null,
       eventId: data.event_id,
       eventSlug: event_id,
-      eventName: eventData.event_name ?? null,
     });
 
     await updateRegistrantQrData(data.registrant_id, qrData);
@@ -165,14 +158,8 @@ export async function updateGuestStatus(
         token,
         registrantId: registrant.registrant_id,
         userId: registrant.users_id,
-        attendeeName:
-          [registrant.users?.first_name, registrant.users?.last_name]
-            .filter(Boolean)
-            .join(" ") || null,
-        attendeeEmail: registrant.users?.email ?? null,
         eventId: registrant.event_id,
         eventSlug: registrant.event?.slug ?? eventSlug,
-        eventName: registrant.event?.event_name ?? null,
       })
     : null;
 
