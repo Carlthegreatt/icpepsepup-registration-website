@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 
 function getSenderConfig() {
   const senderEmail =
@@ -19,43 +20,43 @@ function getSenderConfig() {
   return { senderEmail, senderPassword, senderName };
 }
 
-async function loadRsvpTemplate() {
-  const templatePath = path.join(
-    process.cwd(),
-    "public",
-    "email-template",
-    "adph_rsvp.html",
-  );
+// Module-level transport singleton (reused across requests in the same process)
+let _transporter: Transporter | null = null;
 
-  return await fs.readFile(templatePath, "utf8");
+function getTransporter(): Transporter {
+  if (!_transporter) {
+    const { senderEmail, senderPassword } = getSenderConfig();
+    _transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: senderEmail, pass: senderPassword },
+    });
+  }
+  return _transporter;
 }
 
-async function loadRegisteredTemplate() {
+// Module-level template cache (files read once per process lifetime)
+const _templateCache = new Map<string, string>();
+
+async function loadTemplate(name: string): Promise<string> {
+  if (_templateCache.has(name)) return _templateCache.get(name)!;
   const templatePath = path.join(
     process.cwd(),
     "public",
     "email-template",
-    "adph_registered.html",
+    name,
   );
-
-  return await fs.readFile(templatePath, "utf8");
+  const html = await fs.readFile(templatePath, "utf8");
+  _templateCache.set(name, html);
+  return html;
 }
 
 export async function sendRsvpPendingEmail(to: string, eventName: string) {
-  const { senderEmail, senderPassword, senderName } = getSenderConfig();
-  const templateHtml = await loadRsvpTemplate();
+  const { senderEmail, senderName } = getSenderConfig();
+  const templateHtml = await loadTemplate("adph_rsvp.html");
   const safeEventName = eventName?.trim() || "our event";
   const html = templateHtml.replace(/\{\{\s*event_name\s*\}\}/gi, safeEventName);
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: senderEmail,
-      pass: senderPassword,
-    },
-  });
-
-  const info = await transporter.sendMail({
+  const info = await getTransporter().sendMail({
     from: `${senderName} <${senderEmail}>`,
     to,
     subject: `RSVP Received for ${safeEventName} - Pending Confirmation`,
@@ -65,21 +66,16 @@ export async function sendRsvpPendingEmail(to: string, eventName: string) {
   return info.messageId;
 }
 
-export async function sendRegisteredConfirmationEmail(to: string, eventName: string) {
-  const { senderEmail, senderPassword, senderName } = getSenderConfig();
-  const templateHtml = await loadRegisteredTemplate();
+export async function sendRegisteredConfirmationEmail(
+  to: string,
+  eventName: string,
+) {
+  const { senderEmail, senderName } = getSenderConfig();
+  const templateHtml = await loadTemplate("adph_registered.html");
   const safeEventName = eventName?.trim() || "our event";
   const html = templateHtml.replace(/\{\{\s*event_name\s*\}\}/gi, safeEventName);
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: senderEmail,
-      pass: senderPassword,
-    },
-  });
-
-  const info = await transporter.sendMail({
+  const info = await getTransporter().sendMail({
     from: `${senderName} <${senderEmail}>`,
     to,
     subject: `Your spot at ${safeEventName} is secured`,
