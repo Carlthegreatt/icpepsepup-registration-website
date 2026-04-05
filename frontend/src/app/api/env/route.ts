@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -16,14 +17,18 @@ function resolveSenderEnv() {
 }
 
 export async function GET() {
-  const resolved = resolveSenderEnv();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
 
+  const resolved = resolveSenderEnv();
   const missing = Object.entries(resolved)
     .filter(([, value]) => !value)
     .map(([key]) => key);
 
-  return NextResponse.json({
-    ok: missing.length === 0,
-    missing,
-  });
+  return NextResponse.json({ ok: missing.length === 0, missing });
 }

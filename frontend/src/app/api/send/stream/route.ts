@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import nodemailer from "nodemailer";
 import nunjucks from "nunjucks";
 import { normalizeNameKey } from "@/utils/normalizeName";
@@ -78,6 +79,14 @@ function renderTemplate(
 }
 
 export async function POST(req: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   let payload: Payload;
   try {
     payload = (await req.json()) as Payload;
