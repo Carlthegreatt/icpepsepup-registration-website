@@ -21,6 +21,8 @@ export interface QRValidationResult {
   success: boolean;
   guestName?: string;
   guestEmail?: string;
+  alreadyCheckedIn?: boolean;
+  checkInTime?: string | null;
   error?: string;
 }
 
@@ -102,6 +104,25 @@ export const validateQRCodeAction = withActionErrorHandler(
       return {
         success: false,
         error: "Invalid ticket - registrant is not cleared for entry",
+      };
+    }
+
+    // Already checked in — return early with informative flag instead of overwriting
+    if (registrant.check_in) {
+      const guestName = [
+        registrant.users?.first_name,
+        registrant.users?.last_name,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+      return {
+        success: true,
+        guestName: guestName || "Guest",
+        guestEmail: registrant.users?.email ?? undefined,
+        alreadyCheckedIn: true,
+        checkInTime: registrant.check_in_time ?? null,
       };
     }
 
