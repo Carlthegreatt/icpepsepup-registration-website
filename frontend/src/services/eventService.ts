@@ -1,5 +1,4 @@
 import { getEventBySlug } from "@/repositories/eventRepository";
-import { getGuestCountByEvent } from "@/repositories/guestRepository";
 import { EventData, Question } from "@/types/event";
 import { isRegistrationOpenFromDb } from "@/utils/registration-open";
 

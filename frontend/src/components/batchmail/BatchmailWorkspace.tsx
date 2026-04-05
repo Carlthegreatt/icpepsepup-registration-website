@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback, useEffect } from "react";
 import { driver } from "driver.js";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import type { CsvMapping } from "@/components/ui/CsvUploader";
 import Tabs from "@/components/ui/Tabs";
 import type { Guest } from "@/types/guest";
@@ -27,7 +27,6 @@ type RenderedEmail = {
 
 export default function BatchmailWorkspace({ guests }: BatchmailWorkspaceProps) {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
   const [recipientScope, setRecipientScope] = useState<"all" | "registered" | "pending">("all");
   const filteredGuests = useMemo(() => {
@@ -219,7 +218,7 @@ export default function BatchmailWorkspace({ guests }: BatchmailWorkspaceProps) 
           onChange={(id) => {
             const usp = new URLSearchParams(Array.from(searchParams.entries()));
             usp.set("tab", id);
-            router.replace(`${pathname}?${usp.toString()}`);
+            window.history.replaceState(null, "", `${pathname}?${usp.toString()}`);
           }}
         />
       </div>

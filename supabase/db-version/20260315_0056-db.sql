@@ -18,6 +18,7 @@ CREATE TABLE public.events (
   modified_at timestamp with time zone DEFAULT now(),
   registered numeric DEFAULT '0'::numeric,
   slug text UNIQUE,
+  registration_open boolean NOT NULL DEFAULT true,
   cover_image text,
   post_event_survey jsonb DEFAULT '{"isEnabled": false, "questions": []}'::jsonb,
   certificate_config jsonb,

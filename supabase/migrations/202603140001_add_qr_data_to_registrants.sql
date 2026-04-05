@@ -1,5 +1,8 @@
 alter table public.registrants
-add column if not exists qr_data text;
+  add column if not exists qr_url text;
+
+alter table public.registrants
+  add column if not exists qr_data text;
 
 update public.registrants
 set qr_data = md5(
