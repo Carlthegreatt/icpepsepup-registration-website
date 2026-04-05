@@ -29,11 +29,7 @@ export async function registerForEvent({
   form_answers: Record<string, string>;
 }) {
   if (!event_id || !user_id) {
-    throw new Error("Missing required fields");
-  }
-
-  if (!terms_approval) {
-    throw new ActionError("You must accept the terms to register.", 400);
+    throw new ActionError("Missing required fields.", 400);
   }
 
   const authUser = await getAuthUser();
@@ -43,6 +39,10 @@ export async function registerForEvent({
 
   if (authUser.id !== user_id) {
     throw new ActionError("Unauthorized registration request.", 403);
+  }
+
+  if (!terms_approval) {
+    throw new ActionError("You must accept the terms to register.", 400);
   }
 
   const eventData = await getEventIdAndApprovalBySlug(event_id);
@@ -144,7 +144,7 @@ export async function updateGuestStatus(
 
   const registrant = await getRegistrantStatusEmailAndEvent(guestId);
   if (!registrant) {
-    throw new Error("Registrant not found");
+    throw new ActionError("Registrant not found.", 404);
   }
 
   const wasPending = !registrant.is_registered;
