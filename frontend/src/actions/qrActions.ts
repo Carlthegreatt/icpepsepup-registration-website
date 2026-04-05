@@ -30,6 +30,7 @@ export interface ManualCheckInResult {
   success: boolean;
   guestName?: string;
   guestEmail?: string;
+  alreadyCheckedIn?: boolean;
   checkInTime?: string;
   error?: string;
 }
@@ -107,38 +108,27 @@ export const validateQRCodeAction = withActionErrorHandler(
       };
     }
 
-    // Already checked in — return early with informative flag instead of overwriting
-    if (registrant.check_in) {
-      const guestName = [
-        registrant.users?.first_name,
-        registrant.users?.last_name,
-      ]
+    const guestName =
+      [registrant.users?.first_name, registrant.users?.last_name]
         .filter(Boolean)
         .join(" ")
-        .trim();
+        .trim() || "Guest";
 
+    if (registrant.check_in) {
       return {
         success: true,
-        guestName: guestName || "Guest",
+        guestName,
         guestEmail: registrant.users?.email ?? undefined,
         alreadyCheckedIn: true,
         checkInTime: registrant.check_in_time ?? null,
       };
     }
 
-    const guestName = [
-      registrant.users?.first_name,
-      registrant.users?.last_name,
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
     await checkInRegistrant(registrant.registrant_id);
 
     return {
       success: true,
-      guestName: guestName || "Guest",
+      guestName,
       guestEmail: registrant.users?.email ?? undefined,
     };
   },
@@ -181,6 +171,22 @@ export const manualCheckInAction = withActionErrorHandler(
       return {
         success: false,
         error: "Registrant is not approved yet",
+      };
+    }
+
+    if (registrant.check_in) {
+      const guestName =
+        [registrant.users?.first_name, registrant.users?.last_name]
+          .filter(Boolean)
+          .join(" ")
+          .trim();
+
+      return {
+        success: true,
+        guestName: guestName || "Guest",
+        guestEmail: registrant.users?.email ?? undefined,
+        alreadyCheckedIn: true,
+        checkInTime: registrant.check_in_time ?? undefined,
       };
     }
 

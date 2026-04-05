@@ -222,6 +222,8 @@ export async function getRegistrantById(
       is_registered,
       is_going,
       qr_data,
+      check_in,
+      check_in_time,
       users!users_id (
         first_name,
         last_name,
