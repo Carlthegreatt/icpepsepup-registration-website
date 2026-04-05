@@ -32,14 +32,20 @@ type Payload = {
 function resolveSenderEnv() {
   return {
     email:
-      process.env.SENDER_EMAIL || process.env.ARDUINODAYPH_SENDER_EMAIL || "",
+      process.env.ICPEP_SENDER_EMAIL ||
+      process.env.SENDER_EMAIL ||
+      process.env.ARDUINODAYPH_SENDER_EMAIL ||
+      "",
     password:
+      process.env.ICPEP_SENDER_PASSWORD ||
       process.env.SENDER_APP_PASSWORD ||
       process.env.ARDUINODAYPH_SENDER_PASSWORD ||
       "",
     name:
+      process.env.ICPEP_SENDER_NAME ||
       process.env.SENDER_NAME ||
       process.env.ARDUINODAYPH_SENDER_NAME ||
+      process.env.ICPEP_SENDER_EMAIL ||
       process.env.SENDER_EMAIL ||
       process.env.ARDUINODAYPH_SENDER_EMAIL ||
       "",

@@ -5,10 +5,15 @@ import type { Transporter } from "nodemailer";
 
 function getSenderConfig() {
   const senderEmail =
-    process.env.ARDUINODAYPH_SENDER_EMAIL || process.env.SENDER_EMAIL;
+    process.env.ICPEP_SENDER_EMAIL ||
+    process.env.ARDUINODAYPH_SENDER_EMAIL ||
+    process.env.SENDER_EMAIL;
   const senderPassword =
-    process.env.ARDUINODAYPH_SENDER_PASSWORD || process.env.SENDER_APP_PASSWORD;
+    process.env.ICPEP_SENDER_PASSWORD ||
+    process.env.ARDUINODAYPH_SENDER_PASSWORD ||
+    process.env.SENDER_APP_PASSWORD;
   const senderName =
+    process.env.ICPEP_SENDER_NAME ||
     process.env.ARDUINODAYPH_SENDER_NAME ||
     process.env.SENDER_NAME ||
     senderEmail;

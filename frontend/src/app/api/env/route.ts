@@ -6,13 +6,20 @@ export const runtime = "nodejs";
 function resolveSenderEnv() {
   return {
     SENDER_EMAIL:
-      process.env.SENDER_EMAIL || process.env.ARDUINODAYPH_SENDER_EMAIL || "",
+      process.env.ICPEP_SENDER_EMAIL ||
+      process.env.SENDER_EMAIL ||
+      process.env.ARDUINODAYPH_SENDER_EMAIL ||
+      "",
     SENDER_APP_PASSWORD:
+      process.env.ICPEP_SENDER_PASSWORD ||
       process.env.SENDER_APP_PASSWORD ||
       process.env.ARDUINODAYPH_SENDER_PASSWORD ||
       "",
     SENDER_NAME:
-      process.env.SENDER_NAME || process.env.ARDUINODAYPH_SENDER_NAME || "",
+      process.env.ICPEP_SENDER_NAME ||
+      process.env.SENDER_NAME ||
+      process.env.ARDUINODAYPH_SENDER_NAME ||
+      "",
   };
 }
 
