@@ -20,7 +20,7 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
-  title: "ICPEP SE - PUP Manila 2026",
+  title: "Career Fair and Engineering Seminar",
   description: "ICPEP SE - PUP Manila 2026 Registration and Event Management",
   icons: {
     icon: "/images/logos/ICPEP-logo-1.png",
