@@ -3,7 +3,9 @@ import { z } from "zod";
 export const CreateRegistrantSchema = z.object({
   event_id: z.string().min(1, "Event ID cannot be empty"),
   user_id: z.string().min(1, "User ID cannot be empty"),
-  terms_approval: z.boolean().optional(),
+  terms_approval: z.literal(true, {
+    message: "You must accept the terms to register.",
+  }),
   form_answers: z.record(z.string(), z.string()),
 });
 

@@ -13,6 +13,7 @@ import {
   createRegistrantQrToken,
   parseRegistrantQrData,
 } from "@/services/qrService";
+import { ActionError } from "@/lib/utils/actionError";
 import { logger } from "@/utils/logger";
 import { isRegistrationOpenFromDb } from "@/utils/registration-open";
 
@@ -24,25 +25,29 @@ export async function registerForEvent({
 }: {
   event_id: string;
   user_id: string;
-  terms_approval?: boolean;
+  terms_approval: boolean;
   form_answers: Record<string, string>;
 }) {
   if (!event_id || !user_id) {
     throw new Error("Missing required fields");
   }
 
+  if (!terms_approval) {
+    throw new ActionError("You must accept the terms to register.", 400);
+  }
+
   const authUser = await getAuthUser();
   if (!authUser) {
-    throw new Error("You must be logged in to register");
+    throw new ActionError("You must be logged in to register.", 401);
   }
 
   if (authUser.id !== user_id) {
-    throw new Error("Unauthorized registration request");
+    throw new ActionError("Unauthorized registration request.", 403);
   }
 
   const eventData = await getEventIdAndApprovalBySlug(event_id);
   if (!eventData) {
-    throw new Error("Event not found");
+    throw new ActionError("Event not found.", 404);
   }
 
   const registrationOpen = isRegistrationOpenFromDb({
@@ -51,7 +56,7 @@ export async function registerForEvent({
   });
 
   if (!registrationOpen) {
-    throw new Error("Registration for this event is closed");
+    throw new ActionError("Registration for this event is closed.", 400);
   }
 
   const is_registered = !eventData.require_approval;
@@ -61,13 +66,13 @@ export async function registerForEvent({
     eventData.event_id,
   );
   if (existingRegistrant) {
-    throw new Error("You have already registered for this event");
+    throw new ActionError("You have already registered for this event.", 409);
   }
 
   const data = await createRegistrant({
     event_id: eventData.event_id,
     users_id: authUser.id,
-    terms_approval: terms_approval || true,
+    terms_approval,
     form_answers,
     is_registered,
     is_going: is_registered ? true : null,

@@ -87,11 +87,13 @@ export function handleActionError(error: unknown): ActionResponse {
 
   // 3. Handle standard JS errors
   if (error instanceof Error) {
-    logger.error("[Server Action Error]:", error);
-    // Be careful not to expose internal stack traces/database queries to the client
+    logger.error("[Server Action Error]:", {
+      message: error.message,
+      stack: error.stack,
+    });
     return {
       success: false,
-      error: error.message || "An unexpected server error occurred.",
+      error: "An unexpected server error occurred.",
       code: 500,
     };
   }
