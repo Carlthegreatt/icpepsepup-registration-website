@@ -198,7 +198,7 @@ export default function BatchmailWorkspace({ guests }: BatchmailWorkspaceProps) 
             },
           ]}
           initialId={(() => {
-            const raw = searchParams.get("tab") || "guests";
+            const raw = searchParams.get("btab") || "guests";
             if (raw === "csv") return "guests";
             if (raw === "template") return "preview";
             if (raw === "preview" || raw === "docs" || raw === "guests" || raw === "message") return raw;
@@ -217,7 +217,7 @@ export default function BatchmailWorkspace({ guests }: BatchmailWorkspaceProps) 
           }}
           onChange={(id) => {
             const usp = new URLSearchParams(Array.from(searchParams.entries()));
-            usp.set("tab", id);
+            usp.set("btab", id);
             window.history.replaceState(null, "", `${pathname}?${usp.toString()}`);
           }}
         />

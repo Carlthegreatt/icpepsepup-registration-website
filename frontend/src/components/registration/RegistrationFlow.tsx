@@ -293,7 +293,14 @@ export function RegistrationFlow({
 
   return (
     <RegistrationLayout currentStep={currentStep} totalSteps={totalSteps}>
-      {currentStep === 0 && <Step0 onNext={nextStep} />}
+      {currentStep === 0 && (
+        <Step0
+          onNext={() => {
+            updateData({ agreedToPrivacy: true });
+            nextStep();
+          }}
+        />
+      )}
 
       {/* Dynamic question steps */}
       {questionSteps.map((questions, index) => {

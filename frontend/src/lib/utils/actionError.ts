@@ -4,6 +4,7 @@
 import { ActionResponse } from "@/types/action";
 import { logger } from "@/utils/logger";
 import { redirect } from "next/navigation";
+import { ZodError } from "zod";
 
 export class ActionError extends Error {
   code: number;
@@ -85,7 +86,18 @@ export function handleActionError(error: unknown): ActionResponse {
     };
   }
 
-  // 3. Handle standard JS errors
+  // 3. Zod validation errors — these ARE user-facing (bad input), return the message
+  if (error instanceof ZodError) {
+    const message = error.issues.map((i) => i.message).join(". ");
+    logger.warn("[Validation Error]:", { issues: error.issues });
+    return {
+      success: false,
+      error: message || "Validation failed.",
+      code: 400,
+    };
+  }
+
+  // 4. Handle standard JS errors
   if (error instanceof Error) {
     logger.error("[Server Action Error]:", {
       message: error.message,
@@ -98,7 +110,7 @@ export function handleActionError(error: unknown): ActionResponse {
     };
   }
 
-  // 4. Ultimate fallback
+  // 5. Ultimate fallback
   logger.error("[Unknown Action Error]:", error);
   return {
     success: false,
